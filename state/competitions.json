@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-17T19:00:08.833087+00:00",
+  "generated_at": "2026-10-17T19:53:09.474843+00:00",
   "agent": {
     "name": "Kaggle Auto Scientist",
     "version": "V2",
@@ -37,7 +37,7 @@
       "deadline": "2026-11-02 23:59:00",
       "category": "Featured",
       "reward": "700,000 Usd",
-      "teamCount": 2994,
+      "teamCount": 2996,
       "userHasEntered": false,
       "userRank": 0,
       "daysRemaining": 16,
