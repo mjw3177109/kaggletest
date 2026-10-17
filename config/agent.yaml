@@ -1,0 +1,23 @@
+agent:
+  name: Kaggle Auto Scientist
+  version: V1
+  mode: scout
+
+scout:
+  page_size: 100
+  max_candidates: 20
+  prefer_categories:
+    - playground
+    - gettingStarted
+    - featured
+  min_days_remaining: 2
+  max_team_count_for_bonus: 5000
+
+safety:
+  auto_accept_rules: false
+  auto_submit: false
+  auto_join_competitions: false
+
+output:
+  competitions_json: state/competitions.json
+  latest_report: reports/scout_latest.md
