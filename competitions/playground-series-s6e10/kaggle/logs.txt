@@ -1,0 +1,15 @@
+[{"stream_name":"stderr","time":6.412356433,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":6.4127180599999996,"data":"  File \"/kaggle/src/script.py\", line 25, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":6.412729188,"data":"    train = pd.read_csv(find(\"train.csv\"))\n"}
+,{"stream_name":"stderr","time":6.412733299,"data":"                        ~~~~^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":6.412737398,"data":"  File \"/kaggle/src/script.py\", line 22, in find\n"}
+,{"stream_name":"stderr","time":6.412741825,"data":"    raise FileNotFoundError(f\"Could not find {name} under {ROOT}\")\n"}
+,{"stream_name":"stderr","time":6.412746668,"data":"FileNotFoundError: Could not find train.csv under /kaggle/input/playground-series-s6e10\n"}
+,{"stream_name":"stderr","time":9.865764724,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":9.865809677,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":10.34357216,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":10.343610284,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":12.54197745,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":14.04140784,"data":"[NbConvertApp] Writing 295801 bytes to __results__.html\n"}
+]
+
