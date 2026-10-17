@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - "kaggle_agent/v2_pipeline.py"
+      - "kaggle_agent/v2_runner.py"
       - "config/agent.yaml"
       - "requirements.txt"
       - ".github/workflows/kaggle_v2.yml"
@@ -53,7 +54,7 @@ jobs:
           git reset --hard origin/main
 
       - name: Run V2 autonomous pipeline
-        run: python kaggle_agent/v2_pipeline.py
+        run: python kaggle_agent/v2_runner.py
 
       - name: Commit V2 state, analysis, code and results
         shell: bash
@@ -68,7 +69,7 @@ jobs:
           if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
             echo "main advanced during V2; regenerating outputs on latest main"
             git reset --hard origin/main
-            python kaggle_agent/v2_pipeline.py
+            python kaggle_agent/v2_runner.py
           fi
 
           git add state/ reports/ competitions/
