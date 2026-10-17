@@ -1,171 +1,47 @@
 {
-  "generated_at": "2026-10-17T18:54:40.850933+00:00",
+  "generated_at": "2026-10-17T18:55:17.484623+00:00",
   "agent": {
     "name": "Kaggle Auto Scientist",
     "version": "V1",
     "mode": "scout"
   },
-  "candidate_count": 20,
+  "candidate_count": 3,
   "competitions": [
     {
-      "ref": "https://www.kaggle.com/competitions/passenger-screening-algorithm-challenge",
-      "deadline": "2017-12-15",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 1,500,000 Usd 518",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/zillow-prize-1",
-      "deadline": "2018-01-10",
-      "category": "False",
-      "reward": "0",
-      "title": "15:59:00 Featured 1,200,000 Usd 3770",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/data-science-bowl-2017",
-      "deadline": "2017-04-12",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 1,000,000 Usd 1972",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/vesuvius-challenge-ink-detection",
-      "deadline": "2023-06-14",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 1,000,000 Usd 1249",
-      "score": 0
+      "ref": "https://www.kaggle.com/competitions/arc-prize-2026-paper-track",
+      "slug": "arc-prize-2026-paper-track",
+      "deadline": "2026-11-09 23:59:00",
+      "category": "Featured",
+      "reward": "450,000 Usd",
+      "teamCount": 261,
+      "userHasEntered": false,
+      "userRank": 0,
+      "daysRemaining": 23,
+      "score": 30
     },
     {
       "ref": "https://www.kaggle.com/competitions/arc-prize-2026-arc-agi-3",
-      "deadline": "2026-11-02",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 850,000 Usd 4419",
-      "score": 0
+      "slug": "arc-prize-2026-arc-agi-3",
+      "deadline": "2026-11-02 23:59:00",
+      "category": "Featured",
+      "reward": "850,000 Usd",
+      "teamCount": 4419,
+      "userHasEntered": false,
+      "userRank": 0,
+      "daysRemaining": 16,
+      "score": 20
     },
     {
       "ref": "https://www.kaggle.com/competitions/arc-prize-2026-arc-agi-2",
-      "deadline": "2026-11-02",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 700,000 Usd 2993",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/gemini-3",
-      "deadline": "2025-12-12",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 500,000 Usd 4083",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/openai-gpt-oss-20b-red-teaming",
-      "deadline": "2025-08-26",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 500,000 Usd 601",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/openai-to-z-challenge",
-      "deadline": "2025-06-29",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 500,000 Usd 225",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/arc-prize-2026-paper-track",
-      "deadline": "2026-11-09",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 450,000 Usd 261",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle-challenge-strategy",
-      "deadline": "2026-09-13",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 240,000 Usd 938",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/llm-prompt-recovery",
-      "deadline": "2024-04-16",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 200,000 Usd 2175",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/vesuvius-challenge-surface-detection",
-      "deadline": "2026-02-27",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Research 200,000 Usd 1391",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/asl-fingerspelling",
-      "deadline": "2023-08-24",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Research 200,000 Usd 1314",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/second-annual-data-science-bowl",
-      "deadline": "2016-03-14",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 200,000 Usd 192",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/gemma-4-good-hackathon",
-      "deadline": "2026-05-18",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 200,000 Usd 1604",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/kaggle-measuring-agi",
-      "deadline": "2026-04-16",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 200,000 Usd 1062",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/datasciencebowl",
-      "deadline": "2015-03-16",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 175,000 Usd 1049",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/data-science-bowl-2019",
-      "deadline": "2020-01-22",
-      "category": "False",
-      "reward": "0",
-      "title": "23:59:00 Featured 160,000 Usd 3493",
-      "score": 0
-    },
-    {
-      "ref": "https://www.kaggle.com/competitions/feedback-prize-2021",
-      "deadline": "2022-03-15",
-      "category": "True",
-      "reward": "0",
-      "title": "23:59:00 Featured 160,000 Usd 2058",
-      "score": 0
+      "slug": "arc-prize-2026-arc-agi-2",
+      "deadline": "2026-11-02 23:59:00",
+      "category": "Featured",
+      "reward": "700,000 Usd",
+      "teamCount": 2993,
+      "userHasEntered": false,
+      "userRank": 0,
+      "daysRemaining": 16,
+      "score": 20
     }
   ]
 }
