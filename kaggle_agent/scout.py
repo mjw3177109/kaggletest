@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import csv
 import json
 import os
+import re
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -24,43 +24,73 @@ def run(cmd: list[str]) -> str:
 
 
 def parse_competitions(raw: str) -> list[dict]:
-    lines = [line for line in raw.splitlines() if line.strip()]
-    if not lines:
-        return []
-
-    # Kaggle CLI table output is whitespace-separated. We only need stable columns.
     rows: list[dict] = []
-    for line in lines:
-        if line.startswith("ref") or set(line.strip()) <= {"-", " "}:
+    for line in raw.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("ref") or set(stripped) <= {"-"}:
             continue
-        parts = line.split()
-        if len(parts) < 6:
+
+        # Kaggle CLI 2.x renders fixed-width columns separated by 2+ spaces.
+        # Expected fields:
+        # ref | deadline | category | reward | teamCount | userHasEntered | userRank
+        parts = re.split(r"\s{2,}", stripped)
+        if len(parts) < 7:
             continue
-        ref = parts[0]
-        deadline = parts[1]
-        category = parts[-2]
-        reward = parts[-1]
-        title = " ".join(parts[2:-2])
+
+        ref, deadline, category, reward, team_count, user_has_entered, user_rank = parts[:7]
+        slug = ref.rstrip("/").split("/")[-1]
         rows.append({
             "ref": ref,
+            "slug": slug,
             "deadline": deadline,
             "category": category,
             "reward": reward,
-            "title": title,
+            "teamCount": int(team_count) if team_count.isdigit() else team_count,
+            "userHasEntered": user_has_entered.lower() == "true",
+            "userRank": int(user_rank) if user_rank.isdigit() else user_rank,
         })
     return rows
 
 
-def score(row: dict, prefer_categories: list[str]) -> int:
+def is_open(deadline: str, now: datetime) -> bool:
+    try:
+        dt = datetime.strptime(deadline, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+        return dt > now
+    except ValueError:
+        return False
+
+
+def days_remaining(deadline: str, now: datetime) -> int:
+    try:
+        dt = datetime.strptime(deadline, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+        return max(0, (dt - now).days)
+    except ValueError:
+        return 0
+
+
+def score(row: dict, prefer_categories: list[str], now: datetime) -> int:
     s = 0
     category = str(row.get("category", ""))
     if category in prefer_categories:
-        s += 30 - prefer_categories.index(category) * 5
-    title = str(row.get("title", "")).lower()
-    if any(k in title for k in ["playground", "prediction", "classification", "regression", "tabular"]):
-        s += 25
-    if any(k in title for k in ["image", "audio", "video", "llm", "segmentation"]):
+        s += 35 - prefer_categories.index(category) * 5
+    elif category.lower() in {"featured", "research"}:
+        s += 10
+
+    slug = str(row.get("slug", "")).lower()
+    if any(k in slug for k in ["playground", "prediction", "classification", "regression", "tabular"]):
+        s += 30
+    if any(k in slug for k in ["image", "audio", "video", "segmentation", "agi", "llm"]):
         s -= 10
+
+    remaining = days_remaining(str(row.get("deadline", "")), now)
+    if remaining >= 7:
+        s += 15
+    elif remaining >= 2:
+        s += 8
+
+    team_count = row.get("teamCount")
+    if isinstance(team_count, int) and team_count <= 5000:
+        s += 5
     return s
 
 
@@ -75,17 +105,25 @@ def main() -> None:
         str(scout_cfg.get("page_size", 100)),
     ])
 
+    now = datetime.now(timezone.utc)
     comps = parse_competitions(raw)
+    min_days = int(scout_cfg.get("min_days_remaining", 2))
+    comps = [
+        c for c in comps
+        if is_open(c["deadline"], now) and days_remaining(c["deadline"], now) >= min_days
+    ]
+
     prefer = scout_cfg.get("prefer_categories", [])
     for c in comps:
-        c["score"] = score(c, prefer)
+        c["daysRemaining"] = days_remaining(c["deadline"], now)
+        c["score"] = score(c, prefer, now)
 
-    comps.sort(key=lambda x: x.get("score", 0), reverse=True)
+    comps.sort(key=lambda x: (x.get("score", 0), x.get("daysRemaining", 0)), reverse=True)
     comps = comps[: int(scout_cfg.get("max_candidates", 20))]
 
-    now = datetime.now(timezone.utc).isoformat()
+    now_iso = now.isoformat()
     payload = {
-        "generated_at": now,
+        "generated_at": now_iso,
         "agent": cfg["agent"],
         "candidate_count": len(comps),
         "competitions": comps,
@@ -100,16 +138,16 @@ def main() -> None:
     lines = [
         "# Kaggle Auto Scientist — Scout Report",
         "",
-        f"Generated: `{now}`",
+        f"Generated: `{now_iso}`",
         "",
-        f"Candidates: **{len(comps)}**",
+        f"Open candidates: **{len(comps)}**",
         "",
-        "| Rank | Competition | Category | Deadline | Score |",
-        "|---:|---|---|---|---:|",
+        "| Rank | Competition | Category | Deadline | Days left | Teams | Entered | Score |",
+        "|---:|---|---|---|---:|---:|---|---:|",
     ]
     for i, c in enumerate(comps, start=1):
         lines.append(
-            f"| {i} | `{c['ref']}` — {c['title']} | {c['category']} | {c['deadline']} | {c['score']} |"
+            f"| {i} | `{c['slug']}` | {c['category']} | {c['deadline']} | {c['daysRemaining']} | {c['teamCount']} | {c['userHasEntered']} | {c['score']} |"
         )
     lines.extend([
         "",
