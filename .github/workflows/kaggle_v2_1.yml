@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - "kaggle_agent/v2_1_pipeline.py"
+      - "kaggle_agent/beginner_guide.py"
       - ".github/workflows/kaggle_v2_1.yml"
 
 permissions:
@@ -51,9 +52,11 @@ jobs:
           git reset --hard origin/main
 
       - name: Run V2.1 optimizer
-        run: python kaggle_agent/v2_1_pipeline.py
+        run: |
+          python kaggle_agent/v2_1_pipeline.py
+          python kaggle_agent/beginner_guide.py
 
-      - name: Commit V2.1 experiments and results
+      - name: Commit V2.1 experiments, beginner guide and results
         shell: bash
         run: |
           git config user.name "kaggle-auto-scientist[bot]"
@@ -64,6 +67,7 @@ jobs:
             echo "main advanced during V2.1; regenerating optimizer outputs on latest main"
             git reset --hard origin/main
             python kaggle_agent/v2_1_pipeline.py
+            python kaggle_agent/beginner_guide.py
           fi
 
           git add state/ reports/ competitions/
