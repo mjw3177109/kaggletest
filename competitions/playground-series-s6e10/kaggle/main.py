@@ -12,7 +12,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 
 COMPETITION = "playground-series-s6e10"
-ROOT = Path("/kaggle/input") / COMPETITION
+ROOT = Path("/kaggle/input")
 OUT = Path("/kaggle/working")
 
 

@@ -1,0 +1,8 @@
+{
+  "target": "satisfaction",
+  "features": 21,
+  "categorical_features": 4,
+  "rows": 699635,
+  "validation_metric": "roc_auc",
+  "validation_score": 0.9569278088980195
+}

@@ -1,1 +1,1 @@
-mjw3177109/kas-v2-playground-series-s6e10 has status "KernelWorkerStatus.ERROR"
+mjw3177109/kas-v2-playground-series-s6e10 has status "KernelWorkerStatus.COMPLETE"

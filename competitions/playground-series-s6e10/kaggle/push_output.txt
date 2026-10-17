@@ -1,2 +1,2 @@
-Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/mjw3177109/kas-v2-playground-series-s6e10
+Kernel version 2 successfully pushed.  Please check progress at https://www.kaggle.com/code/mjw3177109/kas-v2-playground-series-s6e10
 
