@@ -1,0 +1,2 @@
+
+Cannot access kernel 'mjw3177109/kas-v21-playground-series-s6e10' (Permission 'kernels.get' was denied). The most likely cause is a wrong kernel slug. Use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG).

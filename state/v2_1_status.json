@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-10-17T20:00:50.859784+00:00",
+  "version": "V2.1",
+  "competition": "playground-series-s6e10",
+  "kernel": "mjw3177109/kas-v21-playground-series-s6e10",
+  "stage": "kernel_timeout",
+  "baseline_cv": 0.9569278088980195,
+  "baseline_public_score": "0.95738",
+  "kernel_state": "timeout"
+}
