@@ -1,0 +1,145 @@
+[
+  {
+    "ref": "https://www.kaggle.com/competitions/playground-series-s6e10",
+    "deadline": "2026-10-31T23:59:00+00:00",
+    "category": "Playground",
+    "reward": "Swag",
+    "teamCount": 2178,
+    "userHasEntered": false,
+    "userRank": 0,
+    "slug": "playground-series-s6e10",
+    "score": 277.9
+  },
+  {
+    "ref": "https://www.kaggle.com/competitions/the-pokemon-company-ptcg-ai-battle-challenge-playground",
+    "deadline": "2027-01-08T23:59:59+00:00",
+    "category": "Playground",
+    "reward": "Swag",
+    "teamCount": 417,
+    "userHasEntered": false,
+    "userRank": 0,
+    "slug": "the-pokemon-company-ptcg-ai-battle-challenge-playground",
+    "score": 135.0
+  },
+  {
+    "ref": "https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques",
+    "deadline": "2030-01-01T00:00:00+00:00",
+    "category": "Getting Started",
+    "reward": "Knowledge",
+    "teamCount": 4267,
+    "userHasEntered": true,
+    "userRank": 0,
+    "slug": "house-prices-advanced-regression-techniques",
+    "score": 50.0
+  },
+  {
+    "ref": "https://www.kaggle.com/competitions/contradictory-my-dear-watson",
+    "deadline": "2030-07-01T23:59:00+00:00",
+    "category": "Getting Started",
+    "reward": "Knowledge",
+    "teamCount": 48,
+    "userHasEntered": false,
+    "userRank": 0,
+    "slug": "contradictory-my-dear-watson",
+    "score": 15.0
+  },
+  {
+    "ref": "https://www.kaggle.com/competitions/store-sales-time-series-forecasting",
+    "deadline": "2030-06-30T23:59:00+00:00",
+    "category": "Getting Started",
+    "reward": "Knowledge",
+    "teamCount": 563,
+    "userHasEntered": false,
+    "userRank": 0,
+    "slug": "store-sales-time-series-forecasting",
+    "score": 15.0
+  },
+  {
+    "ref": "https://www.kaggle.com/competitions/tpu-getting-started",
+    "deadline": "2030-06-03T23:59:00+00:00",
+    "category": "Getting Started",
+    "reward": "Knowledge",
+    "teamCount": 44,
+    "userHasEntered": false,
+    "userRank": 0,
+    "slug": "tpu-getting-started",
+    "score": 15.0
+  },
+  {
+    "ref": "https://www.kaggle.com/competitions/home-data-for-ml-course",
+    "deadline": "2030-01-01T23:59:00+00:00",
+    "category": "Getting Started",
+    "reward": "Knowledge",
+    "teamCount": 3851,
+    "userHasEntered": false,
+    "userRank": 0,
+    "slug": "home-data-for-ml-course",
+    "score": 15.0
+  },
+  {
+    "ref": "https://www.kaggle.com/competitions/spaceship-titanic",
+    "deadline": "2030-01-01T00:00:00+00:00",
+    "category": "Getting Started",
+    "reward": "Knowledge",
+    "teamCount": 1738,
+    "userHasEntered": false,
+    "userRank": 0,
+    "slug": "spaceship-titanic",
+    "score": 15.0
+  },
+  {
+    "ref": "https://www.kaggle.com/competitions/nlp-getting-started",
+    "deadline": "2030-01-01T00:00:00+00:00",
+    "category": "Getting Started",
+    "reward": "Knowledge",
+    "teamCount": 473,
+    "userHasEntered": true,
+    "userRank": 0,
+    "slug": "nlp-getting-started",
+    "score": 15.0
+  },
+  {
+    "ref": "https://www.kaggle.com/competitions/connectx",
+    "deadline": "2030-01-01T00:00:00+00:00",
+    "category": "Getting Started",
+    "reward": "Knowledge",
+    "teamCount": 230,
+    "userHasEntered": true,
+    "userRank": 0,
+    "slug": "connectx",
+    "score": 15.0
+  },
+  {
+    "ref": "https://www.kaggle.com/competitions/digit-recognizer",
+    "deadline": "2030-01-01T00:00:00+00:00",
+    "category": "Getting Started",
+    "reward": "Knowledge",
+    "teamCount": 964,
+    "userHasEntered": false,
+    "userRank": 0,
+    "slug": "digit-recognizer",
+    "score": 15.0
+  },
+  {
+    "ref": "https://www.kaggle.com/competitions/titanic",
+    "deadline": "2030-01-01T00:00:00+00:00",
+    "category": "Getting Started",
+    "reward": "Knowledge",
+    "teamCount": 11291,
+    "userHasEntered": true,
+    "userRank": 0,
+    "slug": "titanic",
+    "score": 0.0
+  },
+  {
+    "ref": "https://www.kaggle.com/competitions/llm-classification-finetuning",
+    "deadline": "2030-07-01T23:59:00+00:00",
+    "category": "Getting Started",
+    "reward": "Knowledge",
+    "teamCount": 261,
+    "userHasEntered": false,
+    "userRank": 0,
+    "slug": "llm-classification-finetuning",
+    "score": -30.0
+  }
+]

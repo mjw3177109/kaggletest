@@ -1,0 +1,17 @@
+[
+  {
+    "name": "sample_submission.csv",
+    "size": 8095804,
+    "creationDate": "2026-08-26T22:08:09.210000"
+  },
+  {
+    "name": "test.csv",
+    "size": 27200964,
+    "creationDate": "2026-08-26T22:08:09.894000"
+  },
+  {
+    "name": "train.csv",
+    "size": 67245068,
+    "creationDate": "2026-08-26T22:08:11.001000"
+  }
+]

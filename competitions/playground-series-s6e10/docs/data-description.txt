@@ -1,0 +1,4 @@
+usage: kaggle competitions pages [-h] [-v | --format OUTPUT_FORMAT] [-q]
+                                 [--content] [--page-name PAGE_NAME]
+                                 [competition] {list,create,update,delete} ...
+kaggle competitions pages: error: argument command: invalid choice: 'playground-series-s6e10' (choose from 'list', 'create', 'update', 'delete')
