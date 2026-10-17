@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-10-17T19:00:12.768462+00:00",
+  "generated_at": "2026-10-17T19:52:11.802145+00:00",
   "version": "V2",
   "competition": "playground-series-s6e10",
   "competition_url": "https://www.kaggle.com/competitions/playground-series-s6e10",
-  "entered": false,
-  "stage": "rules_required",
+  "entered": true,
+  "stage": "download_failed",
   "files_error": "",
-  "next_action": "Open the competition URL, click Join Competition, and accept the rules; then rerun Kaggle Auto Scientist V2."
+  "error": "usage: kaggle [-h] [-v] [-W]\n              {competitions,c,datasets,d,kernels,k,models,m,files,forums,f,benchmarks,b,config,auth,quota}\n              ...\nkaggle: error: unrecognized arguments: --unzip"
 }
