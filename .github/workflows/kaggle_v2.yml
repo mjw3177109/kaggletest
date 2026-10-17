@@ -1,0 +1,63 @@
+name: Kaggle Auto Scientist V2
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "kaggle_agent/v2_pipeline.py"
+      - "config/agent.yaml"
+      - "requirements.txt"
+      - ".github/workflows/kaggle_v2.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-auto-scientist-v2
+  cancel-in-progress: false
+
+jobs:
+  v2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install V2 dependencies
+        run: pip install -r requirements.txt
+
+      - name: Verify Kaggle authentication
+        shell: bash
+        run: |
+          test -n "$KAGGLE_API_TOKEN" || (echo "Missing KAGGLE_API_TOKEN" && exit 1)
+          kaggle competitions list --category playground --page-size 3 --format json >/dev/null
+          echo "Kaggle authentication OK"
+
+      - name: Run V2 autonomous pipeline
+        run: python kaggle_agent/v2_pipeline.py
+
+      - name: Commit V2 state, analysis, code and results
+        shell: bash
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add state/ reports/ competitions/
+          if git diff --cached --quiet; then
+            echo "No V2 changes to commit."
+            exit 0
+          fi
+          git commit -m "bot: Kaggle Auto Scientist V2 run"
+          git pull --rebase origin main
+          git push origin main

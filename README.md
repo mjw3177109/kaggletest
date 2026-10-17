@@ -1,68 +1,53 @@
-# Kaggle Auto Scientist V1
+# Kaggle Auto Scientist
 
-这是一个把 GitHub 与 Kaggle 串起来的自动参赛实验框架。
+This repository is an automated Kaggle competition lab.
 
-当前 V1 已完成第一条最小闭环：
+## Current version: V2
 
-1. GitHub Actions 读取仓库 Secret `KAGGLE_API_TOKEN`
-2. 调用 Kaggle CLI 验证认证
-3. 拉取当前比赛列表
-4. 自动排序并筛选候选比赛
-5. 生成 `state/competitions.json`
-6. 生成 `reports/scout_latest.md`
-7. 自动 commit + push 回当前仓库
+V2 can authenticate with Kaggle, find currently-open competitions, automatically prefer Playground / Getting Started tasks, inspect competition pages, download data after you have accepted the competition rules, profile the dataset, generate a baseline, run it as a Kaggle Kernel, submit `submission.csv`, collect the latest score, and write the run artifacts back to this GitHub repository.
 
-> V1 暂时不会自动接受比赛规则，也不会自动提交比赛结果。
+### Required GitHub Secret
 
-## 第一次运行
+`KAGGLE_API_TOKEN`
 
-进入 GitHub 仓库：
+Optional: `KAGGLE_USERNAME`. If omitted, the V2 kernel owner falls back to the GitHub repository owner. Add `KAGGLE_USERNAME` only if your Kaggle username is different from your GitHub username.
 
-`Actions -> Kaggle Scout -> Run workflow`
+## Run V2
 
-等待工作流执行结束。
+Open **Actions → Kaggle Auto Scientist V2 → Run workflow**.
 
-成功后，仓库会自动新增/刷新：
+The workflow is also triggered automatically when V2 code/config changes.
 
-- `state/competitions.json`
-- `reports/scout_latest.md`
+### If the run stops at `rules_required`
 
-## Secret
+This is expected for a competition you have not joined yet. Open `reports/v2_latest.md`, follow the selected Kaggle competition link, click **Join Competition**, accept the competition rules yourself, then rerun the workflow.
 
-仓库必须存在：
-
-`Settings -> Secrets and variables -> Actions -> KAGGLE_API_TOKEN`
-
-不要把真实 token 写入代码、README、issue 或 commit。
-
-## 当前结构
+After rules are accepted, V2 continues automatically:
 
 ```text
-.github/workflows/kaggle_scout.yml
-config/agent.yaml
-kaggle_agent/scout.py
-reports/
-state/
-requirements.txt
+select competition
+-> download data
+-> analyze data
+-> generate baseline
+-> Kaggle Kernel training
+-> produce submission.csv
+-> submit
+-> collect score
+-> write results back to GitHub
 ```
 
-## V1 后续阶段
+## Output
 
-认证与 Scout 验证通过后继续加入：
+- `state/v2_candidates.json` — ranked open competitions
+- `state/v2_selection.json` — selected competition
+- `state/v2_status.json` — current V2 stage/status
+- `reports/v2_latest.md` — human-readable latest run report
+- `competitions/<slug>/problem_analysis.md`
+- `competitions/<slug>/data_analysis.md`
+- `competitions/<slug>/solution_plan.md`
+- `competitions/<slug>/kaggle/main.py`
+- `competitions/<slug>/kaggle/kernel-metadata.json`
+- `competitions/<slug>/results/metrics.json`
+- `competitions/<slug>/results/latest_submission.json`
 
-- Competition Analyzer：读取题目、评价指标、数据说明
-- Data Profiler：自动 EDA
-- Solution Planner：自动生成 baseline / CV / 特征工程方案
-- Training Generator：生成 Kaggle Notebook / Python 训练代码
-- Kaggle Runner：推送 Notebook 并等待训练结束
-- Submission Manager：生成并提交 submission.csv
-- Result Reviewer：读取 leaderboard score
-- Experiment Loop：根据 CV + LB 自动提出下一轮实验
-- GitHub Writer：把每轮代码、报告、分数写回仓库
-
-## 安全原则
-
-- 不自动接受比赛 Rules
-- 未验证前不自动提交
-- Token 只从 GitHub Secret 注入
-- `.gitignore` 已忽略 `kaggle.json`、`access_token`、`.kaggle/` 和 `.env*`
+Raw competition data, credentials, models, and large `submission.csv` files are intentionally excluded from Git.

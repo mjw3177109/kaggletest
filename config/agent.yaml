@@ -1,7 +1,7 @@
 agent:
   name: Kaggle Auto Scientist
-  version: V1
-  mode: scout
+  version: V2
+  mode: auto_compete
 
 scout:
   page_size: 100
@@ -13,11 +13,26 @@ scout:
   min_days_remaining: 2
   max_team_count_for_bonus: 5000
 
+v2:
+  categories:
+    - playground
+    - gettingStarted
+  page_size: 100
+  min_days_remaining: 2
+  profile_rows: 50000
+  kernel_timeout_seconds: 3300
+  kernel_poll_seconds: 20
+  auto_submit: true
+  prefer_cpu_for_tabular: true
+
 safety:
   auto_accept_rules: false
-  auto_submit: false
   auto_join_competitions: false
+  never_commit_credentials: true
+  never_commit_raw_competition_data: true
 
 output:
   competitions_json: state/competitions.json
   latest_report: reports/scout_latest.md
+  v2_status: state/v2_status.json
+  v2_report: reports/v2_latest.md
