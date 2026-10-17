@@ -2,6 +2,13 @@ name: Kaggle Scout
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "requirements.txt"
+      - "config/**"
+      - "kaggle_agent/**"
+      - ".github/workflows/kaggle_scout.yml"
   schedule:
     - cron: "17 2 * * *"
 
