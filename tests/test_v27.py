@@ -12,7 +12,7 @@ from sklearn.metrics import roc_auc_score
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"kaggle_agent"))
 from v27_blend_math import model_oof, paired_fusion
-from v27_oof_blender import daily_count
+from v27_oof_blender import daily_count, safe_to_make_first_submission
 
 
 class V27Tests(unittest.TestCase):
@@ -58,6 +58,16 @@ class V27Tests(unittest.TestCase):
         result=paired_fusion(y,y,a,b,a[:20],b[:20])
         expected=(rankdata(a)+rankdata(b))/(2*len(a))
         self.assertAlmostEqual(result["fused_cv_auc"],roc_auc_score(y,expected))
+
+    def test_never_repeat_unknown_or_existing_submission(self):
+        self.assertTrue(safe_to_make_first_submission({},None))
+        self.assertFalse(safe_to_make_first_submission({},{"ref":456}))
+        for stage in ("submitting","submission_pending","submission_failed",
+                      "submission_unverified","submission_ambiguous"):
+            self.assertFalse(safe_to_make_first_submission({"stage":stage},None))
+        self.assertFalse(safe_to_make_first_submission({"submission_attempted":True},None))
+        self.assertFalse(safe_to_make_first_submission({"submitted":True},None))
+        self.assertTrue(safe_to_make_first_submission({"stage":"quota_wait"},None))
 
     def test_utc_daily_quota(self):
         rows=[
