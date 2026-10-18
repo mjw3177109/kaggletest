@@ -1,0 +1,70 @@
+{
+  "target": "satisfaction",
+  "rows": 699635,
+  "features_after_encoding": 35,
+  "folds": 3,
+  "target_mapping": {
+    "false": 0,
+    "true": 1
+  },
+  "import_errors": {},
+  "models": {
+    "catboost": {
+      "cv_auc": 0.9578913875193985,
+      "fold_auc": [
+        0.9573274872973283,
+        0.9584706749676828,
+        0.9579001905588385
+      ]
+    },
+    "lightgbm": {
+      "cv_auc": 0.958125466942204,
+      "fold_auc": [
+        0.9576175322657235,
+        0.9585747257584188,
+        0.95820973604388
+      ]
+    },
+    "xgboost": {
+      "cv_auc": 0.9579783199225546,
+      "fold_auc": [
+        0.9574216885654879,
+        0.9584439656527941,
+        0.9580966910659774
+      ]
+    },
+    "ensemble": {
+      "cv_auc": 0.9582786744608702,
+      "members": [
+        "catboost",
+        "lightgbm",
+        "xgboost"
+      ],
+      "weights": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ]
+    }
+  },
+  "best_model": "ensemble",
+  "best_cv_auc": 0.9582786744608702,
+  "ranking": [
+    {
+      "model": "ensemble",
+      "cv_auc": 0.9582786744608702
+    },
+    {
+      "model": "lightgbm",
+      "cv_auc": 0.958125466942204
+    },
+    {
+      "model": "xgboost",
+      "cv_auc": 0.9579783199225546
+    },
+    {
+      "model": "catboost",
+      "cv_auc": 0.9578913875193985
+    }
+  ]
+}

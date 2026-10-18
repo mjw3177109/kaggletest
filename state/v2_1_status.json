@@ -2,9 +2,91 @@
   "generated_at": "2026-10-17T20:00:50.859784+00:00",
   "version": "V2.1",
   "competition": "playground-series-s6e10",
-  "kernel": "mjw3177109/kas-v21-playground-series-s6e10",
-  "stage": "kernel_timeout",
+  "kernel": "mjw3177109/kas-v2-1-playground-series-s6e10",
+  "stage": "complete",
   "baseline_cv": 0.9569278088980195,
   "baseline_public_score": "0.95738",
-  "kernel_state": "timeout"
+  "kernel_state": "timeout",
+  "recovered_at": "2026-10-18T02:10:07.101439+00:00",
+  "metrics": {
+    "target": "satisfaction",
+    "rows": 699635,
+    "features_after_encoding": 35,
+    "folds": 3,
+    "target_mapping": {
+      "false": 0,
+      "true": 1
+    },
+    "import_errors": {},
+    "models": {
+      "catboost": {
+        "cv_auc": 0.9578913875193985,
+        "fold_auc": [
+          0.9573274872973283,
+          0.9584706749676828,
+          0.9579001905588385
+        ]
+      },
+      "lightgbm": {
+        "cv_auc": 0.958125466942204,
+        "fold_auc": [
+          0.9576175322657235,
+          0.9585747257584188,
+          0.95820973604388
+        ]
+      },
+      "xgboost": {
+        "cv_auc": 0.9579783199225546,
+        "fold_auc": [
+          0.9574216885654879,
+          0.9584439656527941,
+          0.9580966910659774
+        ]
+      },
+      "ensemble": {
+        "cv_auc": 0.9582786744608702,
+        "members": [
+          "catboost",
+          "lightgbm",
+          "xgboost"
+        ],
+        "weights": [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ]
+      }
+    },
+    "best_model": "ensemble",
+    "best_cv_auc": 0.9582786744608702,
+    "ranking": [
+      {
+        "model": "ensemble",
+        "cv_auc": 0.9582786744608702
+      },
+      {
+        "model": "lightgbm",
+        "cv_auc": 0.958125466942204
+      },
+      {
+        "model": "xgboost",
+        "cv_auc": 0.9579783199225546
+      },
+      {
+        "model": "catboost",
+        "cv_auc": 0.9578913875193985
+      }
+    ]
+  },
+  "submit_returncode": 0,
+  "latest_submission": {
+    "ref": 57334457,
+    "fileName": "best_submission.csv",
+    "date": "2026-10-18T02:10:12.707000",
+    "description": "KAS V2.1 ensemble CV=0.958279",
+    "status": "SubmissionStatus.COMPLETE",
+    "publicScore": "0.95774",
+    "privateScore": ""
+  },
+  "public_score_delta": 0.00036000000000002697
 }
