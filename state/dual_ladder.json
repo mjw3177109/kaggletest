@@ -1,17 +1,25 @@
 {
   "version": "V2.4 ladder",
   "active_competition": "playground-series-s6e10",
-  "updated_at": "2026-10-18T07:34:46.675701+00:00",
+  "updated_at": "2026-10-18T07:38:19.718773+00:00",
   "public_rank_verified": false,
-  "status": "rank_unverified",
-  "warning": "Kaggle did not confirm entered participation and rank; no promotion.",
+  "status": "monitoring_deadline",
+  "warning": "Rank unknown; independently monitoring the verified final submission deadline.",
   "gpu_training": "kernel_queued",
   "tpu_training": "kernel_queued",
   "promotion_policy": {
-    "public_top3": "Trigger change of focus, NOT an official prize",
-    "final_top3": "Must separately verify final private leaderboard and organizer eligibility",
-    "join_next": "Never accept Kaggle rules without the user's explicit acceptance",
-    "training_next": "Only use verified compatible task and scoring metric"
+    "public_top3": "A verified Kaggle PUBLIC rank <= 3 triggers handoff; not a prize",
+    "submission_deadline_window": "Trigger handoff inside 48h before the verified final submission cutoff",
+    "competition_ended": "Trigger handoff after the verified final submission cutoff",
+    "final_top3": "Requires separate final private leaderboard and organizer verification",
+    "join_next": "Never accept Kaggle rules without explicit user consent",
+    "training_next": "Only after target type and scoring metric preflight; existing GPU/TPU kernels remain scoped to S6E10"
   },
-  "rank": null
+  "rank": null,
+  "active_deadline": "2026-10-31T23:59:00+00:00",
+  "deadline_source": "verified official competition timeline",
+  "hours_to_deadline": 328.34,
+  "handoff_reasons": [],
+  "next_competition": null,
+  "next_training_enabled": false
 }
