@@ -1,0 +1,54 @@
+name: Kaggle Beginner Guides
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "kaggle_agent/beginner_guide.py"
+      - ".github/workflows/kaggle_beginner_guides.yml"
+  workflow_run:
+    workflows:
+      - "Kaggle Auto Scientist V2"
+      - "Kaggle Auto Scientist V2.1"
+      - "Kaggle Auto Scientist V2.1 Recovery"
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-beginner-guides
+  cancel-in-progress: false
+
+jobs:
+  guides:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Refresh beginner guides for all competitions
+        run: python kaggle_agent/beginner_guide.py
+
+      - name: Commit guide updates
+        shell: bash
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- competitions/
+          if git diff --cached --quiet; then
+            echo "Beginner guides are already current."
+            exit 0
+          fi
+          git commit -m "docs: refresh beginner guides"
+          git pull --rebase origin main
+          git push origin main
