@@ -1,0 +1,268 @@
+"""Verified Kaggle score + public leaderboard position for each report.
+
+Use authenticated competitions list userRank first. As a fallback inspect Kaggle's
+full leaderboard: an exact *member username* match may verify a row, while merely
+matching TeamName is only a hint, not proof of ownership.
+Never calculate an official rank from a score or confuse Public and Private ranks.
+"""
+from __future__ import annotations
+
+import csv
+import io
+import json
+import os
+import re
+import subprocess
+import tempfile
+from datetime import datetime, timezone
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+STATE = ROOT / "state" / "score_rank_latest.json"
+REPORT = ROOT / "reports" / "score_rank_latest.md"
+
+
+def read(path):
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
+def save(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def candidates_for(slug):
+    """Choose the best actual scored submission, not an unsubmitted CV candidate."""
+    found = []
+    for path in ("v2_status.json", "v2_1_status.json", "v2_3_gpu_status.json", "v2_3_status.json"):
+        obj = read(ROOT / "state" / path)
+        if obj.get("competition") != slug:
+            continue
+        submission = obj.get("latest_submission") or {}
+        score = submission.get("publicScore")
+        if score in (None, ""):
+            continue
+        try:
+            numeric = float(score)
+        except (ValueError, TypeError):
+            continue
+        if not 0 <= numeric <= 1:
+            continue
+        found.append({
+            "source": path,
+            "model": obj.get("champion") or obj.get("version"),
+            "public_score": numeric,
+            "submission_id": submission.get("ref"),
+            "submitted_at": submission.get("date"),
+        })
+    # ROC-AUC for the existing S6E10 contest: higher is better.
+    return max(found, key=lambda x: x["public_score"]) if found else None
+
+
+def kaggle_json(args):
+    p = subprocess.run(["kaggle", "competitions", "list", *args, "--format", "json"],
+                       cwd=ROOT, capture_output=True, text=True, timeout=120)
+    if p.returncode:
+        raise RuntimeError((p.stderr or p.stdout)[-1400:])
+    payload = json.loads(p.stdout)
+    if isinstance(payload, list):
+        return payload
+    for key in ("results", "items", "competitions", "data"):
+        if isinstance(payload.get(key), list):
+            return payload[key]
+    return []
+
+
+def norm_slug(row):
+    return str(row.get("ref") or row.get("slug") or "").rstrip("/").split("/")[-1]
+
+
+def valid_rank(value):
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, float) and not value.is_integer():
+        return None
+    try:
+        rank = int(value)
+        return rank if rank > 0 else None
+    except (TypeError, ValueError):
+        return None
+
+
+def valid_team_count(value):
+    n = valid_rank(value)
+    return n
+
+
+def direct_rank(rows, slug):
+    """Authenticated userRank is account-bound and must be preferred."""
+    for row in rows:
+        if not isinstance(row, dict) or norm_slug(row) != slug:
+            continue
+        r = valid_rank(row.get("userRank"))
+        n = valid_team_count(row.get("teamCount"))
+        if r is not None and str(row.get("userHasEntered", "")).lower() == "true":
+            if n is not None and r > n:
+                # Inconsistent upstream data: no proven place.
+                return {"rank": None, "teams": n, "source": "inconsistent_rank"}
+            return {"rank": r, "teams": n, "source": "kaggle_authenticated_userRank"}
+        return {"rank": None, "teams": n, "source": "no_public_rank"}
+    return {"rank": None, "teams": None, "source": "entry_not_returned"}
+
+
+def column(row, *names):
+    remap={re.sub(r"[^a-z0-9]", "", str(k).lower()):v for k,v in row.items()}
+    for n in names:
+        key=re.sub(r"[^a-z0-9]", "", n.lower())
+        if key in remap:
+            return remap[key]
+    return None
+
+
+def exact_members(raw, username):
+    if not raw or not username:
+        return False
+    members = [x.casefold() for x in re.split(r"[,;|/]", str(raw).strip()) if x.strip()]
+    return username.casefold() in [s.strip() for s in members]
+
+
+def read_leaderboard_csv(csv_text, username):
+    try:
+        rows=list(csv.DictReader(io.StringIO(csv_text)))
+    except csv.Error:
+        return {"rank": None, "teams": None, "source": "leaderboard_invalid_csv"}
+    if not rows:
+        return {"rank": None, "teams": 0, "source": "leaderboard_empty"}
+    count=len(rows)
+    exact=[]
+    team_name_only=[]
+    for position, row in enumerate(rows, 1):
+        rank=valid_rank(column(row, "Rank", "Place", "Position"))
+        if rank is None:
+            rank=position
+        member=column(row, "TeamMembers", "TeamMemberNames", "Usernames", "MemberUsernames")
+        if exact_members(member, username):
+            exact.append(rank)
+        elif str(column(row,"TeamName","Team") or "").casefold() == username.casefold():
+            team_name_only.append(rank)
+    if len(exact)==1:
+        return {"rank":exact[0],"teams":count,"source":"leaderboard_verified_member_username"}
+    if team_name_only:
+        return {"rank":None,"teams":count,"source":"team_name_match_not_verified",
+                "unverified_candidate_rank":team_name_only[0]}
+    return {"rank":None,"teams":count,"source":"username_not_located_on_leaderboard"}
+
+
+def leaderboard_lookup(slug, username):
+    """Full raw CSV is read in temp storage and NEVER committed to GitHub."""
+    with tempfile.TemporaryDirectory(prefix="kaggle-lb-") as folder:
+        p = subprocess.run(
+            ["kaggle", "competitions", "leaderboard", slug, "--download",
+             "--path", folder, "--quiet"],
+            cwd=ROOT, capture_output=True, text=True, timeout=180)
+        if p.returncode:
+            raise RuntimeError((p.stderr or p.stdout)[-1200:])
+        files=sorted(Path(folder).glob("*.csv"))
+        if not files:
+            raise RuntimeError("No full leaderboard CSV downloaded from Kaggle")
+        # Refuse to assume which CSV is the user or private leaderboard.
+        public=[f for f in files if "public" in f.name.lower()]
+        if not public and len(files)==1 and "private" not in files[0].name.lower():
+            public=files
+        if len(public)!=1:
+            raise RuntimeError("Cannot positively identify exactly one Public leaderboard CSV")
+        return read_leaderboard_csv(public[0].read_text(encoding="utf-8-sig"),username)
+
+
+def best_rank(slug, username):
+    warnings=[]
+    rows=[]
+    for args in (["--group","entered","--page-size","100"],
+                 ["--search",slug,"--page-size","100"]):
+        try:
+            rows.extend(kaggle_json(args))
+        except (RuntimeError, ValueError, json.JSONDecodeError) as err:
+            warnings.append(str(err)[-350:])
+    rank=direct_rank(rows,slug)
+    if rank["rank"] is not None:
+        return rank,warnings
+    try:
+        other=leaderboard_lookup(slug,username)
+        if other["teams"]:
+            rank["teams"]=other["teams"]
+        if other["rank"] is not None:
+            rank=other
+        else:
+            rank["source"] += "; "+other["source"]
+            if other.get("unverified_candidate_rank"):
+                warnings.append("Only same-name team found, membership not authenticated; omitted rank")
+    except (OSError, RuntimeError, ValueError, UnicodeError, subprocess.TimeoutExpired) as err:
+        warnings.append("Public leaderboard lookup unavailable: "+str(err)[-500:])
+    return rank,warnings
+
+
+def create_snapshot(slug, username, when=None):
+    checked=(when or datetime.now(timezone.utc)).isoformat()
+    rank,warnings=best_rank(slug,username)
+    model=candidates_for(slug)
+    return {
+        "competition":slug,
+        "checked_at":checked,
+        "ranking_type":"Public",
+        "rank":rank["rank"],
+        "rank_verified":rank["rank"] is not None,
+        "rank_source":rank["source"],
+        "ranked_teams":rank["teams"],
+        "score":model,
+        "warnings":warnings,
+        "leaderboard_url":f"https://www.kaggle.com/competitions/{slug}/leaderboard",
+        "note":"Public rank is not final Private leaderboard rank or prize entitlement."
+    }
+
+
+def render(snapshot):
+    score=snapshot.get("score") or {}
+    rank=snapshot.get("rank")
+    teams=snapshot.get("ranked_teams")
+    place=(f"第 {rank} 名 / 共 {teams} 支队伍" if rank is not None and teams
+           else f"第 {rank} 名（参赛队伍总数未核实）" if rank is not None
+           else "官方排名暂未核实")
+    return "\n".join([
+        "# Kaggle 自动成绩 + 当前排名",
+        "",
+        f"- 比赛：{snapshot['competition']}",
+        f"- 当前最佳 Public LB：{score.get('public_score','暂无')}",
+        f"- 提交编号：{score.get('submission_id','暂无')}",
+        f"- 最佳模型：{score.get('model','暂无')}",
+        f"- **当前 Public 排名：{place}**",
+        f"- 已识别排行榜队伍数：{teams if teams is not None else '未知'}",
+        f"- 排名数据源：{snapshot['rank_source']}",
+        f"- 最近核验 UTC：{snapshot['checked_at']}",
+        f"- 官方榜：{snapshot['leaderboard_url']}",
+        "",
+        "注意：公开榜名次会随着其他人提交而变化。比赛结束后需另行确认 Private 榜最终排名和领奖资格。",
+        "找不到可信的账户绑定名次时绝不按分数推算排名。",
+        "",
+    ])
+
+
+def main():
+    if not os.environ.get("KAGGLE_API_TOKEN"):
+        raise RuntimeError("Missing Kaggle auth token")
+    ladder=read(ROOT / "state" / "dual_ladder.json")
+    base=read(ROOT / "state" / "v2_1_status.json")
+    slug=ladder.get("active_competition") or base.get("competition")
+    if not slug:
+        raise RuntimeError("No current competition")
+    username=os.environ.get("KAGGLE_USERNAME") or str(base.get("kernel") or "").split("/")[0]
+    if not username:
+        raise RuntimeError("No verified Kaggle account username")
+    snapshot=create_snapshot(slug,username)
+    save(STATE,snapshot)
+    REPORT.parent.mkdir(parents=True,exist_ok=True)
+    REPORT.write_text(render(snapshot),encoding="utf-8")
+    print(render(snapshot),flush=True)
+
+
+if __name__ == "__main__":
+    main()
