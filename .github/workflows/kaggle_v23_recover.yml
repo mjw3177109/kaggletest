@@ -58,7 +58,7 @@ jobs:
         run: |
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
-          git add -A -- state/v2_3_status.json reports/v2_3_latest.md competitions/*/kaggle_tpu_v23/status_output.txt competitions/*/kaggle_tpu_v23/logs.txt competitions/*/results_v23/
+          git add -A -- state/v2_3_status.json reports/v2_3_latest.md competitions/
           if git diff --cached --quiet; then
             echo "No new recovery changes."
             exit 0
