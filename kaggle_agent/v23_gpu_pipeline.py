@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from v2_1_pipeline import ROOT, run, load_json, write_json, latest_submission
 from v22_pipeline import kernel_handle, validate_submission
 from v23_tpu_pipeline import poll_kernel, check_cv
+from v24_rank_tracker import score_rank_lines
 
 STATE = ROOT / "state" / "v2_3_gpu_status.json"
 REPORT = ROOT / "reports" / "v2_3_gpu_latest.md"
@@ -46,6 +47,13 @@ def report(status):
         "原有 CPU CatBoost/LightGBM/XGBoost Ensemble 保留不变；GPU 训练仅是新的候选模型。",
         "使用 NVIDIA T4 ×2 实例，但当前单进程 XGBoost 仅使用一个 CUDA 设备，",
         "不能声称同时使用了两张 GPU。", "",
+    ]
+    lines += [
+        "", "## 当前 Kaggle Public 榜名次（与成绩一起报告）", "",
+        *score_rank_lines(
+            status.get("competition"),
+            (status.get("latest_submission") or {}).get("publicScore")
+        ),
     ]
     if m.get("models"):
         lines.extend(["| 模型 | 3-Fold OOF ROC-AUC |", "|---|---:|"])
