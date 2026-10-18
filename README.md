@@ -24,11 +24,22 @@ V2.1 continues from a completed V2 project and performs multi-model leaderboard 
 
 Optional: `KAGGLE_USERNAME`. If omitted, the kernel owner falls back to the GitHub repository owner. Add `KAGGLE_USERNAME` only if your Kaggle username is different from your GitHub username.
 
+## 已完成的实战成绩
+
+- 比赛：[`playground-series-s6e10`](https://www.kaggle.com/competitions/playground-series-s6e10)
+- Run 001（V2）Public LB：**0.95738**
+- Run 005（V2.1 Ensemble）Public LB：**0.95774**（提升 **+0.00036**）
+- 最佳 V2.1 3-Fold OOF ROC-AUC：**0.95827867**
+- 自动生成的[小白说明书](competitions/playground-series-s6e10/小白说明书.md)
+- [成绩和模型比较报告](reports/v2_1_latest.md)
+
+V2.1 已完成并归档。再次运行相同配置时默认避免重复训练和提交；需要新的实验应修改实验设计并明确启用重新训练，而不是盲目重复提交。
+
 ## Run V2
 
 Open **Actions → Kaggle Auto Scientist V2 → Run workflow**.
 
-The workflow is also triggered automatically when V2 code/config changes.
+V2 and V2.1 currently start only when you explicitly choose **Run workflow**, to avoid duplicate long training runs and Kaggle submissions after a code or documentation edit. Daily scouting and beginner-guide updates remain automated.
 
 ### If the run stops at `rules_required`
 
@@ -86,3 +97,5 @@ load V2 champion
 - `competitions/<slug>/results_v21/` — V2.1 results
 
 Raw competition data, credentials, models, and large `submission.csv` files are intentionally excluded from Git.
+
+Recovery workflow can re-read an already pushed Kaggle kernel without launching new training; it is available under **Actions → Kaggle Auto Scientist V2.1 Recovery**.
