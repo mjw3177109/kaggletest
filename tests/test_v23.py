@@ -24,7 +24,6 @@ class TestV23TPU(unittest.TestCase):
         source = (ROOT / "kaggle_agent" / "v23_tpu_train.py").read_text(encoding="utf-8")
         self.assertIn('jax.default_backend() == "tpu"', source)
         self.assertIn('v23_hardware.json', source)
-        self.assertIn('No', "No CPU fallback is permitted")
         pipeline = (ROOT / "kaggle_agent" / "v23_tpu_pipeline.py").read_text(encoding="utf-8")
         self.assertIn('"--accelerator", accelerator', pipeline)
         self.assertIn('"machine_shape": accelerator', pipeline)
@@ -33,7 +32,8 @@ class TestV23TPU(unittest.TestCase):
     def test_trees_untouched(self):
         source = (ROOT / "kaggle_agent" / "v23_tpu_pipeline.py").read_text(encoding="utf-8")
         self.assertNotIn("v2_1_pipeline.py", source)
-        self.assertNotIn("v2_1_status.json", "unintended update logic")
+        self.assertIn('"v2_1_status.json"', source)
+        self.assertNotIn('write_json(ROOT / "state" / "v2_1_status.json"', source)
 
 
 if __name__ == "__main__":
