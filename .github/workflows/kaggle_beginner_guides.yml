@@ -16,6 +16,7 @@ on:
       - "Kaggle V2.3 TPU Recovery"
       - "Kaggle Auto Scientist V2.3 GPU"
       - "Kaggle Auto Scientist V2.5 GPU Feature Engineering"
+      - "Kaggle Auto Scientist V2.6 GPU Frequency Challenger"
       - "Kaggle Dual GPU-TPU Top3 or Deadline Ladder"
     types:
       - completed
@@ -50,6 +51,7 @@ jobs:
           python kaggle_agent/v23_gpu_guide.py
           python kaggle_agent/v24_guide.py
           python kaggle_agent/v25_guide.py
+          python kaggle_agent/v26_guide.py
 
       - name: Commit guide updates
         shell: bash
