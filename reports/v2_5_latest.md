@@ -4,7 +4,7 @@
 - 比赛：playground-series-s6e10
 - Kaggle Notebook：https://www.kaggle.com/code/mjw3177109/kas-v25-gpu-te-playground-series-s6e10
 - 运行阶段：kernel_queued
-- 真实 T4：False；尚未验证
+- 真实 T4：尚未确认（Kernel 尚未执行）；尚未验证
 
 ## 为什么改进？
 
@@ -26,10 +26,13 @@ V2.5 新增 5 折内部交叉拟合 TE；每个外层验证折只使用对应训
 - 新 Public LB：尚未提交/未评分
 - 线上冠军：V2.3 GPU gpu_xgb_depth7
 
-## 本次已提交成绩对应的官方排名
+## 当前已评分冠军对应的官方排名
 
-- 当前 Public 排名：**未核实（需按最新成绩重新查询）**
-- 官方排名查询：reports/score_rank_latest.md
+- 当前最佳 Public LB：**0.95819**
+- 当前 Public 排名：**第 1599 名 / 2222 支队伍**
+- 官方认证来源：kaggle_authenticated_userRank
+- 核验时间 UTC：2026-10-18T08:18:12.133008+00:00
+- 注：这是现有 V2.3 GPU 冠军的成绩；V2.5 仍然处于实验队列中，未有新提交。
 
 ## 同行参考（思路参考，不照搬外部预测文件）
 
