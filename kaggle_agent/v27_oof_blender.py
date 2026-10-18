@@ -144,8 +144,28 @@ def main():
     if prev.get("stage") in ("complete","skipped_no_cv_gain","submission_recovered"):
         print("V2.7 terminal state exists; refuse duplicate work and submission")
         return
+    # Recheck an already accepted submission without downloading OOF again.
+    if prev.get("stage")=="submission_pending" and (prev.get("latest_submission") or {}).get("ref"):
+        ref=str(prev["latest_submission"]["ref"])
+        rows=submissions(COMPETITION)
+        matched=next((x for x in rows if str(x.get("ref"))==ref),None)
+        status=dict(prev)
+        if matched:
+            status["latest_submission"]=matched
+            if matched.get("publicScore") not in (None,""):
+                status["public_lb_delta"]=round(
+                    float(matched["publicScore"])-float(prev["incumbent_lb"]),8)
+                status["stage"]="complete"
+                status["champion"]=(
+                    "V2.7 fixed50 OOF blend"
+                    if float(matched["publicScore"])>float(prev["incumbent_lb"])
+                    else prev.get("incumbent_model","V2.5 / V2.6 champion"))
+        status["updated_at"]=now().isoformat()
+        write_json(STATE,status)
+        score_report(status)
+        print("V2.7 score-recovery state:",status["stage"])
+        return
     v25,v26=ready()
-    base=load_json(ROOT/"state"/"score_rank_latest.json",{}) or {}
     incumbent=max(
         float(v25["latest_submission"]["publicScore"]),
         float((v26.get("latest_submission") or {}).get("publicScore") or 0),
@@ -203,6 +223,19 @@ def main():
             note=f"{NOTE_PREFIX} CV={score:.6f}"
             matching=next((x for x in rows if str(x.get("description","")).startswith(NOTE_PREFIX)),None)
             if matching is None:
+                # Any earlier attempt may already have reached Kaggle even if
+                # the HTTP response failed. Require manual reconciliation, never
+                # fire a second submission with the same experimental payload.
+                if (prev.get("submission_attempted") or prev.get("submitted")
+                        or prev.get("stage") in (
+                            "submitting","submission_failed","submission_unverified",
+                            "submission_ambiguous")):
+                    status["stage"]="submission_ambiguous"
+                    status["error"]=(
+                        "Prior submission attempt exists, but Kaggle has not "
+                        "returned a matching ref. Manual verification required; "
+                        "automatic duplicate submission disabled.")
+                    return
                 used=daily_count(rows,now().date())
                 status["daily_submissions_before"]=used
                 if used>=5:
@@ -214,6 +247,8 @@ def main():
                 scored.to_csv(out,index=False)
                 validate_submission(out,"satisfaction",299844)
                 status["stage"]="submitting"
+                status["submission_attempted"]=True
+                status["submission_note"]=note
                 write_json(STATE,status)
                 p=run(["kaggle","competitions","submit",COMPETITION,
                        "-f",str(out),"-m",note,"--wait","600",
