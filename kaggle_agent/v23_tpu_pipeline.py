@@ -161,7 +161,7 @@ def main(recover_only=False):
         status["stage"] = "kernel_running"
         write_json(STATE, status)
         stage, message = poll_kernel(
-            status["kernel"], int(config.get("poll_timeout_seconds", 2950))
+            status["kernel"], 90 if recover_only else int(config.get("poll_timeout_seconds", 2950))
         )
         (folder / "status_output.txt").write_text(message, encoding="utf-8")
         status["kernel_state"] = stage
