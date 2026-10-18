@@ -1,0 +1,139 @@
+name: Kaggle Auto Scientist V2.5 GPU Feature Engineering
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Run new V2.5 challenger or only inspect previous Kaggle notebook"
+        type: choice
+        required: false
+        default: run
+        options: [run, recover_existing]
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/kaggle_v25_gpu.yml"
+  schedule:
+    - cron: "39 */3 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v25-gpu-challenger
+  cancel-in-progress: false
+
+jobs:
+  improve-s6e10:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Decide if experiment/recovery is safe
+        id: gate
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_MODE: ${{ inputs.mode || 'run' }}
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os, datetime
+          from pathlib import Path
+          p=Path("state/v2_5_status.json")
+          state=json.loads(p.read_text(encoding='utf-8')) if p.exists() else {}
+          ladder=Path("state/dual_ladder.json")
+          focus=json.loads(ladder.read_text(encoding="utf-8")).get("active_competition") if ladder.exists() else "playground-series-s6e10"
+          now=datetime.datetime.now(datetime.timezone.utc)
+          cutoff=datetime.datetime(2026,11,1,tzinfo=datetime.timezone.utc)
+          finished={"complete","skipped_no_cv_gain","submission_pending"}
+          allowed=state.get("stage") not in finished and focus=="playground-series-s6e10" and now < cutoff
+          explicit=os.environ.get("EVENT_NAME")=="workflow_dispatch"
+          mode=os.environ.get("INPUT_MODE","run")
+          if not explicit and state.get("kernel"):
+            mode="recover_existing"
+          print("should_run="+("true" if allowed else "false"))
+          print("mode="+mode)
+          PY
+
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.should_run == 'true'
+        with:
+          python-version: "3.11"
+
+      - name: Install controller/test dependencies
+        if: steps.gate.outputs.should_run == 'true'
+        run: pip install -r requirements.txt scikit-learn lightgbm xgboost scipy
+
+      - name: Run no-leak feature tests before requesting Kaggle GPU
+        if: steps.gate.outputs.should_run == 'true'
+        run: |
+          python -m py_compile kaggle_agent/v25_gpu_te_train.py kaggle_agent/v25_gpu_pipeline.py kaggle_agent/v25_guide.py
+          python -m unittest discover -s tests -p test_v25.py -v
+
+      - name: Launch or recover independent V2.5 Kaggle T4 experiment
+        if: steps.gate.outputs.should_run == 'true'
+        env:
+          EXEC_MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          if [ "$EXEC_MODE" = "recover_existing" ]; then
+            python kaggle_agent/v25_gpu_pipeline.py --recover-only
+          else
+            python kaggle_agent/v25_gpu_pipeline.py
+          fi
+
+      - name: Archive Kaggle experiment diagnostics even if Git writeback fails
+        if: always() && steps.gate.outputs.should_run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: v25-gpu-te-diagnostics
+          path: |
+            state/v2_5_status.json
+            reports/v2_5_latest.md
+            competitions/playground-series-s6e10/kaggle_gpu_v25/
+            competitions/playground-series-s6e10/results_v25/metrics.json
+            competitions/playground-series-s6e10/results_v25/hardware.json
+          if-no-files-found: warn
+
+      - name: Commit only V2.5 state, not data or other live contest files
+        if: steps.gate.outputs.should_run == 'true'
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_5_status.json reports/v2_5_latest.md competitions/playground-series-s6e10/kaggle_gpu_v25/ competitions/playground-series-s6e10/results_v25/
+          if git diff --cached --quiet; then
+            echo "V2.5 no new report changes."
+            exit 0
+          fi
+          git commit -m "bot: V2.5 TE and route-profile GPU challenger"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep $((attempt*2))
+          done
+          exit 1
+
+      - name: Announce evaluation stage without inventing leaderboard score
+        if: steps.gate.outputs.should_run == 'true'
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          state=json.loads(Path("state/v2_5_status.json").read_text(encoding="utf-8"))
+          print("V2.5 stage:",state.get("stage"))
+          print("Best CV:",(state.get("metrics") or {}).get("best_cv_auc"))
+          print("Kaggle public score:",(state.get("latest_submission") or {}).get("publicScore"))
+          print("Verified model submission:",state.get("submitted"))
+          print("Latest rank via separate authenticated report: reports/score_rank_latest.md")
+          PY
