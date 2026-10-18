@@ -1,0 +1,1 @@
+mjw3177109/kas-v26-gpu-te-playground-series-s6e10 has status "KernelWorkerStatus.QUEUED"
