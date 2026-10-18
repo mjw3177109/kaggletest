@@ -160,6 +160,12 @@ def handoff_reasons(rank_row, deadline, now):
 
 def decide(previous, current, rank_row, candidates, now):
     data = dict(previous)
+    last_top3 = data.get("public_top3_achieved")
+    if last_top3 and last_top3.get("competition") != current:
+        history = data.setdefault("historical_public_top3", [])
+        if not any(x.get("competition") == last_top3.get("competition") for x in history):
+            history.append(last_top3)
+        data.pop("public_top3_achieved", None)
     data["version"] = "V2.4 ladder"
     data["active_competition"] = current
     data["updated_at"] = now.isoformat()
