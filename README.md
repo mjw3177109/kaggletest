@@ -1,3 +1,29 @@
+## V2.4｜GPU + TPU 双线冲榜与自动换赛
+
+自动执行的两个旧赛 Notebook 保持独立：
+- GPU XGBoost：Kaggle NVIDIA T4，按它自己的 3-Fold 计算并保护原冠军。
+- TPU JAX MLP：只在 JAX 检测到真实 TPU 时计算，否则安全停止。
+
+新增长期有效的 GitHub Actions：Kaggle Dual GPU-TPU Top3 or Deadline Ladder。每 2 小时读取 Kaggle 实际公开榜名次和最终提交截止时间；以下**任一**条件触发下一场候选：
+
+1. 已认证的 Kaggle Public 榜名次为第 1、2 或 3 名。
+2. 距离官方最终提交截止 <=48 小时。
+3. 官方最终提交截止已过（比赛结束）。
+
+**重要边界：** Public 榜前三不是最终获奖；需要等最终 Private 榜和官方通知独立核对。只有 Kaggle 已确定的官方截止日期才能触发时间规则；不因未取到 userRank 就忽略截止时间。
+
+**换赛机制：**
+- 优先在 Playground / Getting Started 中寻找截止仍有 >=72 小时的比赛，防止刚切换又到最后提交日。
+- 下一场已报名：自动把选赛状态迁移到新赛，但保留 GPU/TPU 原 Notebook 和原分数；必须通过新数据类型、官方评分指标和提交格式预检后才能运行下一场的训练器。
+- 下一场未报名：选出候选并记录等待用户加入/接受规则，**不自动替用户接受 Kaggle 条款**。
+- 没有合格候选：继续记录待换赛状态，不会凭空发明比赛。
+- 当前 GPU/TPU 训练器最初面向 S6E10 二分类 ROC-AUC；V2.4 当前已经实现自动选赛及时间/排名触发，但**尚未实现可适配任意比赛的通用 GPU+TPU 新赛训练器**，不能把换赛选中等同于已开始新的 GPU 或 TPU 训练。
+
+查看自动决策：reports/dual_ladder_latest.md 和 state/dual_ladder.json。
+每个比赛的《小白说明书.md》会自动增加 V2.4 新手章节。
+领奖单独跟踪，不会因换赛遗忘旧比赛。
+
+
 # Kaggle Auto Scientist
 
 This repository is an automated Kaggle competition lab.
