@@ -27,3 +27,10 @@
 ## 诊断
 
 mjw3177109/kas-v23-gpu-playground-series-s6e10 has status "KernelWorkerStatus.QUEUED"
+
+## 当前 Kaggle Public 榜名次（与成绩一起报告）
+
+- 此名次关联的 Public LB：0.95819
+- 当前 Public 排名：**未核实（需按最新成绩重新查询）**
+- 官方排名查询：reports/score_rank_latest.md
+

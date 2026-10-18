@@ -42,3 +42,10 @@ KernelWorkerStatus.QUEUED 表示 Kaggle 尚未安排执行，
 ## 诊断信息
 
 mjw3177109/kas-v23-tpu-playground-series-s6e10 has status "KernelWorkerStatus.QUEUED"
+
+## Kaggle 当前排名（和 Public LB 一起报告）
+
+- 此名次关联的 Public LB：0.95774
+- 当前 Public 排名：**未核实（需按最新成绩重新查询）**
+- 官方排名查询：reports/score_rank_latest.md
+
