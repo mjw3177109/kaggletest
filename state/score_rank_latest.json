@@ -1,0 +1,19 @@
+{
+  "competition": "playground-series-s6e10",
+  "checked_at": "2026-10-18T08:04:40.150043+00:00",
+  "ranking_type": "Public",
+  "rank": 1596,
+  "rank_verified": true,
+  "rank_source": "kaggle_authenticated_userRank",
+  "ranked_teams": 2221,
+  "score": {
+    "source": "v2_3_gpu_status.json",
+    "model": "V2.3 GPU gpu_xgb_depth7",
+    "public_score": 0.95819,
+    "submission_id": 57345271,
+    "submitted_at": "2026-10-18T07:42:15.877000"
+  },
+  "warnings": [],
+  "leaderboard_url": "https://www.kaggle.com/competitions/playground-series-s6e10/leaderboard",
+  "note": "Public rank is not final Private leaderboard rank or prize entitlement."
+}

@@ -1,11 +1,11 @@
 {
   "version": "V2.4 ladder",
   "active_competition": "playground-series-s6e10",
-  "updated_at": "2026-10-18T07:38:19.718773+00:00",
+  "updated_at": "2026-10-18T08:04:43.357928+00:00",
   "public_rank_verified": false,
   "status": "monitoring_deadline",
   "warning": "Rank unknown; independently monitoring the verified final submission deadline.",
-  "gpu_training": "kernel_queued",
+  "gpu_training": "complete",
   "tpu_training": "kernel_queued",
   "promotion_policy": {
     "public_top3": "A verified Kaggle PUBLIC rank <= 3 triggers handoff; not a prize",
@@ -17,8 +17,8 @@
   },
   "rank": null,
   "active_deadline": "2026-10-31T23:59:00+00:00",
-  "deadline_source": "verified official competition timeline",
-  "hours_to_deadline": 328.34,
+  "deadline_source": "archived Kaggle competition deadline",
+  "hours_to_deadline": 327.9,
   "handoff_reasons": [],
   "next_competition": null,
   "next_training_enabled": false
