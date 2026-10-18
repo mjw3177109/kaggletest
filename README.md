@@ -1,3 +1,22 @@
+## V2.7｜双模型 OOF 融合：不额外申请 Kaggle GPU
+
+**最新核验（2026-10-18 09:09 UTC）：** S6E10 最佳 Public LB **0.96035**，账户认证公开榜 **958 / 2224** 队。V2.6 GPU 和 V2.3 TPU Notebook 最近仍在 Kaggle QUEUED 排队，不能把排队说成模型已训练完毕。
+
+新建 CPU-only 工作流 **Kaggle V2.7 OOF Fusion**：
+- 不创建第三个 GPU Notebook，而是等待 V2.6 交叉验证完成（或被 CV 门槛拒绝）；保留原来的 GPU/TPU 双线。
+- 从我们自己 V2.5、V2.6 Kaggle Notebook 下载 `v25_oof.npz`、`v26_oof.npz` 和对应提交预测 CSV。下载数据只存在 GitHub Actions 临时目录，不提交到公开仓库。
+- 严格比对 699635 条训练标签、299844 条测试行的 id 顺序、相同 3 折种子和已记录 CV 值；任何不一致停止。
+- 使用**预先固定**的 50/50 OOF rank blending，不通过全量 OOF 大规模搜融合权重。
+- 只有融合 CV > V2.5/V2.6 已验证的最强 CV **至少 0.00010** 才可能进行一次 Kaggle 提交；提交前再次确认当前比赛、截止日期及每日 5 次提交上限。
+- 提交后独立重新查询账号认证 Public 名次、总队伍数和时间；不根据分数猜名次，也不把 Public 前三当作最终中奖。
+- V2.7 每 6 小时只检查一次是否具备运行条件，V2.6 完成时也会触发同样检查。尚未具备条件时，CI 只运行纯离线测试。
+
+相关文件：`kaggle_agent/v27_blend_math.py`、`kaggle_agent/v27_oof_blender.py`、
+`tests/test_v27.py`、`state/v2_7_status.json`（执行后生成）、`reports/v2_7_latest.md`（执行后生成）。
+
+**外部训练集提示：** 公开的原始 Airline Passenger Satisfaction 数据集标注的授权为“Other (specified in description)”。在确认使用/转载条件及与比赛样本可能重叠的数据安全之前，不自动向模型注入外部标签。
+
+
 ## V2.5｜公开方案对标 + 无泄漏特征工程
 
 **为什么 0.95819 Public LB 仍只在约第 1597 名？** 因为当前只有少量聚合特征和 GPU XGBoost；公开实验中真正产生差距的是目标编码、精确航线距离画像和更丰富的客群条件特征，并非单纯增大树深度。参见每个比赛的 `v25_peer_research.md`。
