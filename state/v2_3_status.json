@@ -5,11 +5,11 @@
   "incumbent_lb": "0.95774",
   "kernel": "mjw3177109/kas-v23-tpu-playground-series-s6e10",
   "kernel_url": "https://www.kaggle.com/code/mjw3177109/kas-v23-tpu-playground-series-s6e10",
-  "stage": "kernel_running",
-  "kernel_state": "kernel_running",
+  "stage": "kernel_queued",
+  "kernel_state": "kernel_queued",
   "submitted": false,
   "champion": "V2.1 ensemble",
-  "notes": "Recovered provisional status from GitHub Actions run 39093552359 (step 7); hardware and actual Kaggle status unverified. Do not start new training.",
+  "notes": "Verified by Kaggle CLI status (2026-10-18); no new training pushed during recovery and no submission made.",
   "updated_at": "2026-10-18T06:16:36.148811+00:00",
-  "error": "Kernel still running"
+  "error": "Kaggle reports KernelWorkerStatus.QUEUED: Notebook is waiting in Kaggle's execution queue; TPU allocation and training not yet verified."
 }
