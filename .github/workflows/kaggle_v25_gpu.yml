@@ -51,7 +51,7 @@ jobs:
           focus=json.loads(ladder.read_text(encoding="utf-8")).get("active_competition") if ladder.exists() else "playground-series-s6e10"
           now=datetime.datetime.now(datetime.timezone.utc)
           cutoff=datetime.datetime(2026,11,1,tzinfo=datetime.timezone.utc)
-          finished={"complete","skipped_no_cv_gain","submission_pending"}
+          finished={"complete","skipped_no_cv_gain","submission_pending","gpu_unavailable","kernel_failed","incomparable_results","artifacts_missing","inactive_competition"}
           allowed=state.get("stage") not in finished and focus=="playground-series-s6e10" and now < cutoff
           explicit=os.environ.get("EVENT_NAME")=="workflow_dispatch"
           mode=os.environ.get("INPUT_MODE","run")
@@ -76,7 +76,7 @@ jobs:
           python -m py_compile kaggle_agent/v25_gpu_te_train.py kaggle_agent/v25_gpu_pipeline.py kaggle_agent/v25_guide.py
           python -m unittest discover -s tests -p test_v25.py -v
 
-      - name: Launch or recover independent V2.5 Kaggle T4 experiment
+      - name: Recheck existing V2.5 Kaggle GPU execution or launch first kernel
         if: steps.gate.outputs.should_run == 'true'
         env:
           EXEC_MODE: ${{ steps.gate.outputs.mode }}
@@ -136,4 +136,5 @@ jobs:
           print("Kaggle public score:",(state.get("latest_submission") or {}).get("publicScore"))
           print("Verified model submission:",state.get("submitted"))
           print("Latest rank via separate authenticated report: reports/score_rank_latest.md")
+          print("Kaggle notebook:",state.get("kernel_url"))
           PY
