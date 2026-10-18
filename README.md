@@ -1,3 +1,19 @@
+## V2.8｜CatBoost GPU 独立挑战者
+
+V2.6 的 104 特征 CV **0.96061463**，弱于 V2.5 的 **0.96065996**，未提交 Kaggle。V2.7 利用 V2.5 + V2.6 的真实 OOF 预测做固定 50/50 排名融合得到 **0.96069468**，仅提高 0.00003472，低于 0.00010 的提交门槛，也未提交。
+
+因此 V2.8 改用**不同树提升算法**寻找真正的多样性，而不是继续叠加 12 个频率特征：
+
+- 训练算法：CatBoost **NVIDIA T4 GPU** + LightGBM CPU，后者是同 Notebook 内的第二候选；无需把 CPU 冒充 GPU。
+- 特征基座：V2.5 已验证的 5 折 inner Target Encoding、精确航线距离画像和客群评分交互；保持外层同一 3 折 `StratifiedKFold(seed=20261018)`，避免分数不可比。
+- 四种候选：CatBoost、LightGBM、50/50 概率融合、50/50 排名融合。仅当 CV 严格高于 **0.96075996** 才允许提交新预测。
+- 独立状态：`state/v2_8_status.json`、`reports/v2_8_latest.md`；不会覆盖已核验 V2.5 Public LB **0.96035** 和当前认证排名。
+- 算力及额度：GitHub Actions 工作流 **Kaggle Auto Scientist V2.8 GPU CatBoost Challenger**，运行完成后仅轮询同一个 Notebook，无效模型不占 Kaggle 正式提交次数。
+- 自动排名：成绩写回后通过 `kaggle_dual_ladder.yml` 取得 Kaggle 账号认证 `userRank` 和队伍数，并同步每次的成绩报告。
+
+截至最近一次认证（2026-10-18 09:27 UTC），Public LB **0.96035**，名次 **959 / 2224**，不是最终 Private 榜名次。TPU 仍独立排队；已有比赛换赛与领奖跟踪规则保持不变。
+
+
 ## V2.7｜双模型 OOF 融合：不额外申请 Kaggle GPU
 
 **最新核验（2026-10-18 09:09 UTC）：** S6E10 最佳 Public LB **0.96035**，账户认证公开榜 **958 / 2224** 队。V2.6 GPU 和 V2.3 TPU Notebook 最近仍在 Kaggle QUEUED 排队，不能把排队说成模型已训练完毕。
