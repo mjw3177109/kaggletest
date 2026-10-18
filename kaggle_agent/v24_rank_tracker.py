@@ -246,6 +246,39 @@ def render(snapshot):
     ])
 
 
+
+def score_rank_lines(competition, public_score):
+    """Reusable verified-rank lines for GPU and TPU reports.
+
+    A prior ranking is only eligible when tied to the SAME currently scored
+    submission. A changed score always requires a fresh Kaggle rank query.
+    """
+    snapshot=read(STATE)
+    model=snapshot.get("score") or {}
+    same=snapshot.get("competition")==competition
+    try:
+        same_score=(public_score not in (None,"") and
+                    model.get("public_score") not in (None,"") and
+                    abs(float(public_score)-float(model["public_score"])) < 1e-10)
+    except (TypeError,ValueError):
+        same_score=False
+    if not same or not same_score:
+        return [
+            "- 当前 Public 排名：**未核实（需按最新成绩重新查询）**",
+            "- 官方排名查询：reports/score_rank_latest.md",
+        ]
+    rank=snapshot.get("rank") if snapshot.get("rank_verified") else None
+    teams=snapshot.get("ranked_teams")
+    label=(f"**第 {rank} 名 / {teams} 支队伍**" if rank and teams
+           else f"**第 {rank} 名**" if rank else "**未核实**")
+    return [
+        "- 当前 Public 排名："+label,
+        "- 排名核验 UTC："+str(snapshot.get("checked_at", "未知")),
+        "- 排名证据："+str(snapshot.get("rank_source", "未知")),
+        "- 官方排行榜："+str(snapshot.get("leaderboard_url", "未知")),
+    ]
+
+
 def main():
     if not os.environ.get("KAGGLE_API_TOKEN"):
         raise RuntimeError("Missing Kaggle auth token")
