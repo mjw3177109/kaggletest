@@ -87,6 +87,18 @@ def daily_count(rows, today):
     return count
 
 
+def safe_to_make_first_submission(previous, matching):
+    """Official matching submission wins; otherwise an old attempt blocks retries."""
+    if matching is not None:
+        return False
+    if previous.get("submission_attempted") or previous.get("submitted"):
+        return False
+    return previous.get("stage") not in {
+        "submitting","submission_failed","submission_unverified",
+        "submission_ambiguous","submission_pending"
+    }
+
+
 def download_output(handle, directory):
     if not handle or "/" not in str(handle):
         raise RuntimeError("Invalid original Kaggle Notebook handle")
@@ -226,10 +238,7 @@ def main():
                 # Any earlier attempt may already have reached Kaggle even if
                 # the HTTP response failed. Require manual reconciliation, never
                 # fire a second submission with the same experimental payload.
-                if (prev.get("submission_attempted") or prev.get("submitted")
-                        or prev.get("stage") in (
-                            "submitting","submission_failed","submission_unverified",
-                            "submission_ambiguous")):
+                if not safe_to_make_first_submission(prev, matching):
                     status["stage"]="submission_ambiguous"
                     status["error"]=(
                         "Prior submission attempt exists, but Kaggle has not "
