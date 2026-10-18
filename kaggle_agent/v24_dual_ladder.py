@@ -259,6 +259,10 @@ def report(data):
         f"- 当前比赛：{data.get('active_competition')}",
         f"- Kaggle 官方公开榜名次：{rank if rank is not None else '暂时无法确认'}",
         f"- 是否有有效排名证据：{data.get('public_rank_verified')}",
+        f"- 官方排行榜队伍数：{data.get('ranked_teams', '未知')}",
+        f"- 排名数据源：{data.get('rank_source', 'Kaggle list / 未核实')}",
+        f"- 排名最后核验：{data.get('rank_checked_at', '未核实')}",
+        f"- 最新已提交 Public LB：{(data.get('latest_scored_submission') or {}).get('public_score', '暂无')}",
         f"- GPU：{gpu.get('stage', 'unknown')}；{gpu.get('kernel_url', '')}",
         f"- TPU：{tpu.get('stage', 'unknown')}；{tpu.get('kernel_url', '')}",
         f"- 换赛阶段：{data.get('status')}",
@@ -295,6 +299,22 @@ def main():
     # Only KAGGLE's authenticated entered list can establish a public rank.
     entered = cli_list("--group", "entered", "--page-size", "100")
     rank_row = next((x for x in entered if norm_slug(x) == current), None)
+    # Cross-check the just-fetched leaderboard scorecard. Only a fresh, VERIFIED,
+    # same-competition rank is allowed to trigger a top-three handoff.
+    rank_snapshot = load(ROOT / "state" / "score_rank_latest.json")
+    if (rank_snapshot.get("competition") == current
+            and rank_snapshot.get("rank_verified") is True):
+        try:
+            checked = datetime.fromisoformat(rank_snapshot["checked_at"].replace("Z", "+00:00"))
+            age = (utc() - checked).total_seconds()
+            fresh = -120 <= age <= 900
+        except (TypeError, ValueError, KeyError):
+            fresh = False
+        if fresh:
+            verified_rank = safe_rank(rank_snapshot.get("rank"))
+            if verified_rank is not None:
+                rank_row = {**(rank_row or {}), "ref": current,
+                            "userHasEntered": True, "userRank": verified_rank}
     # A completed contest may disappear from the entered/open list. The archived
     # competition deadline still allows closed-competition handoff safely.
     candidates = []
@@ -309,6 +329,11 @@ def main():
         k = norm_slug(row)
         merged[k] = {**merged.get(k, {}), **{p: v for p, v in row.items() if v is not None}}
     result = decide(old, current, rank_row, list(merged.values()), utc())
+    if rank_snapshot.get("competition") == current:
+        result["rank_source"] = rank_snapshot.get("rank_source", "unverified")
+        result["rank_checked_at"] = rank_snapshot.get("checked_at")
+        result["ranked_teams"] = rank_snapshot.get("ranked_teams")
+        result["latest_scored_submission"] = rank_snapshot.get("score")
     write(STATE, result)
     report(result)
     print(json.dumps(result, ensure_ascii=False, indent=2), flush=True)
