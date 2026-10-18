@@ -2,11 +2,6 @@ name: Kaggle Auto Scientist V2.1
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "kaggle_agent/v2_1_pipeline.py"
-      - "kaggle_agent/beginner_guide.py"
-      - ".github/workflows/kaggle_v2_1.yml"
 
 permissions:
   contents: write
