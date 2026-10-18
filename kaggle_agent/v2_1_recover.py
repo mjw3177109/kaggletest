@@ -16,7 +16,7 @@ def now() -> str:
 
 def extract_actual_kernel(project: Path) -> str:
     push = (project / "kaggle_v21" / "push_output.txt").read_text(encoding="utf-8")
-    m = re.search(r"https?://(?:www\\.)?kaggle\\.com/code/([A-Za-z0-9_-]+)/([a-z0-9-]+)", push)
+    m = re.search(r"https?://(?:www\.)?kaggle\.com/code/([A-Za-z0-9_-]+)/([a-z0-9-]+)", push)
     if not m:
         raise RuntimeError("No real Kaggle notebook URL found in push_output.txt; cannot guess kernel ID.")
     return f"{m.group(1)}/{m.group(2)}"
@@ -42,10 +42,10 @@ def make_report(project: Path, status: dict[str, Any]) -> None:
     lines = [
         "# Kaggle Auto Scientist V2.1 - Recovery and Model Comparison",
         "",
-        f"- Competition: \`{slug}\`",
-        f"- Actual Kaggle kernel: \`{status.get('kernel')}\`",
-        f"- Recovery stage: \`{status.get('stage')}\`",
-        f"- Previous public LB: \`{status.get('baseline_public_score')}\`",
+        f"- Competition: `{slug}`",
+        f"- Actual Kaggle kernel: `{status.get('kernel')}`",
+        f"- Recovery stage: `{status.get('stage')}`",
+        f"- Previous public LB: `{status.get('baseline_public_score')}`",
         "",
     ]
     if ranking:
@@ -55,8 +55,8 @@ def make_report(project: Path, status: dict[str, Any]) -> None:
         lines += ["", f"Selected candidate: **{metrics.get('best_model')}**", ""]
     latest = status.get("latest_submission") or {}
     lines += [
-        f"New public LB: \`{latest.get('publicScore') or 'not available'}\`",
-        f"Online delta from V2: \`{status.get('public_score_delta')}\`",
+        f"New public LB: `{latest.get('publicScore') or 'not available'}`",
+        f"Online delta from V2: `{status.get('public_score_delta')}`",
         "",
         "No new Kaggle training was started by the recovery job.",
     ]
@@ -77,11 +77,11 @@ def save_run_files(project: Path, metrics: dict[str, Any], online_model: str, ne
         lines = [
             f"# Run {ident} - {name}",
             "",
-            f"- OOF CV ROC-AUC: \`{d.get('cv_auc')}\`",
-            f"- Individual fold scores: \`{d.get('fold_auc', 'ensemble')}\`",
-            f"- Submitted: \`{name == online_model}\`",
-            f"- Public LB: \`{new_lb if name == online_model else 'not submitted'}\`",
-            f"- Prior V2 LB: \`{old_lb}\`",
+            f"- OOF CV ROC-AUC: `{d.get('cv_auc')}`",
+            f"- Individual fold scores: `{d.get('fold_auc', 'ensemble')}`",
+            f"- Submitted: `{name == online_model}`",
+            f"- Public LB: `{new_lb if name == online_model else 'not submitted'}`",
+            f"- Prior V2 LB: `{old_lb}`",
             "",
             "3-fold comparison using the same data split; do not compare the V2 holdout score as if it were the same CV method.",
         ]
@@ -90,6 +90,9 @@ def save_run_files(project: Path, metrics: dict[str, Any], online_model: str, ne
 
 def main() -> None:
     original = load_json(ROOT / "state" / "v2_1_status.json", {}) or {}
+    if original.get("stage") == "complete" and (original.get("latest_submission") or {}).get("publicScore") not in (None, ""):
+        print("V2.1 already scored and archived; skipping duplicate submission.")
+        return
     v2 = load_json(ROOT / "state" / "v2_status.json", {}) or {}
     slug = original.get("competition") or v2.get("competition")
     if not slug:
