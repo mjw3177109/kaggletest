@@ -12,6 +12,7 @@ on:
       - "Kaggle Auto Scientist V2.1"
       - "Kaggle Auto Scientist V2.1 Recovery"
       - "Kaggle Auto Scientist V2.2"
+      - "Kaggle Auto Scientist V2.3 TPU"
     types:
       - completed
 
@@ -41,6 +42,7 @@ jobs:
         run: |
           python kaggle_agent/beginner_guide.py
           python kaggle_agent/v22_guide.py
+          python kaggle_agent/v23_tpu_guide.py
 
       - name: Commit guide updates
         shell: bash
