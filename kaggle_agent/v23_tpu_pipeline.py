@@ -140,6 +140,23 @@ def main(recover_only=False):
         if float(glb) > benchmark_lb:
             benchmark_lb = float(glb)
             benchmark_name = gpu.get("champion") or "V2.3 GPU"
+    # Every newly scored CUDA champion raises the threshold for TPU.
+    # TPU must never use a scarce submission to challenge an obsolete baseline.
+    for filename in ("v2_5_status.json", "v2_6_status.json"):
+        contender = load_json(ROOT / "state" / filename, {}) or {}
+        m = contender.get("metrics") or {}
+        lb = (contender.get("latest_submission") or {}).get("publicScore")
+        if (contender.get("stage") == "complete"
+                and contender.get("competition") == slug and contender.get("submitted")
+                and (contender.get("hardware") or {}).get("ok")
+                and m.get("gpu_verified")
+                and m.get("validation") == "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)"
+                and int(m.get("train_rows", -1)) == int(base["metrics"]["rows"])
+                and lb not in (None, "")):
+            benchmark_cv = max(benchmark_cv, float(m["best_cv_auc"]))
+            if float(lb) > benchmark_lb:
+                benchmark_lb = float(lb)
+                benchmark_name = contender.get("champion") or filename
     project = ROOT / "competitions" / slug
     project.mkdir(parents=True, exist_ok=True)
     previous = load_json(STATE, {}) or {}
