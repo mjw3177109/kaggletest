@@ -195,7 +195,7 @@ def main():
         history = []
         for epoch in range(1, EPOCHS + 1):
             order = rng.permutation(len(tr))
-            losses = []
+            last_loss = None
             for begin in range(0, len(order), BATCH):
                 ids = order[begin:begin + BATCH]
                 if len(ids) != BATCH:
@@ -203,12 +203,13 @@ def main():
                     ids = np.concatenate([ids, order[:BATCH - len(ids)]])
                 tick += 1
                 p, m, v, l = step(p, m, v, jnp.asarray(xf[ids]), jnp.asarray(labels[ids]), jnp.asarray(tick))
-                if not np.isfinite(float(l)):
-                    raise RuntimeError("Neural network loss diverged")
-                losses.append(float(l))
+                last_loss = l
             pred = predict(p, vf)
             auc = float(roc_auc_score(y[va], pred))
-            history.append({"epoch": epoch, "val_auc": auc, "loss": float(np.mean(losses))})
+            epoch_loss = float(last_loss)
+            if not np.isfinite(epoch_loss):
+                raise RuntimeError("Neural network loss diverged")
+            history.append({"epoch": epoch, "val_auc": auc, "loss": epoch_loss})
             if auc > best_auc + 0.00002:
                 best_auc, best_epoch, best_p, stalled = auc, epoch, p, 0
             else:
