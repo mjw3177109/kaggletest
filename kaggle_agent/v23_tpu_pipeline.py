@@ -111,6 +111,27 @@ def main(recover_only=False):
     old_lb = (base.get("latest_submission") or {}).get("publicScore")
     if old_lb in (None, ""):
         raise RuntimeError("No V2.1 scored submission exists")
+    # Compare TPU against the CURRENT verified independent champion, not only V2.1.
+    # GPU and TPU use the same binary ROC-AUC task, train-row count and 3-fold seed.
+    benchmark_cv = old_cv
+    benchmark_lb = float(old_lb)
+    benchmark_name = "V2.1 ensemble"
+    gpu = load_json(ROOT / "state" / "v2_3_gpu_status.json", {}) or {}
+    gm = gpu.get("metrics") or {}
+    glb = (gpu.get("latest_submission") or {}).get("publicScore")
+    if (gpu.get("stage") == "complete"
+            and gpu.get("competition") == slug
+            and gpu.get("submitted")
+            and (gpu.get("hardware") or {}).get("ok")
+            and gm.get("gpu_verified")
+            and gm.get("validation") == "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)"
+            and gm.get("validation_metric") == "roc_auc"
+            and int(gm.get("train_rows", -1)) == int(base["metrics"]["rows"])
+            and glb not in (None, "")):
+        benchmark_cv = max(benchmark_cv, float(gm["best_cv_auc"]))
+        if float(glb) > benchmark_lb:
+            benchmark_lb = float(glb)
+            benchmark_name = gpu.get("champion") or "V2.3 GPU"
     project = ROOT / "competitions" / slug
     project.mkdir(parents=True, exist_ok=True)
     previous = load_json(STATE, {}) or {}
@@ -124,9 +145,9 @@ def main(recover_only=False):
         return
     status = dict(previous) if previous.get("competition") == slug else {}
     status.update({
-        "version": "V2.3", "competition": slug, "incumbent_cv": old_cv,
-        "incumbent_lb": old_lb, "updated_at": now(),
-        "champion": "V2.1 ensemble", "submitted": bool(status.get("submitted", False)),
+        "version": "V2.3", "competition": slug, "incumbent_cv": benchmark_cv,
+        "incumbent_lb": str(benchmark_lb), "updated_at": now(),
+        "champion": benchmark_name, "submitted": bool(status.get("submitted", False)),
     })
     folder = project / "kaggle_tpu_v23"
     results = project / "results_v23"
@@ -223,7 +244,7 @@ def main(recover_only=False):
         status["metrics"] = metrics
         write_json(results / "metrics.json", metrics)
         gate = check_cv(
-            metrics["cv_auc"], old_cv, float(config.get("min_cv_improvement", 0.00010))
+            metrics["cv_auc"], benchmark_cv, float(config.get("min_cv_improvement", 0.00010))
         )
         status["cv_gate"] = gate
         if not gate["passed"]:
@@ -259,7 +280,7 @@ def main(recover_only=False):
         if new_lb in (None, ""):
             status["stage"] = "submission_pending"
             return
-        delta = round(float(new_lb) - float(old_lb), 8)
+        delta = round(float(new_lb) - benchmark_lb, 8)
         status["public_lb_delta"] = delta
         if delta > 0:
             status["champion"] = "V2.3 JAX TPU MLP"
