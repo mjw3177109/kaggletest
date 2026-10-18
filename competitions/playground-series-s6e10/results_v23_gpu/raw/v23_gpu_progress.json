@@ -1,0 +1,66 @@
+{
+  "completed": [
+    "gpu_xgb_depth5",
+    "gpu_xgb_depth7"
+  ],
+  "models": {
+    "gpu_xgb_depth5": {
+      "cv_auc": 0.9581617476319175,
+      "folds": [
+        {
+          "fold": 1,
+          "auc": 0.9576676485384084,
+          "best_iteration": 1099,
+          "device": "cuda:0"
+        },
+        {
+          "fold": 2,
+          "auc": 0.9586256707220128,
+          "best_iteration": 1098,
+          "device": "cuda:0"
+        },
+        {
+          "fold": 3,
+          "auc": 0.958206583329354,
+          "best_iteration": 1099,
+          "device": "cuda:0"
+        }
+      ],
+      "hyperparameters": {
+        "max_depth": 5,
+        "learning_rate": 0.035,
+        "min_child_weight": 3,
+        "reg_lambda": 5.0
+      }
+    },
+    "gpu_xgb_depth7": {
+      "cv_auc": 0.9585317063733847,
+      "folds": [
+        {
+          "fold": 1,
+          "auc": 0.9579357076622862,
+          "best_iteration": 1093,
+          "device": "cuda:0"
+        },
+        {
+          "fold": 2,
+          "auc": 0.959014889759656,
+          "best_iteration": 1000,
+          "device": "cuda:0"
+        },
+        {
+          "fold": 3,
+          "auc": 0.9586654367884168,
+          "best_iteration": 1083,
+          "device": "cuda:0"
+        }
+      ],
+      "hyperparameters": {
+        "max_depth": 7,
+        "learning_rate": 0.025,
+        "min_child_weight": 5,
+        "reg_lambda": 8.0
+      }
+    }
+  }
+}
