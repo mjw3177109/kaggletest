@@ -1,0 +1,15 @@
+{
+  "competition": "playground-series-s6e10",
+  "version": "V2.5",
+  "updated_at": "2026-10-18T08:17:45.593980+00:00",
+  "incumbent_cv": 0.9585317063733847,
+  "incumbent_lb": 0.95819,
+  "incumbent_model": "V2.3 GPU gpu_xgb_depth7",
+  "champion": "V2.3 GPU gpu_xgb_depth7",
+  "submitted": false,
+  "kernel": "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+  "kernel_url": "https://www.kaggle.com/code/mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+  "stage": "kernel_queued",
+  "kernel_state": "kernel_queued",
+  "error": "mjw3177109/kas-v25-gpu-te-playground-series-s6e10 has status \"KernelWorkerStatus.QUEUED\""
+}
