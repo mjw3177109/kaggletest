@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/kaggle_v23_recover.yml"
+  schedule:
+    - cron: "27 */3 * * *"
 
 permissions:
   contents: write
@@ -27,20 +29,40 @@ jobs:
           ref: main
           fetch-depth: 0
 
+      - name: Determine if this Kaggle queue still needs recovery
+        id: guard
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import datetime, json
+          from pathlib import Path
+          p=Path("state/v2_3_status.json")
+          d=json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+          s=d.get("stage")
+          before_deadline=datetime.datetime.now(datetime.timezone.utc) < datetime.datetime(2026, 11, 1, tzinfo=datetime.timezone.utc)
+          active=s in ("kernel_queued", "kernel_running")
+          should=(active and before_deadline) or ( __import__("os").environ.get("EVENT_NAME") == "workflow_dispatch" )
+          print("should_run=" + ("true" if should else "false"))
+          PY
+
       - uses: actions/setup-python@v5
+        if: steps.guard.outputs.should_run == 'true'
         with:
           python-version: "3.11"
 
       - name: Install Kaggle controller dependencies
+        if: steps.guard.outputs.should_run == 'true'
         run: pip install -r requirements.txt
 
       - name: Check existing Kaggle TPU Notebook (NO training push)
+        if: steps.guard.outputs.should_run == 'true'
         run: |
           python -m py_compile kaggle_agent/v23_tpu_pipeline.py
           python kaggle_agent/v23_tpu_pipeline.py --recover-only
 
       - name: Preserve diagnostic artifacts even if Git rebase fails
-        if: always()
+        if: always() && steps.guard.outputs.should_run == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: v23-tpu-recovery-diagnostics
@@ -54,6 +76,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Commit only V2.3 recovery files (avoid guide conflicts)
+        if: steps.guard.outputs.should_run == 'true'
         shell: bash
         run: |
           git config user.name "kaggle-auto-scientist[bot]"
@@ -68,6 +91,7 @@ jobs:
           git push origin main
 
       - name: Print verified stage
+        if: steps.guard.outputs.should_run == 'true'
         run: |
           python - <<'PY'
           import json
