@@ -1,6 +1,6 @@
 # V2.6｜研究高分选手后的 GPU 特征工程实验
 
-- 生成时间 UTC：2026-10-18T08:44:01.429571+00:00
+- 生成时间 UTC：2026-10-18T08:45:48.265885+00:00
 - 比赛：playground-series-s6e10
 - Kaggle Notebook：https://www.kaggle.com/code/mjw3177109/kas-v26-gpu-te-playground-series-s6e10
 - 运行阶段：kernel_queued
@@ -28,7 +28,6 @@ V2.6 新增 5 折内部交叉拟合 TE；每个外层验证折只使用对应训
 
 ## 当前已评分冠军对应的官方排名
 
-- 此名次关联的 Public LB：0.96035
 - 当前 Public 排名：**第 958 名 / 2224 支队伍**
 - 排名核验 UTC：2026-10-18T08:44:30.957775+00:00
 - 排名证据：kaggle_authenticated_userRank
