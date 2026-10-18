@@ -34,7 +34,7 @@ def save(path, data):
 def candidates_for(slug):
     """Choose the best actual scored submission, not an unsubmitted CV candidate."""
     found = []
-    for path in ("v2_status.json", "v2_1_status.json", "v2_3_gpu_status.json", "v2_3_status.json", "v2_5_status.json"):
+    for path in ("v2_status.json", "v2_1_status.json", "v2_3_gpu_status.json", "v2_3_status.json", "v2_5_status.json", "v2_6_status.json"):
         obj = read(ROOT / "state" / path)
         if obj.get("competition") != slug:
             continue
