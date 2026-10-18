@@ -17,6 +17,7 @@ on:
       - "Kaggle Auto Scientist V2.3 GPU"
       - "Kaggle Auto Scientist V2.5 GPU Feature Engineering"
       - "Kaggle Auto Scientist V2.6 GPU Frequency Challenger"
+      - "Kaggle V2.7 OOF Fusion"
       - "Kaggle Dual GPU-TPU Top3 or Deadline Ladder"
     types:
       - completed
@@ -52,6 +53,7 @@ jobs:
           python kaggle_agent/v24_guide.py
           python kaggle_agent/v25_guide.py
           python kaggle_agent/v26_guide.py
+          python kaggle_agent/v27_guide.py
 
       - name: Commit guide updates
         shell: bash
@@ -75,4 +77,4 @@ jobs:
             fi
             sleep $((attempt * 2))
           done
-          exit 1 origin main
+          exit 1
