@@ -26,7 +26,8 @@ def chapter(slug):
     gate = state.get("cv_gate") or {}
     mapping = {
         "pushing_tpu_kernel": "正在请求 Kaggle TPU 资源",
-        "kernel_running": "Notebook 正在 Kaggle 运行",
+        "kernel_running": "Notebook 正在 Kaggle 实际运行",
+        "kernel_queued": "Kaggle 仍在排队等待算力（未开始训练）",
         "kernel_complete": "神经网络已执行，正在检验结果",
         "tpu_unavailable": "Kaggle 没有分配真正的 TPU，已安全停止",
         "tpu_push_failed": "无法创建 Kaggle TPU Notebook",
