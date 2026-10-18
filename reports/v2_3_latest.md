@@ -1,0 +1,38 @@
+# Kaggle Auto Scientist V2.3 - 独立 TPU 神经网络实验
+
+## 训练线状态
+
+- 树模型 V2.1 Ensemble 保留不变。
+- 独立的 TPU 线用 JAX MLP；统一 3 折验证、再判断是否提交。
+- 比赛：playground-series-s6e10
+- 当前阶段：kernel_running
+- Kaggle Notebook：https://www.kaggle.com/code/mjw3177109/kas-v23-tpu-playground-series-s6e10
+
+## 硬件核验
+
+- 请求硬件：TpuV5E8
+- 真实 JAX backend：未知
+- 真正使用 TPU：False
+- JAX device count：未知
+
+## 3-Fold OOF 对比
+
+- V2.1 树模型 CV：0.9582786744608702
+- V2.1 Public LB：0.95774
+- V2.3 JAX TPU CV：尚未完成
+- CV 提升差值：未知
+- 提交门槛：未知
+- 达到提交条件：False
+
+## 结果与保底
+
+- 已提交：False
+- 新 Public LB：未提交或未评分
+- 当前线上冠军：V2.1 ensemble
+
+V2.1 未存储逐行 OOF 预测，因此不能声称已比较了 TPU/树模型的联合融合分数。
+TPU 线单独验证，不覆盖 V2.1 树模型。
+
+## 诊断信息
+
+Kernel still running

@@ -9,5 +9,7 @@
   "kernel_state": "kernel_running",
   "submitted": false,
   "champion": "V2.1 ensemble",
-  "notes": "Recovered provisional status from GitHub Actions run 39093552359 (step 7); hardware and actual Kaggle status unverified. Do not start new training."
+  "notes": "Recovered provisional status from GitHub Actions run 39093552359 (step 7); hardware and actual Kaggle status unverified. Do not start new training.",
+  "updated_at": "2026-10-18T06:16:36.148811+00:00",
+  "error": "Kernel still running"
 }
