@@ -172,7 +172,15 @@ def main(recover_only=False):
                 status.update({"stage":"gpu_unavailable","error":"Not an actual NVIDIA T4"})
                 return
         if stage!="kernel_complete":
-            status.update({"stage":"kernel_failed","error":"Kaggle returned failed status: "+desc[-7000:]})
+            # Kaggle may emit v25_error.json after a failed training attempt.
+            err=next(iter(raw.rglob("v25_error.json")),None)
+            status.update({
+                "stage":"kernel_failed",
+                "error":(err.read_text(encoding="utf-8")[-7000:] if err
+                         else "Kaggle reported a failed kernel; "+desc[-5000:]),
+            })
+            logs=run(["kaggle","kernels","logs",status["kernel"]],check=False,timeout=120)
+            (folder/"logs.txt").write_text(((logs.stdout or "")+"\n"+(logs.stderr or ""))[-20000:],encoding="utf-8")
             return
         if p.returncode or hw is None:
             status.update({"stage":"output_failed","error":(p.stderr or p.stdout or "Missing GPU hardware probe")[-6000:]})
@@ -189,6 +197,7 @@ def main(recover_only=False):
                 or not metrics.get("validation")=="StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)"
                 or int(metrics.get("train_rows",-1))!=champ["train_rows"]
                 or int(metrics.get("folds",0))!=3
+                or len(metrics.get("fold_results",[]))!=3
                 or not all(str(row.get("xgb_device","")).startswith("cuda") for row in metrics.get("fold_results",[]))):
             status.update({"stage":"incomparable_results","error":"GPU/CV/target encoding evidence invalid"})
             return
