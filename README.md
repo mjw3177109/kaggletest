@@ -12,7 +12,7 @@ This repository is an automated Kaggle competition lab.
 
 统一说明书规范在：`docs/BEGINNER_GUIDE_STANDARD.md`。
 
-## Current version: V2 + V2.1 + V2.2
+## Current version: V2 + V2.1 + V2.2 + V2.3 TPU
 
 V2 can authenticate with Kaggle, find currently-open competitions, automatically prefer Playground / Getting Started tasks, inspect competition pages, download data after you have accepted the competition rules, profile the dataset, generate a baseline, run it as a Kaggle Kernel, submit `submission.csv`, collect the latest score, and write the run artifacts back to this GitHub repository.
 
@@ -51,6 +51,30 @@ V2.2 仅在已完成的 V2.1 比赛上运行；沿用相同的 3 折划分（SEE
 **主要文件：** kaggle_agent/v22_train.py（云端训练脚本）、kaggle_agent/v22_pipeline.py（控制与成绩回写）、config/agent.yaml（参数）、reports/v2_2_latest.md、state/v2_2_status.json、competitions/<slug>/results_v22/（指标/试验/特征重要性）。
 
 本项目当前只对二分类表格赛启用 V2.2，非二分类数据需要独立适配；Kaggle 环境与计算额度也可能影响是否训练成功。
+
+## V2.3：独立 TPU 神经网络训练线
+
+原有的 V2.1 Ensemble（CV 0.95827867，Public LB 0.95774）**不作修改**。新增一条 TPU 独立实验线：
+
+- Kaggle CPU/GPU：继续保留 CatBoost、LightGBM、XGBoost；不会强行将树模型放进 TPU。
+- Kaggle TPU v5e-8：运行 JAX MLP 神经网络，沿用同一随机种子和 3-Fold StratifiedKFold。
+- 上传 TPU kernel 时使用 Kaggle CLI --accelerator TpuV5E8 与 machine_shape: TpuV5E8。
+- 训练开始前，脚本必须检查 jax.default_backend() 确实为 tpu；若实际是 CPU/GPU 则立即停止，保留原有线上冠军。
+- TPU 神经网络 OOF 分数只有超过 V2.1 0.00010 才能提交；真正的线上成绩只有更高才升级冠军。
+- 不会虚构 TPU+树模型融合成绩：当前未保存两者可配对的逐行 OOF，融合需要以后新增这部分输出再测试。
+
+**使用：** GitHub → Actions → Kaggle Auto Scientist V2.3 TPU → Run workflow → mode=run。
+
+**如果 Kaggle API 没真正分配 TPU：** 打开报告中的 notebook 链接；在 Kaggle 编辑器选 Settings → Accelerator → TPU v5e-8 → Save & Run All；确认 Notebook 运行完后，回 GitHub Actions 选择 mode=recover_existing。这只读取已经运行好的 Notebook，不重复消耗一次训练。Kaggle API 的 TPU 请求成功不等于硬件实际分配成功，必须以 JAX 运行时检测为准。
+
+**V2.3 输出：**
+- state/v2_3_status.json（真实阶段、硬件证据及提交决策）
+- reports/v2_3_latest.md（TPU 与树模型对比和错误解释）
+- competitions/<slug>/kaggle_tpu_v23/main.py（云端训练）
+- competitions/<slug>/results_v23/metrics.json 和 hardware.json（若运行成功）
+- competitions/<slug>/小白说明书.md（新增零基础 TPU 教学章节）
+
+V2.3 是针对当前二分类表格比赛的首次实验版；TPU 对小模型不一定比 CPU 快，是否有益由实际 OOF 和运行时间决定。
 
 ## Run V2
 
