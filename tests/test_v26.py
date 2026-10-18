@@ -9,9 +9,15 @@ sys.path.insert(0,str(ROOT/"kaggle_agent"))
 import numpy as np
 import pandas as pd
 import v26_gpu_freq_train as tr
+import v26_gpu_pipeline as pipeline
 
 
 class Tests(unittest.TestCase):
+    def test_challenger_isolates_state_from_finished_champion(self):
+        self.assertEqual(pipeline.STATE.name, "v2_6_status.json")
+        self.assertEqual(pipeline.REPORT.name, "v2_6_latest.md")
+        self.assertNotEqual(pipeline.STATE.name, "v2_5_status.json")
+
     def test_sources_parse(self):
         for filename in ["v26_gpu_freq_train.py","v26_gpu_pipeline.py"]:
             ast.parse((ROOT/"kaggle_agent"/filename).read_text(encoding="utf-8"))
