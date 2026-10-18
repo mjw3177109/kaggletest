@@ -26,6 +26,13 @@ def explanation(data, slug):
         "competition_ended": "比赛的最终提交截止已经过去",
     }
     nxt = data.get("next_competition") or {}
+    score_info = read(ROOT / "state" / "score_rank_latest.json")
+    same_competition = score_info.get("competition") == data.get("active_competition")
+    best = (score_info.get("score") or {}) if same_competition else {}
+    rank = score_info.get("rank") if same_competition and score_info.get("rank_verified") else None
+    teams = score_info.get("ranked_teams") if same_competition else None
+    rank_label = (f"第 {rank} 名 / 共 {teams} 支队伍" if rank and teams
+                  else f"第 {rank} 名" if rank else "当前名次未核实")
     lines = [
         "## V2.4｜GPU + TPU 双线自动换赛（新手说明）", "",
         "比赛由 GPU XGBoost 和 TPU JAX 各自训练；原先 CPU Ensemble 成绩保留。",
@@ -35,6 +42,10 @@ def explanation(data, slug):
         f"- 当前聚焦比赛：{ascode(data.get('active_competition', '未选择'))}",
         f"- 当前比赛官方截止：{ascode(data.get('active_deadline', '未知'))}",
         f"- 距截止还有（小时）：{ascode(data.get('hours_to_deadline', '未知'))}",
+        f"- 已确认的最新 Public LB 分数：{ascode(best.get('public_score', '暂无'))}",
+        f"- **当前官方公开榜排名：{rank_label}**",
+        f"- 名次核验时间：{ascode(score_info.get('checked_at', '暂无') if same_competition else '暂无')}",
+        f"- 评分与排名数据源：{ascode(score_info.get('rank_source', '未核实') if same_competition else '未核实')}",
         f"- 排名：{ascode(data.get('rank', '未核实'))}",
         f"- 换赛阶段：{ascode(data.get('status', '待检查'))}",
         f"- 已触发条件：{', '.join(labels.get(x, x) for x in reasons) or '尚未触发'}",
