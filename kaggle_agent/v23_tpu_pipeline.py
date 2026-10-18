@@ -37,6 +37,8 @@ def poll_kernel(handle, wait_seconds=3000, interval=25):
         low = last.lower()
         if p.returncode or "permission" in low or "denied" in low:
             return "kernel_access_error", last
+        if "kernelworkerstatus.queued" in low or 'has status "queued"' in low:
+            return "kernel_queued", last
         if any(x in low for x in ("failed", "error", "cancelled", "canceled")):
             return "kernel_failed", last
         if any(x in low for x in ("complete", "success")):
@@ -78,6 +80,13 @@ def write_report(status):
         "V2.1 未存储逐行 OOF 预测，因此不能声称已比较了 TPU/树模型的联合融合分数。",
         "TPU 线单独验证，不覆盖 V2.1 树模型。",
     ]
+    if status.get("stage") == "kernel_queued":
+        lines.extend([
+            "", "## Kaggle 仍在排队", "",
+            "KernelWorkerStatus.QUEUED 表示 Kaggle 尚未安排执行，",
+            "因此现在没有 TPU JAX 检测或 CV 结果；绝不能将它写成训练中或训练失败。",
+            "可在 Kaggle Notebook 页面查看排队状态，若排队持续很久再检查 TPU 额度。",
+        ])
     if status.get("stage") == "tpu_unavailable":
         lines.extend([
             "", "## Kaggle 没有真正分配 TPU 时", "",
@@ -165,9 +174,9 @@ def main(recover_only=False):
         )
         (folder / "status_output.txt").write_text(message, encoding="utf-8")
         status["kernel_state"] = stage
-        if stage in ("kernel_access_error", "kernel_running"):
+        if stage in ("kernel_access_error", "kernel_running", "kernel_queued"):
             status["stage"] = stage
-            status["error"] = message[-5000:] if stage == "kernel_access_error" else "Kernel still running"
+            status["error"] = message[-5000:] if stage != "kernel_running" else "Kernel is still running"
             return
         # Even after Kaggle reports a failed run, retrieve the hardware probe if possible.
         raw = results / "raw"
