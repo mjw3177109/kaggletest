@@ -50,7 +50,7 @@ jobs:
       - name: Query authenticated Kaggle rank, team count and current scored submission
         run: python kaggle_agent/v24_rank_tracker.py
 
-      - name: Verify joined competitions and live PUBLIC rank
+      - name: Confirm refreshed official Public rank and apply safe contest handoff
         run: python kaggle_agent/v24_dual_ladder.py
 
       - name: Upload actual rank evidence and next-contest decision
