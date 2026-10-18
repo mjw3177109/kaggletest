@@ -70,7 +70,7 @@ jobs:
         if: steps.gate.outputs.should_run == 'true'
         run: pip install -r requirements.txt scikit-learn lightgbm xgboost scipy
 
-      - name: Run no-leak feature tests before requesting Kaggle GPU
+      - name: Verify crossfitted frequencies, no target leakage and GPU code before launch
         if: steps.gate.outputs.should_run == 'true'
         run: |
           python -m py_compile kaggle_agent/v26_gpu_freq_train.py kaggle_agent/v26_gpu_pipeline.py kaggle_agent/v26_guide.py
