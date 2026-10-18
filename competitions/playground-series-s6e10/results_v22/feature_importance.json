@@ -1,0 +1,313 @@
+{
+  "method": "LightGBM gain averaged over 3 folds",
+  "candidates": {
+    "tuned_lightgbm": [
+      {
+        "feature": "Online boarding",
+        "gain": 3285135.870921
+      },
+      {
+        "feature": "Inflight wifi service",
+        "gain": 1232790.514248
+      },
+      {
+        "feature": "Class_Business",
+        "gain": 877965.215496
+      },
+      {
+        "feature": "Type of Travel_Business travel",
+        "gain": 634553.986636
+      },
+      {
+        "feature": "Customer Type_Loyal Customer",
+        "gain": 292692.026415
+      },
+      {
+        "feature": "__auto_rating_max",
+        "gain": 288917.150908
+      },
+      {
+        "feature": "__auto_rating_mean",
+        "gain": 241595.428526
+      },
+      {
+        "feature": "Type of Travel_Personal Travel",
+        "gain": 236085.939411
+      },
+      {
+        "feature": "Inflight entertainment",
+        "gain": 235834.027811
+      },
+      {
+        "feature": "Class_Eco",
+        "gain": 165725.384358
+      },
+      {
+        "feature": "Baggage handling",
+        "gain": 153858.352398
+      },
+      {
+        "feature": "Seat comfort",
+        "gain": 120425.402543
+      },
+      {
+        "feature": "Ease of Online booking",
+        "gain": 117872.448999
+      },
+      {
+        "feature": "Checkin service",
+        "gain": 114822.555796
+      },
+      {
+        "feature": "On-board service",
+        "gain": 73974.226514
+      },
+      {
+        "feature": "Age",
+        "gain": 64905.017267
+      },
+      {
+        "feature": "Gate location",
+        "gain": 55644.458475
+      },
+      {
+        "feature": "Cleanliness",
+        "gain": 55025.827398
+      },
+      {
+        "feature": "Customer Type_disloyal Customer",
+        "gain": 53013.351835
+      },
+      {
+        "feature": "Flight Distance",
+        "gain": 38051.313184
+      },
+      {
+        "feature": "Leg room service",
+        "gain": 35061.846238
+      },
+      {
+        "feature": "Departure/Arrival time convenient",
+        "gain": 30335.987876
+      },
+      {
+        "feature": "Arrival Delay in Minutes",
+        "gain": 8894.284237
+      },
+      {
+        "feature": "__auto_rating_min",
+        "gain": 6087.377613
+      },
+      {
+        "feature": "Food and drink",
+        "gain": 5259.673616
+      },
+      {
+        "feature": "Gender_Female",
+        "gain": 1223.347596
+      },
+      {
+        "feature": "Class_Eco Plus",
+        "gain": 862.157673
+      },
+      {
+        "feature": "__auto_total_delay",
+        "gain": 744.12825
+      },
+      {
+        "feature": "__auto_max_delay",
+        "gain": 528.235903
+      },
+      {
+        "feature": "Gender_Male",
+        "gain": 208.365236
+      },
+      {
+        "feature": "Departure Delay in Minutes",
+        "gain": 188.048356
+      },
+      {
+        "feature": "Gender_nan",
+        "gain": 0.0
+      },
+      {
+        "feature": "Customer Type_nan",
+        "gain": 0.0
+      },
+      {
+        "feature": "Type of Travel_nan",
+        "gain": 0.0
+      },
+      {
+        "feature": "Class_nan",
+        "gain": 0.0
+      }
+    ],
+    "tuned_extended": [
+      {
+        "feature": "Online boarding",
+        "gain": 3033231.843012
+      },
+      {
+        "feature": "Inflight wifi service",
+        "gain": 1077763.798186
+      },
+      {
+        "feature": "__rating_high_count",
+        "gain": 987514.047851
+      },
+      {
+        "feature": "Type of Travel_Business travel",
+        "gain": 689594.020438
+      },
+      {
+        "feature": "Class_Business",
+        "gain": 523079.29157
+      },
+      {
+        "feature": "Customer Type_Loyal Customer",
+        "gain": 257832.279102
+      },
+      {
+        "feature": "__auto_rating_max",
+        "gain": 256108.865602
+      },
+      {
+        "feature": "Type of Travel_Personal Travel",
+        "gain": 253988.153794
+      },
+      {
+        "feature": "Class_Eco",
+        "gain": 155633.789486
+      },
+      {
+        "feature": "Baggage handling",
+        "gain": 153603.607469
+      },
+      {
+        "feature": "Ease of Online booking",
+        "gain": 142961.292018
+      },
+      {
+        "feature": "Inflight entertainment",
+        "gain": 118724.721993
+      },
+      {
+        "feature": "Checkin service",
+        "gain": 109228.866271
+      },
+      {
+        "feature": "Customer Type_disloyal Customer",
+        "gain": 92979.116911
+      },
+      {
+        "feature": "Seat comfort",
+        "gain": 85255.928249
+      },
+      {
+        "feature": "__auto_rating_mean",
+        "gain": 73727.939324
+      },
+      {
+        "feature": "Gate location",
+        "gain": 72696.139566
+      },
+      {
+        "feature": "On-board service",
+        "gain": 72329.91897
+      },
+      {
+        "feature": "Age",
+        "gain": 58639.801618
+      },
+      {
+        "feature": "Cleanliness",
+        "gain": 42546.487297
+      },
+      {
+        "feature": "Departure/Arrival time convenient",
+        "gain": 39475.148753
+      },
+      {
+        "feature": "Flight Distance",
+        "gain": 36769.319084
+      },
+      {
+        "feature": "Leg room service",
+        "gain": 27868.713961
+      },
+      {
+        "feature": "__rating_std",
+        "gain": 22456.038773
+      },
+      {
+        "feature": "__rating_low_count",
+        "gain": 18325.305541
+      },
+      {
+        "feature": "Arrival Delay in Minutes",
+        "gain": 8631.217459
+      },
+      {
+        "feature": "__auto_rating_min",
+        "gain": 4743.103568
+      },
+      {
+        "feature": "Food and drink",
+        "gain": 4401.244289
+      },
+      {
+        "feature": "Gender_Female",
+        "gain": 1741.109905
+      },
+      {
+        "feature": "Class_Eco Plus",
+        "gain": 1040.048858
+      },
+      {
+        "feature": "__rating_range",
+        "gain": 770.263058
+      },
+      {
+        "feature": "__auto_total_delay",
+        "gain": 622.347122
+      },
+      {
+        "feature": "__auto_max_delay",
+        "gain": 465.129149
+      },
+      {
+        "feature": "__delay_difference",
+        "gain": 377.565484
+      },
+      {
+        "feature": "Gender_Male",
+        "gain": 371.875034
+      },
+      {
+        "feature": "Departure Delay in Minutes",
+        "gain": 148.915801
+      },
+      {
+        "feature": "__any_delay",
+        "gain": 19.7341
+      },
+      {
+        "feature": "Gender_nan",
+        "gain": 0.0
+      },
+      {
+        "feature": "Customer Type_nan",
+        "gain": 0.0
+      },
+      {
+        "feature": "Type of Travel_nan",
+        "gain": 0.0
+      },
+      {
+        "feature": "Class_nan",
+        "gain": 0.0
+      }
+    ]
+  }
+}

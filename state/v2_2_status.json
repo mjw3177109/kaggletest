@@ -1,0 +1,74 @@
+{
+  "version": "V2.2",
+  "competition": "playground-series-s6e10",
+  "updated_at": "2026-10-18T02:31:08.397294+00:00",
+  "incumbent_cv": 0.9582786744608702,
+  "incumbent_lb": "0.95774",
+  "kernel": "mjw3177109/kas-v22-playground-series-s6e10",
+  "kernel_url": "https://www.kaggle.com/code/mjw3177109/kas-v22-playground-series-s6e10",
+  "stage": "skipped_no_cv_gain",
+  "kernel_state": "kernel_complete",
+  "metrics": {
+    "target": "satisfaction",
+    "train_rows": 699635,
+    "test_rows": 299844,
+    "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+    "seed": 20261018,
+    "tuning": {
+      "method": "Optuna TPE",
+      "trials_requested": 8,
+      "trials_completed": 8,
+      "sample_rows": 120000
+    },
+    "candidates": {
+      "tuned_lightgbm": {
+        "cv_auc": 0.9579447715588472,
+        "fold_auc": [
+          0.9574303757650163,
+          0.9583476159228864,
+          0.9580844825568526
+        ],
+        "features": 35,
+        "params": {
+          "learning_rate": 0.02570708527112287,
+          "num_leaves": 24,
+          "min_child_samples": 32,
+          "reg_lambda": 7.994649098844313,
+          "reg_alpha": 2.1963841298389903,
+          "colsample_bytree": 0.7298786847053476
+        }
+      },
+      "tuned_extended": {
+        "cv_auc": 0.957886116417406,
+        "fold_auc": [
+          0.9573770684000829,
+          0.9583438150244694,
+          0.9579667810283113
+        ],
+        "features": 41,
+        "params": {
+          "learning_rate": 0.02570708527112287,
+          "num_leaves": 24,
+          "min_child_samples": 32,
+          "reg_lambda": 7.994649098844313,
+          "reg_alpha": 2.1963841298389903,
+          "colsample_bytree": 0.7298786847053476
+        }
+      }
+    },
+    "best_candidate": "tuned_lightgbm",
+    "best_cv_auc": 0.9579447715588472,
+    "validation_metric": "roc_auc",
+    "feature_engineering": "V2.1 compatible and extended row-wise variant"
+  },
+  "cv_gate": {
+    "candidate_cv": 0.9579447715588472,
+    "champion_cv": 0.9582786744608702,
+    "delta": -0.0003339029020230644,
+    "min_delta": 8e-05,
+    "passed": false
+  },
+  "submitted": false,
+  "champion": "V2.1 ensemble",
+  "decision": "No submission: CV threshold not met"
+}

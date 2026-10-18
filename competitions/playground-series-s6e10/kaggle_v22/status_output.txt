@@ -1,0 +1,2 @@
+mjw3177109/kas-v22-playground-series-s6e10 has status "KernelWorkerStatus.COMPLETE"
+
