@@ -87,8 +87,22 @@ jobs:
             exit 0
           fi
           git commit -m "bot: recover V2.3 existing Kaggle TPU results"
-          git pull --rebase origin main
-          git push origin main
+          for attempt in 1 2 3 4 5; do
+            echo "Push attempt $attempt/5"
+            git fetch origin main
+            if ! git rebase origin/main; then
+              echo "Conflict while rebasing diagnostic outputs"
+              git rebase --abort || true
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              echo "Diagnostic results stored on main"
+              exit 0
+            fi
+            sleep $((attempt * 2))
+          done
+          echo "Could not push diagnostics after five bounded retries"
+          exit 1
 
       - name: Print verified stage
         if: steps.guard.outputs.should_run == 'true'
