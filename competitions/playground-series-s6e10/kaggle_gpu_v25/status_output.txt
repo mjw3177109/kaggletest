@@ -1,1 +1,1 @@
-mjw3177109/kas-v25-gpu-te-playground-series-s6e10 has status "KernelWorkerStatus.QUEUED"
+mjw3177109/kas-v25-gpu-te-playground-series-s6e10 has status "KernelWorkerStatus.COMPLETE"

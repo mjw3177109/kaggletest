@@ -1,10 +1,10 @@
 # V2.5｜研究高分选手后的 GPU 特征工程实验
 
-- 生成时间 UTC：2026-10-18T08:17:45.594189+00:00
+- 生成时间 UTC：2026-10-18T08:34:55.555020+00:00
 - 比赛：playground-series-s6e10
 - Kaggle Notebook：https://www.kaggle.com/code/mjw3177109/kas-v25-gpu-te-playground-series-s6e10
-- 运行阶段：kernel_queued
-- 真实 T4：尚未确认（Kernel 尚未执行）；尚未验证
+- 运行阶段：complete
+- 真实 T4：True；['Tesla T4, 15360 MiB', 'Tesla T4, 15360 MiB']
 
 ## 为什么改进？
 
@@ -17,22 +17,19 @@ V2.5 新增 5 折内部交叉拟合 TE；每个外层验证折只使用对应训
 - 原冠军：V2.3 GPU gpu_xgb_depth7
 - 原冠军 CV：0.9585317063733847
 - 原冠军 Public LB：0.95819
-- LightGBM + XGBoost GPU 最佳模型：尚未完成
-- 新 3-Fold OOF：尚未完成
-- CV 超越差值：暂无
+- LightGBM + XGBoost GPU 最佳模型：blend_rank
+- 新 3-Fold OOF：0.9606599604603964
+- CV 超越差值：0.0021282540870116717
 - 门槛：0.0001
-- 达标：False
-- 是否已提交：False
-- 新 Public LB：尚未提交/未评分
-- 线上冠军：V2.3 GPU gpu_xgb_depth7
+- 达标：True
+- 是否已提交：True
+- 新 Public LB：0.96035
+- 线上冠军：V2.5 blend_rank
 
 ## 当前已评分冠军对应的官方排名
 
-- 当前最佳 Public LB：**0.95819**
-- 当前 Public 排名：**第 1599 名 / 2222 支队伍**
-- 官方认证来源：kaggle_authenticated_userRank
-- 核验时间 UTC：2026-10-18T08:18:12.133008+00:00
-- 注：这是现有 V2.3 GPU 冠军的成绩；V2.5 仍然处于实验队列中，未有新提交。
+- 当前 Public 排名：**未核实（需按最新成绩重新查询）**
+- 官方排名查询：reports/score_rank_latest.md
 
 ## 同行参考（思路参考，不照搬外部预测文件）
 
@@ -42,7 +39,9 @@ V2.5 新增 5 折内部交叉拟合 TE；每个外层验证折只使用对应训
 
 任何外部公开方法或成绩都不是本站实测。上线是否有效，只以本次真实 OOF 和官方 Public LB 判断。
 
-说明：Notebook 还在等待 Kaggle 分配 GPU；并非训练中。
-
-## 错误/状态诊断
-mjw3177109/kas-v25-gpu-te-playground-series-s6e10 has status "KernelWorkerStatus.QUEUED"
+| 候选 | 同3折 OOF AUC |
+|---|---:|
+| lightgbm | 0.96053020 |
+| xgboost | 0.96050532 |
+| blend_mean | 0.96065257 |
+| blend_rank | 0.96065996 |

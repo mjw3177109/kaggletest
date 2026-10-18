@@ -1,15 +1,97 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.5",
-  "updated_at": "2026-10-18T08:17:45.593980+00:00",
+  "updated_at": "2026-10-18T08:34:55.554572+00:00",
   "incumbent_cv": 0.9585317063733847,
   "incumbent_lb": 0.95819,
   "incumbent_model": "V2.3 GPU gpu_xgb_depth7",
-  "champion": "V2.3 GPU gpu_xgb_depth7",
-  "submitted": false,
+  "champion": "V2.5 blend_rank",
+  "submitted": true,
   "kernel": "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
   "kernel_url": "https://www.kaggle.com/code/mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
-  "stage": "kernel_queued",
-  "kernel_state": "kernel_queued",
-  "error": "mjw3177109/kas-v25-gpu-te-playground-series-s6e10 has status \"KernelWorkerStatus.QUEUED\""
+  "stage": "complete",
+  "kernel_state": "kernel_complete",
+  "hardware": {
+    "devices": [
+      "Tesla T4, 15360 MiB",
+      "Tesla T4, 15360 MiB"
+    ],
+    "ok": true
+  },
+  "metrics": {
+    "competition": "playground-series-s6e10",
+    "target": "satisfaction",
+    "gpu_verified": true,
+    "hardware": {
+      "devices": [
+        "Tesla T4, 15360 MiB",
+        "Tesla T4, 15360 MiB"
+      ],
+      "ok": true
+    },
+    "actual_xgboost_device": "cuda:0",
+    "train_rows": 699635,
+    "test_rows": 299844,
+    "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+    "folds": 3,
+    "inner_encoding_folds": 5,
+    "leakage_safe_target_encoding": true,
+    "features_per_fold": 92,
+    "fold_results": [
+      {
+        "fold": 1,
+        "lgb_auc": 0.9601227772819099,
+        "xgb_auc": 0.9600739050707277,
+        "xgb_device": "cuda:0",
+        "features": 92
+      },
+      {
+        "fold": 2,
+        "lgb_auc": 0.9607553165447926,
+        "xgb_auc": 0.9607318750825351,
+        "xgb_device": "cuda:0",
+        "features": 92
+      },
+      {
+        "fold": 3,
+        "lgb_auc": 0.9607274448389885,
+        "xgb_auc": 0.9607714733342982,
+        "xgb_device": "cuda:0",
+        "features": 92
+      }
+    ],
+    "models": {
+      "lightgbm": 0.9605301966924407,
+      "xgboost": 0.9605053165238824,
+      "blend_mean": 0.9606525709692346,
+      "blend_rank": 0.9606599604603964
+    },
+    "best_model": "blend_rank",
+    "best_cv_auc": 0.9606599604603964,
+    "elapsed_seconds": 377.3,
+    "new_methods": [
+      "all-original-columns exact-value 5-fold target encoding",
+      "flight distance training-fold-only profile",
+      "service ratings by traveler segment",
+      "numeric class-group target encoding",
+      "fixed rank and raw blending candidates"
+    ]
+  },
+  "cv_gate": {
+    "candidate": 0.9606599604603964,
+    "benchmark": 0.9585317063733847,
+    "delta": 0.0021282540870116717,
+    "threshold": 0.0001,
+    "passed": true
+  },
+  "latest_submission": {
+    "ref": 57346852,
+    "fileName": "candidate_submission.csv",
+    "date": "2026-10-18T08:34:41.130000",
+    "description": "KAS V2.5 TE blend_rank CV=0.960660",
+    "status": "SubmissionStatus.COMPLETE",
+    "publicScore": "0.96035",
+    "privateScore": ""
+  },
+  "public_lb_delta": 0.00216
 }
