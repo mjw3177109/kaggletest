@@ -2,12 +2,6 @@ name: Kaggle V2.3 TPU Recovery
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/kaggle_v23_recover.yml"
-  schedule:
-    - cron: "27 */3 * * *"
 
 permissions:
   contents: write
