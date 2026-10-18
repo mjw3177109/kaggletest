@@ -2,7 +2,15 @@
 from __future__ import annotations
 
 from pathlib import Path
-from v2_1_pipeline import ROOT, load_json
+import json
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def load_json(path, default=None):
+    if not Path(path).exists():
+        return default
+    return json.loads(Path(path).read_text(encoding="utf-8"))
 
 START = "<!-- V2.2 START -->"
 END = "<!-- V2.2 END -->"
