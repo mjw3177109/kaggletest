@@ -2,9 +2,19 @@ name: Kaggle Scout
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/kaggle_scout.yml"
+  schedule:
+    - cron: "17 2 * * *"
 
 permissions:
   contents: write
+
+concurrency:
+  group: kaggle-scout
+  cancel-in-progress: false
 
 jobs:
   scout:
@@ -50,4 +60,18 @@ jobs:
             exit 0
           fi
           git commit -m "bot: refresh Kaggle competition scout"
-          git push
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              echo "Conflicting scout report changes; leaving committed history intact"
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              echo "Scout state saved"
+              exit 0
+            fi
+            sleep $((attempt * 2))
+          done
+          echo "Unable to push scout results after retries"
+          exit 1
