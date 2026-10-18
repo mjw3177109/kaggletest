@@ -47,7 +47,7 @@ jobs:
           python -m unittest discover -s tests -p test_v24_dual_ladder.py -v
           python -m unittest discover -s tests -p test_v24_rank_tracker.py -v
 
-      - name: Query authenticated Kaggle rank and calculate scorecard
+      - name: Query authenticated Kaggle rank, team count and current scored submission
         run: python kaggle_agent/v24_rank_tracker.py
 
       - name: Verify joined competitions and live PUBLIC rank
@@ -102,6 +102,7 @@ jobs:
           print('Kaggle official public rank:',score.get('rank'))
           print('Ranked teams:',score.get('ranked_teams'))
           print('Rank verified at:',score.get('checked_at'))
+          print('Rank verified by:',score.get('rank_source'))
           print('Kaggle ladder rank:',d.get('rank'))
           print('Stage:',d.get('status'))
           print('Deadline:',d.get('active_deadline'))
