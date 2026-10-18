@@ -141,7 +141,7 @@ def score_report(status):
 
 def main():
     prev=load_json(STATE,{}) or {}
-    if prev.get("stage") in ("complete","skipped_no_cv_gain","submission_pending","submission_recovered"):
+    if prev.get("stage") in ("complete","skipped_no_cv_gain","submission_recovered"):
         print("V2.7 terminal state exists; refuse duplicate work and submission")
         return
     v25,v26=ready()
