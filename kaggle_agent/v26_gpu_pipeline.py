@@ -134,8 +134,33 @@ def main(recover_only=False):
     slug=str(baseline["competition"])
     champ=champion_for(slug)
     prev=load_json(STATE,{}) or {}
+    # A scored submission can remain PENDING briefly. Requery Kaggle by its
+    # unique submission ref; never train or submit again while awaiting a score.
+    if prev.get("competition")==slug and prev.get("stage")=="submission_pending":
+        pending=prev.get("latest_submission") or {}
+        ref=pending.get("ref")
+        if ref is None:
+            raise RuntimeError("Pending V2.6 submission missing Kaggle ref; manual review required")
+        actual=latest_submission(slug)
+        if actual and str(actual.get("ref"))==str(ref):
+            pending=actual
+        # Prefer matching ref, not an unrelated newer submission.
+        score=pending.get("publicScore")
+        result=dict(prev)
+        if score not in (None,""):
+            result["latest_submission"]=pending
+            result["submitted"]=True
+            result["public_lb_delta"]=round(float(score)-float(prev["incumbent_lb"]),8)
+            if float(score)>float(prev["incumbent_lb"]):
+                result["champion"]="V2.6 "+str((prev.get("metrics") or {}).get("best_model","unknown"))
+            result["stage"]="complete"
+        result["updated_at"]=now()
+        write_json(STATE,result)
+        report(result)
+        print("V2.6 existing submission status:", result["stage"])
+        return
     if prev.get("competition")==slug and prev.get("stage") in (
-        "complete","skipped_no_cv_gain","submission_pending","awaiting_approval"
+        "complete","skipped_no_cv_gain","awaiting_approval"
     ):
         print("V2.6 already evaluated: refusing duplicate compute/submission")
         return
