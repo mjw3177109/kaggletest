@@ -27,17 +27,40 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+      - name: Verify prerequisite GPU submissions and current competition
+        id: gate
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,datetime
+          from pathlib import Path
+          def get(n):
+            p=Path("state")/n
+            return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+          a,b,c=get("v2_5_status.json"),get("v2_6_status.json"),get("v2_7_status.json")
+          focus=get("dual_ladder.json").get("active_competition")
+          terminal={"complete","skipped_no_cv_gain"}
+          allowed=(a.get("stage")=="complete" and b.get("stage") in terminal
+                   and c.get("stage") not in terminal
+                   and focus=="playground-series-s6e10"
+                   and datetime.datetime.now(datetime.timezone.utc) <
+                       datetime.datetime(2026,10,31,23,59,tzinfo=datetime.timezone.utc))
+          print("should_run="+str(allowed).lower())
+          PY
       - uses: actions/setup-python@v5
+        if: steps.gate.outputs.should_run == 'true'
         with:
           python-version: "3.11"
       - name: Install dependencies
+        if: steps.gate.outputs.should_run == 'true'
         run: pip install -r requirements.txt numpy pandas scipy scikit-learn
       - name: Run offline OOF safety tests
+        if: steps.gate.outputs.should_run == 'true'
         run: python -m unittest discover -s tests -p test_v27.py -v
       - name: Evaluate fixed candidate from owner's prior kernels
+        if: steps.gate.outputs.should_run == 'true'
         run: python kaggle_agent/v27_oof_blender.py
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.gate.outputs.should_run == 'true'
         with:
           name: v27-report
           path: |
