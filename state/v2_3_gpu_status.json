@@ -10,7 +10,6 @@
   "kernel_url": "https://www.kaggle.com/code/mjw3177109/kas-v23-gpu-playground-series-s6e10",
   "stage": "complete",
   "kernel_state": "kernel_complete",
-  "error": "mjw3177109/kas-v23-gpu-playground-series-s6e10 has status \"KernelWorkerStatus.QUEUED\"",
   "hardware": {
     "requested": "NvidiaTeslaT4",
     "ok": true,
@@ -69,7 +68,7 @@
           "max_depth": 5,
           "learning_rate": 0.035,
           "min_child_weight": 3,
-          "reg_lambda": 5.0
+          "reg_lambda": 5
         }
       },
       "gpu_xgb_depth7": {
@@ -98,7 +97,7 @@
           "max_depth": 7,
           "learning_rate": 0.025,
           "min_child_weight": 5,
-          "reg_lambda": 8.0
+          "reg_lambda": 8
         }
       }
     },
