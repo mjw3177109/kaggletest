@@ -11,10 +11,6 @@ on:
         options:
           - run
           - recover_existing
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/kaggle_v23_tpu.yml"
 
 permissions:
   contents: write
@@ -66,12 +62,6 @@ jobs:
             python kaggle_agent/v23_tpu_pipeline.py
           fi
 
-      - name: Refresh beginner guides
-        run: |
-          python kaggle_agent/beginner_guide.py
-          python kaggle_agent/v22_guide.py
-          python kaggle_agent/v23_tpu_guide.py
-
       - name: Commit state, model diagnostics and beginner manuals
         shell: bash
         run: |
@@ -99,7 +89,7 @@ jobs:
           print("V2.3:", status, "Actual TPU:", (state.get("hardware") or {}).get("actual"))
           expected = {
               "complete", "skipped_no_cv_gain", "submission_pending",
-              "awaiting_submission_approval", "tpu_unavailable", "kernel_running"
+              "awaiting_submission_approval", "tpu_unavailable", "kernel_running", "kernel_queued"
           }
           if status not in expected:
               raise SystemExit("V2.3 failed; committed report contains the actual error")
