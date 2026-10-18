@@ -16,8 +16,8 @@ from v22_pipeline import kernel_handle, validate_submission
 from v23_tpu_pipeline import poll_kernel, check_cv
 from v24_rank_tracker import score_rank_lines
 
-STATE=ROOT/"state"/"v2_5_status.json"
-REPORT=ROOT/"reports"/"v2_5_latest.md"
+STATE=ROOT/"state"/"v2_6_status.json"
+REPORT=ROOT/"reports"/"v2_6_latest.md"
 
 
 def now():
