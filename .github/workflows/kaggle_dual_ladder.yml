@@ -12,6 +12,7 @@ on:
     workflows:
       - "Kaggle Auto Scientist V2.3 GPU"
       - "Kaggle V2.3 TPU Recovery"
+      - "Kaggle Auto Scientist V2.5 GPU Feature Engineering"
     types: [completed]
 
 permissions:
