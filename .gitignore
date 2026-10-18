@@ -38,6 +38,9 @@ competitions/*/results_v21/raw/
 competitions/*/results_v22/raw/
 competitions/*/results_v23/raw/
 competitions/*/results_v25/raw/
+competitions/*/results_v26/raw/
+competitions/*/results_v26/*.csv
+competitions/*/results_v26/*.npz
 competitions/*/results_v25/*.csv
 competitions/*/results_v25/*.npz
 competitions/*/results_v23/*.csv
