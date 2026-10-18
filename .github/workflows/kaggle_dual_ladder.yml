@@ -14,6 +14,7 @@ on:
       - "Kaggle V2.3 TPU Recovery"
       - "Kaggle Auto Scientist V2.5 GPU Feature Engineering"
       - "Kaggle Auto Scientist V2.6 GPU Frequency Challenger"
+      - "Kaggle V2.7 OOF Fusion"
     types: [completed]
 
 permissions:
@@ -71,6 +72,7 @@ jobs:
             reports/score_rank_latest.md
             reports/v2_5_latest.md
             reports/v2_6_latest.md
+            reports/v2_7_latest.md
             reports/v2_3_gpu_latest.md
             reports/v2_3_latest.md
           if-no-files-found: warn
@@ -81,7 +83,7 @@ jobs:
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
           # Optional experiment reports might not exist until their Kaggle runs finish.
-          for file in state/dual_ladder.json reports/dual_ladder_latest.md state/score_rank_latest.json reports/score_rank_latest.md reports/v2_5_latest.md reports/v2_6_latest.md reports/v2_3_gpu_latest.md reports/v2_3_latest.md; do
+          for file in state/dual_ladder.json reports/dual_ladder_latest.md state/score_rank_latest.json reports/score_rank_latest.md reports/v2_5_latest.md reports/v2_6_latest.md reports/v2_7_latest.md reports/v2_3_gpu_latest.md reports/v2_3_latest.md; do
             if test -f "$file"; then git add -A -- "$file"; fi
           done
           if git diff --cached --quiet; then
