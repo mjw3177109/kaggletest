@@ -53,7 +53,10 @@ jobs:
           scheduled=os.environ.get("EVENT_NAME") == "schedule"
           deadline=datetime.datetime.now(datetime.timezone.utc) < datetime.datetime(2026, 11, 1, tzinfo=datetime.timezone.utc)
           active=current in ("kernel_queued", "kernel_running")
-          allowed=(not scheduled) or (deadline and active)
+          ladder_p=Path("state/dual_ladder.json")
+          ladder=json.loads(ladder_p.read_text(encoding="utf-8")) if ladder_p.exists() else {}
+          still_current=ladder.get("active_competition", d.get("competition")) == d.get("competition")
+          allowed=(not scheduled) or (deadline and active and still_current)
           mode="recover_existing" if scheduled else os.environ.get("INPUT_MODE", "run")
           print("should_run=" + ("true" if allowed else "false"))
           print("mode=" + mode)
