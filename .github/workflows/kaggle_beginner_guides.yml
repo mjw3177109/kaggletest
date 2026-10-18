@@ -11,6 +11,7 @@ on:
       - "Kaggle Auto Scientist V2"
       - "Kaggle Auto Scientist V2.1"
       - "Kaggle Auto Scientist V2.1 Recovery"
+      - "Kaggle Auto Scientist V2.2"
     types:
       - completed
 
@@ -37,7 +38,9 @@ jobs:
           python-version: "3.11"
 
       - name: Refresh beginner guides for all competitions
-        run: python kaggle_agent/beginner_guide.py
+        run: |
+          python kaggle_agent/beginner_guide.py
+          python kaggle_agent/v22_guide.py
 
       - name: Commit guide updates
         shell: bash
