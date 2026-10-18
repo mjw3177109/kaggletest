@@ -13,6 +13,7 @@ import yaml
 
 from v2_1_pipeline import ROOT, load_json, write_json, run, latest_submission
 from v22_pipeline import kernel_handle, validate_submission
+from v24_rank_tracker import score_rank_lines
 
 STATE = ROOT / "state" / "v2_3_status.json"
 REPORT = ROOT / "reports" / "v2_3_latest.md"
@@ -80,6 +81,13 @@ def write_report(status):
         "V2.1 未存储逐行 OOF 预测，因此不能声称已比较了 TPU/树模型的联合融合分数。",
         "TPU 线单独验证，不覆盖 V2.1 树模型。",
     ]
+    lines.extend([
+        "", "## Kaggle 当前排名（和 Public LB 一起报告）", "",
+        *score_rank_lines(
+            status.get("competition"),
+            (status.get("latest_submission") or {}).get("publicScore")
+        ),
+    ])
     if status.get("stage") == "kernel_queued":
         lines.extend([
             "", "## Kaggle 仍在排队", "",
