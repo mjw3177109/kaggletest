@@ -8,6 +8,11 @@ on:
       - ".github/workflows/kaggle_dual_ladder.yml"
   schedule:
     - cron: "09 */2 * * *"
+  workflow_run:
+    workflows:
+      - "Kaggle Auto Scientist V2.3 GPU"
+      - "Kaggle V2.3 TPU Recovery"
+    types: [completed]
 
 permissions:
   contents: write
@@ -18,6 +23,7 @@ concurrency:
 
 jobs:
   rank-and-rotate:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -37,8 +43,12 @@ jobs:
 
       - name: Test fail-closed top-three gate
         run: |
-          python -m py_compile kaggle_agent/v24_dual_ladder.py
+          python -m py_compile kaggle_agent/v24_dual_ladder.py kaggle_agent/v24_rank_tracker.py
           python -m unittest discover -s tests -p test_v24_dual_ladder.py -v
+          python -m unittest discover -s tests -p test_v24_rank_tracker.py -v
+
+      - name: Query authenticated Kaggle rank and calculate scorecard
+        run: python kaggle_agent/v24_rank_tracker.py
 
       - name: Verify joined competitions and live PUBLIC rank
         run: python kaggle_agent/v24_dual_ladder.py
@@ -51,6 +61,8 @@ jobs:
           path: |
             state/dual_ladder.json
             reports/dual_ladder_latest.md
+            state/score_rank_latest.json
+            reports/score_rank_latest.md
           if-no-files-found: warn
 
       - name: Preserve independent rank and transition report
@@ -58,7 +70,7 @@ jobs:
         run: |
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
-          git add -A -- state/dual_ladder.json reports/dual_ladder_latest.md
+          git add -A -- state/dual_ladder.json reports/dual_ladder_latest.md state/score_rank_latest.json reports/score_rank_latest.md
           if git diff --cached --quiet; then
             echo "Leaderboard has no material updates"
             exit 0
@@ -85,7 +97,12 @@ jobs:
           import json
           from pathlib import Path
           d=json.loads(Path('state/dual_ladder.json').read_text(encoding='utf-8'))
-          print('Kaggle public rank:',d.get('rank'))
+          score=json.loads(Path('state/score_rank_latest.json').read_text(encoding='utf-8'))
+          print('Kaggle latest public score:',(score.get('score') or {}).get('public_score'))
+          print('Kaggle official public rank:',score.get('rank'))
+          print('Ranked teams:',score.get('ranked_teams'))
+          print('Rank verified at:',score.get('checked_at'))
+          print('Kaggle ladder rank:',d.get('rank'))
           print('Stage:',d.get('status'))
           print('Deadline:',d.get('active_deadline'))
           print('Hours remaining:',d.get('hours_to_deadline'))
