@@ -14,7 +14,7 @@ on:
     paths:
       - ".github/workflows/kaggle_v26_gpu.yml"
   schedule:
-    - cron: "23 */4 * * *"
+    - cron: "23 * * * *"
 
 permissions:
   contents: write
