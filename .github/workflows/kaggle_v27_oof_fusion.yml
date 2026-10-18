@@ -67,3 +67,25 @@ jobs:
             state/v2_7_status.json
             reports/v2_7_latest.md
           if-no-files-found: warn
+
+      - name: Persist result and submission decision
+        if: steps.gate.outputs.should_run == 'true'
+        shell: bash
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          for f in state/v2_7_status.json reports/v2_7_latest.md; do
+            if test -f "$f"; then git add -- "$f"; fi
+          done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: V2.7 CPU OOF paired fusion decision"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              exit 1
+            fi
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
