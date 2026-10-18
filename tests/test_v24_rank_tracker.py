@@ -64,6 +64,30 @@ class ScoreRankTests(unittest.TestCase):
         self.assertIn("官方排名暂未核实",r.render(snap))
         self.assertNotIn("第 1 名",r.render(snap))
 
+    def test_score_change_invalidates_previous_rank(self):
+        # Do not assert rank of a *new* GPU submission from an old score.
+        previous_state=r.STATE
+        try:
+            from tempfile import TemporaryDirectory
+            with TemporaryDirectory() as directory:
+                r.STATE=Path(directory)/"score.json"
+                r.save(r.STATE,{
+                    "competition":"playground-series-s6e10",
+                    "score":{"public_score":0.95819},
+                    "rank":1596,"rank_verified":True,"ranked_teams":2221,
+                    "checked_at":"2026-10-18T08:04:40+00:00",
+                    "rank_source":"kaggle_authenticated_userRank",
+                })
+                stale=r.score_rank_lines("playground-series-s6e10",0.9584)
+                self.assertIn("未核实",stale[0])
+                current=r.score_rank_lines("playground-series-s6e10",0.95819)
+                self.assertIn("第 1596 名",current[0])
+                self.assertIn("2221",current[0])
+                other=r.score_rank_lines("a-different-contest",0.95819)
+                self.assertIn("未核实",other[0])
+        finally:
+            r.STATE=previous_state
+
     def test_successful_rank_print(self):
         snap={"competition":"playground-series-s6e10",
               "rank":23,"ranked_teams":480,
