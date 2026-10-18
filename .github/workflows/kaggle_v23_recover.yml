@@ -42,7 +42,10 @@ jobs:
           s=d.get("stage")
           before_deadline=datetime.datetime.now(datetime.timezone.utc) < datetime.datetime(2026, 11, 1, tzinfo=datetime.timezone.utc)
           active=s in ("kernel_queued", "kernel_running")
-          should=(active and before_deadline) or ( __import__("os").environ.get("EVENT_NAME") == "workflow_dispatch" )
+          ladder_p=Path("state/dual_ladder.json")
+          ladder=json.loads(ladder_p.read_text(encoding="utf-8")) if ladder_p.exists() else {}
+          still_current=ladder.get("active_competition", d.get("competition")) == d.get("competition")
+          should=(active and before_deadline and still_current) or ( __import__("os").environ.get("EVENT_NAME") == "workflow_dispatch" )
           print("should_run=" + ("true" if should else "false"))
           PY
 
