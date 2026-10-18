@@ -1,6 +1,6 @@
 agent:
   name: Kaggle Auto Scientist
-  version: V2.2
+  version: V2.3
   mode: auto_compete
 
 scout:
@@ -38,6 +38,21 @@ v22:
   auto_submit: true
   max_new_submissions: 1
   use_gpu: false
+
+v23:
+  enabled: true
+  accelerator: TpuV5E8
+  model: jax_mlp
+  full_folds: 3
+  seed: 20261018
+  kernel_timeout_seconds: 3600
+  poll_timeout_seconds: 2950
+  min_cv_improvement: 0.00010
+  auto_submit: true
+  max_new_submissions: 1
+  fail_if_no_real_tpu: true
+  keep_v21_tree_champion: true
+  cpu_fallback: false
 
 safety:
   auto_accept_rules: false
