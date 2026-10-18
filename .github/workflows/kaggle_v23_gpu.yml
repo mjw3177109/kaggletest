@@ -1,0 +1,142 @@
+name: Kaggle Auto Scientist V2.3 GPU
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "run = launch GPU if new; recover_existing = check saved GPU Notebook only"
+        type: choice
+        default: run
+        options:
+          - run
+          - recover_existing
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/kaggle_v23_gpu.yml"
+  schedule:
+    - cron: "51 */3 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v23-gpu
+  cancel-in-progress: false
+
+jobs:
+  gpu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Decide whether GPU needs recovery
+        id: gate
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_MODE: ${{ inputs.mode || 'run' }}
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import os, json, datetime
+          from pathlib import Path
+          p=Path("state/v2_3_gpu_status.json")
+          d=json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+          current=d.get("stage")
+          scheduled=os.environ.get("EVENT_NAME") == "schedule"
+          deadline=datetime.datetime.now(datetime.timezone.utc) < datetime.datetime(2026, 11, 1, tzinfo=datetime.timezone.utc)
+          active=current in ("kernel_queued", "kernel_running")
+          allowed=(not scheduled) or (deadline and active)
+          mode="recover_existing" if scheduled else os.environ.get("INPUT_MODE", "run")
+          print("should_run=" + ("true" if allowed else "false"))
+          print("mode=" + mode)
+          PY
+
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.should_run == 'true'
+        with:
+          python-version: "3.11"
+
+      - name: Install control dependencies
+        if: steps.gate.outputs.should_run == 'true'
+        run: pip install -r requirements.txt scikit-learn
+
+      - name: Test independent GPU code and Kaggle authentication
+        if: steps.gate.outputs.should_run == 'true'
+        run: |
+          python -m py_compile kaggle_agent/v23_gpu_train.py kaggle_agent/v23_gpu_pipeline.py kaggle_agent/v23_gpu_guide.py
+          python -m unittest discover -s tests -p test_v23_gpu.py -v
+          test -n "$KAGGLE_API_TOKEN"
+          kaggle competitions list --category playground --page-size 2 --format json >/dev/null
+
+      - name: Start or safely recover Kaggle NVIDIA T4 training
+        if: steps.gate.outputs.should_run == 'true'
+        shell: bash
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          if [ "$MODE" = "recover_existing" ]; then
+            python kaggle_agent/v23_gpu_pipeline.py --recover-only
+          else
+            python kaggle_agent/v23_gpu_pipeline.py
+          fi
+
+      - name: Always preserve GPU state and diagnostic outputs
+        if: always() && steps.gate.outputs.should_run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: v23-gpu-diagnostics
+          path: |
+            state/v2_3_gpu_status.json
+            reports/v2_3_gpu_latest.md
+            competitions/playground-series-s6e10/kaggle_gpu_v23/
+            competitions/playground-series-s6e10/results_v23_gpu/metrics.json
+            competitions/playground-series-s6e10/results_v23_gpu/hardware.json
+          if-no-files-found: warn
+
+      - name: Commit GPU only (do not touch beginner guide or CPU/TPU results)
+        if: steps.gate.outputs.should_run == 'true'
+        shell: bash
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_3_gpu_status.json reports/v2_3_gpu_latest.md competitions/
+          if git diff --cached --quiet; then
+            echo "No GPU state changes."
+            exit 0
+          fi
+          git commit -m "bot: independent V2.3 GPU Kaggle experiment"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              echo "GPU results written back"
+              exit 0
+            fi
+            sleep $((attempt * 2))
+          done
+          echo "Git write-back conflict; diagnostic artifact preserved"
+          exit 1
+
+      - name: Read final GPU status
+        if: steps.gate.outputs.should_run == 'true'
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("state/v2_3_gpu_status.json").read_text(encoding="utf-8"))
+          print("GPU status:", d.get("stage"))
+          print("Confirmed GPU:", (d.get("hardware") or {}).get("devices"))
+          print("GPU CV:", (d.get("metrics") or {}).get("best_cv_auc"))
+          print("Submitted:", d.get("submitted"))
+          PY
