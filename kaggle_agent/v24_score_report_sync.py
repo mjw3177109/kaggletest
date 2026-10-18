@@ -13,6 +13,8 @@ from pathlib import Path
 from v24_rank_tracker import ROOT, STATE as RANK_STATE, score_rank_lines
 
 REPORTS = [
+    ("state/v2_6_status.json", "reports/v2_6_latest.md",
+     "## 当前已评分冠军对应的官方排名"),
     ("state/v2_5_status.json", "reports/v2_5_latest.md",
      "## 当前已评分冠军对应的官方排名"),
     ("state/v2_3_gpu_status.json", "reports/v2_3_gpu_latest.md",
