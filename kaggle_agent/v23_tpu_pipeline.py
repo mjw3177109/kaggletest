@@ -142,7 +142,7 @@ def main(recover_only=False):
             benchmark_name = gpu.get("champion") or "V2.3 GPU"
     # Every newly scored CUDA champion raises the threshold for TPU.
     # TPU must never use a scarce submission to challenge an obsolete baseline.
-    for filename in ("v2_5_status.json", "v2_6_status.json"):
+    for filename in ("v2_5_status.json", "v2_6_status.json", "v2_8_status.json"):
         contender = load_json(ROOT / "state" / filename, {}) or {}
         m = contender.get("metrics") or {}
         lb = (contender.get("latest_submission") or {}).get("publicScore")
