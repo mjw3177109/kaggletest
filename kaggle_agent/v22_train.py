@@ -221,6 +221,8 @@ def main():
     selected_variant = max(candidates, key=lambda k: candidates[k]["cv_auc"])
     winning = OUT / f"candidate_{selected_variant}.csv"
     (OUT / "candidate_submission.csv").write_bytes(winning.read_bytes())
+    for intermediate in OUT.glob("candidate_tuned_*.csv"):
+        intermediate.unlink(missing_ok=True)
     metrics = {
         "target": target,
         "train_rows": len(train),
