@@ -34,7 +34,9 @@ Thumbs.db
 competitions/*/data/
 competitions/*/runtime/
 competitions/*/results/raw/
+competitions/*/results_v21/raw/
 competitions/*/results/submission.csv
+competitions/*/results_v21/*.csv
 competitions/*/results/*.pkl
 competitions/*/results/*.joblib
 competitions/*/results/*.bin
