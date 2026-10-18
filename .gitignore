@@ -36,6 +36,8 @@ competitions/*/runtime/
 competitions/*/results/raw/
 competitions/*/results_v21/raw/
 competitions/*/results_v22/raw/
+competitions/*/results_v23/raw/
+competitions/*/results_v23/*.csv
 competitions/*/results_v22/*.csv
 competitions/*/results/submission.csv
 competitions/*/results_v21/*.csv

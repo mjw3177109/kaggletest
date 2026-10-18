@@ -1,0 +1,108 @@
+name: Kaggle Auto Scientist V2.3 TPU
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "run = new TPU notebook; recover_existing = read manually rerun TPU notebook"
+        type: choice
+        required: true
+        default: run
+        options:
+          - run
+          - recover_existing
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/kaggle_v23_tpu.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-auto-scientist-v23-tpu
+  cancel-in-progress: false
+
+jobs:
+  train-tpu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Kaggle controller dependencies (NOT the TPU runtime)
+        run: pip install -r requirements.txt
+
+      - name: Offline unit tests and syntax checks
+        run: |
+          python -m py_compile kaggle_agent/v23_tpu_train.py kaggle_agent/v23_tpu_pipeline.py kaggle_agent/v23_tpu_guide.py
+          python -m unittest discover -s tests -v
+
+      - name: Verify Kaggle access
+        shell: bash
+        run: |
+          test -n "$KAGGLE_API_TOKEN" || (echo "KAGGLE_API_TOKEN missing" && exit 1)
+          kaggle competitions list --category playground --page-size 2 --format json >/dev/null
+
+      - name: Run independent TPU line or recover existing TPU run
+        shell: bash
+        env:
+          RUN_MODE: ${{ inputs.mode || 'run' }}
+        run: |
+          if [ "$RUN_MODE" = "recover_existing" ]; then
+            python kaggle_agent/v23_tpu_pipeline.py --recover-only
+          else
+            python kaggle_agent/v23_tpu_pipeline.py
+          fi
+
+      - name: Refresh beginner guides
+        run: |
+          python kaggle_agent/beginner_guide.py
+          python kaggle_agent/v22_guide.py
+          python kaggle_agent/v23_tpu_guide.py
+
+      - name: Commit state, model diagnostics and beginner manuals
+        shell: bash
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add state/ reports/ competitions/
+          if git diff --cached --quiet; then
+            echo "No changed V2.3 artifacts"
+            exit 0
+          fi
+          git commit -m "bot: Kaggle V2.3 independent TPU experiment"
+          git pull --rebase origin main
+          git push origin main
+
+      - name: Final status — never mislabel CPU as TPU
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          p = Path("state/v2_3_status.json")
+          if not p.exists():
+              raise SystemExit("Missing V2.3 status output")
+          state = json.loads(p.read_text(encoding="utf-8"))
+          status = state.get("stage")
+          print("V2.3:", status, "Actual TPU:", (state.get("hardware") or {}).get("actual"))
+          expected = {
+              "complete", "skipped_no_cv_gain", "submission_pending",
+              "awaiting_submission_approval", "tpu_unavailable", "kernel_running"
+          }
+          if status not in expected:
+              raise SystemExit("V2.3 failed; committed report contains the actual error")
+          if status == "tpu_unavailable":
+              print("TPU not allocated via Kaggle API: see beginner guide for web UI activation")
+          PY
