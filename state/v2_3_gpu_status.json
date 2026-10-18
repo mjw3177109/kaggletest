@@ -1,0 +1,14 @@
+{
+  "version": "V2.3 GPU",
+  "competition": "playground-series-s6e10",
+  "updated_at": "2026-10-18T07:24:00.487783+00:00",
+  "incumbent_cv": 0.9582786744608702,
+  "incumbent_lb": "0.95774",
+  "champion": "V2.1 ensemble",
+  "submitted": false,
+  "kernel": "mjw3177109/kas-v23-gpu-playground-series-s6e10",
+  "kernel_url": "https://www.kaggle.com/code/mjw3177109/kas-v23-gpu-playground-series-s6e10",
+  "stage": "kernel_queued",
+  "kernel_state": "kernel_queued",
+  "error": "mjw3177109/kas-v23-gpu-playground-series-s6e10 has status \"KernelWorkerStatus.QUEUED\""
+}
