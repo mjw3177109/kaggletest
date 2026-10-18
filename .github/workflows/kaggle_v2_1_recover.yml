@@ -1,0 +1,54 @@
+name: Kaggle Auto Scientist V2.1 Recovery
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "kaggle_agent/v2_1_recover.py"
+      - ".github/workflows/kaggle_v2_1_recover.yml"
+  schedule:
+    - cron: "41 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-auto-scientist-v21-recovery
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Kaggle CLI and analysis dependencies
+        run: pip install -r requirements.txt
+
+      - name: Recover existing kernel without pushing new training
+        run: python kaggle_agent/v2_1_recover.py
+
+      - name: Save recovery status, metrics and reports
+        shell: bash
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A state/ reports/ competitions/
+          if git diff --cached --quiet; then
+            echo "No changes to save."
+            exit 0
+          fi
+          git commit -m "bot: recover Kaggle V2.1 existing kernel results"
+          git pull --rebase origin main
+          git push origin main
