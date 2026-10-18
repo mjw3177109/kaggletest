@@ -56,6 +56,8 @@ def poll_kernel(handle: str, timeout_seconds: int, poll_seconds: int) -> tuple[s
         p = run(["kaggle", "kernels", "status", handle], check=False)
         last = ((p.stdout or "") + "\n" + (p.stderr or "")).strip()
         low = last.lower()
+        if p.returncode != 0 or "permission" in low or "denied" in low:
+            return "access_error", last
         if any(x in low for x in ("complete", "success")):
             return "complete", last
         if any(x in low for x in ("error", "failed", "cancel")):
@@ -254,6 +256,10 @@ print(json.dumps(metrics, indent=2))
 
 def main() -> None:
     cfg = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
+    previous = load_json(ROOT / "state" / "v2_1_status.json", {}) or {}
+    if previous.get("stage") == "complete" and os.environ.get("FORCE_V21_RETRAIN") != "1":
+        print("V2.1 result already completed. Avoiding duplicate training and submission.")
+        return
     v2 = load_json(ROOT / "state" / "v2_status.json", {}) or {}
     if v2.get("stage") != "complete" or not v2.get("competition"):
         raise RuntimeError("V2 must complete before V2.1 can optimize the selected competition")
@@ -267,7 +273,7 @@ def main() -> None:
     now = datetime.now(timezone.utc).isoformat()
 
     username = os.environ.get("KAGGLE_USERNAME") or "mjw3177109"
-    kernel_slug = ("kas-v21-" + re.sub(r"[^a-z0-9-]+", "-", slug.lower()))[:48].rstrip("-")
+    kernel_slug = ("kas-v2-1-" + re.sub(r"[^a-z0-9-]+", "-", slug.lower()))[:48].rstrip("-")
     handle = f"{username}/{kernel_slug}"
     kernel_dir = project / "kaggle_v21"
     if kernel_dir.exists():
