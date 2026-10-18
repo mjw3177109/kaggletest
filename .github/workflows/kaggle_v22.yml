@@ -1,0 +1,81 @@
+name: Kaggle Auto Scientist V2.2
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/kaggle_v22.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-auto-scientist-v22
+  cancel-in-progress: false
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Kaggle API controller dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate V2.2 scripts and CV gate before using Kaggle compute
+        run: |
+          python -m py_compile kaggle_agent/v22_train.py kaggle_agent/v22_pipeline.py kaggle_agent/v22_guide.py
+          python -m unittest discover -s tests -v
+
+      - name: Confirm Kaggle credentials
+        shell: bash
+        run: |
+          test -n "$KAGGLE_API_TOKEN" || (echo "Missing KAGGLE_API_TOKEN" && exit 1)
+          kaggle competitions list --category playground --page-size 2 --format json >/dev/null
+
+      - name: Run V2.2 Optuna and guarded submission
+        run: python kaggle_agent/v22_pipeline.py
+
+      - name: Update each competition beginner manual
+        run: |
+          python kaggle_agent/beginner_guide.py
+          python kaggle_agent/v22_guide.py
+
+      - name: Commit V2.2 metrics, experiments, analysis and guide
+        shell: bash
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add state/ reports/ competitions/
+          if git diff --cached --quiet; then
+            echo "No new V2.2 files to write back"
+            exit 0
+          fi
+          git commit -m "bot: V2.2 Optuna optimization and review"
+          git pull --rebase origin main
+          git push origin main
+
+      - name: Verify meaningful experiment completion
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("state/v2_2_status.json")
+          state = json.loads(p.read_text(encoding="utf-8"))
+          print("V2.2 status:", state.get("stage"))
+          allowed = {"complete", "skipped_no_cv_gain", "submission_pending", "awaiting_submit_approval"}
+          if state.get("stage") not in allowed:
+              raise SystemExit("V2.2 results are incomplete; see the committed state and reports.")
+          PY
