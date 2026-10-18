@@ -1,4 +1,4 @@
-name: Kaggle Dual GPU-TPU Top3 Ladder
+name: Kaggle Dual GPU-TPU Top3 or Deadline Ladder
 
 on:
   workflow_dispatch:
@@ -87,6 +87,9 @@ jobs:
           d=json.loads(Path('state/dual_ladder.json').read_text(encoding='utf-8'))
           print('Kaggle public rank:',d.get('rank'))
           print('Stage:',d.get('status'))
+          print('Deadline:',d.get('active_deadline'))
+          print('Hours remaining:',d.get('hours_to_deadline'))
+          print('Transition triggers:',d.get('handoff_reasons'))
           print('GPU/TPU:',d.get('gpu_training'),d.get('tpu_training'))
           print('Next contest:',(d.get('next_competition') or {}).get('competition'))
           print('Official prize confirmed:',(d.get('public_top3_achieved') or {}).get('official_prize_confirmed',False))
