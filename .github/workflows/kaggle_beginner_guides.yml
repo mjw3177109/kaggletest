@@ -15,6 +15,7 @@ on:
       - "Kaggle Auto Scientist V2.3 TPU"
       - "Kaggle V2.3 TPU Recovery"
       - "Kaggle Auto Scientist V2.3 GPU"
+      - "Kaggle Dual GPU-TPU Top3 or Deadline Ladder"
     types:
       - completed
 
@@ -46,6 +47,7 @@ jobs:
           python kaggle_agent/v22_guide.py
           python kaggle_agent/v23_tpu_guide.py
           python kaggle_agent/v23_gpu_guide.py
+          python kaggle_agent/v24_guide.py
 
       - name: Commit guide updates
         shell: bash
@@ -58,5 +60,15 @@ jobs:
             exit 0
           fi
           git commit -m "docs: refresh beginner guides"
-          git pull --rebase origin main
-          git push origin main
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep $((attempt * 2))
+          done
+          exit 1 origin main
