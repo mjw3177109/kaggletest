@@ -12,7 +12,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/kaggle_v28_gpu.yml"
+      - ".github/workflows/kaggle_v28_catboost.yml"
   schedule:
     - cron: "53 * * * *"
 
