@@ -8,7 +8,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"kaggle_agent"))
 import numpy as np
 import pandas as pd
-import v26_gpu_te_train as tr
+import v26_gpu_freq_train as tr
 
 
 class Tests(unittest.TestCase):
