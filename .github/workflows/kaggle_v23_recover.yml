@@ -1,0 +1,80 @@
+name: Kaggle V2.3 TPU Recovery
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/kaggle_v23_recover.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v23-recovery
+  cancel-in-progress: false
+
+jobs:
+  recover-existing-kernel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Kaggle controller dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check existing Kaggle TPU Notebook (NO training push)
+        run: |
+          python -m py_compile kaggle_agent/v23_tpu_pipeline.py
+          python kaggle_agent/v23_tpu_pipeline.py --recover-only
+
+      - name: Preserve diagnostic artifacts even if Git rebase fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v23-tpu-recovery-diagnostics
+          path: |
+            state/v2_3_status.json
+            reports/v2_3_latest.md
+            competitions/playground-series-s6e10/kaggle_tpu_v23/status_output.txt
+            competitions/playground-series-s6e10/kaggle_tpu_v23/logs.txt
+            competitions/playground-series-s6e10/results_v23/hardware.json
+            competitions/playground-series-s6e10/results_v23/metrics.json
+          if-no-files-found: warn
+
+      - name: Commit only V2.3 recovery files (avoid guide conflicts)
+        shell: bash
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_3_status.json reports/v2_3_latest.md competitions/*/kaggle_tpu_v23/status_output.txt competitions/*/kaggle_tpu_v23/logs.txt competitions/*/results_v23/
+          if git diff --cached --quiet; then
+            echo "No new recovery changes."
+            exit 0
+          fi
+          git commit -m "bot: recover V2.3 existing Kaggle TPU results"
+          git pull --rebase origin main
+          git push origin main
+
+      - name: Print verified stage
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("state/v2_3_status.json").read_text(encoding="utf-8"))
+          print("V2.3 stage:", d.get("stage"))
+          print("Confirmed backend:", (d.get("hardware") or {}).get("actual"))
+          print("TPU CV:", (d.get("metrics") or {}).get("cv_auc"))
+          print("Submitted:", d.get("submitted"))
+          PY
