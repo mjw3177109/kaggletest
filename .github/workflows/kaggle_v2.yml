@@ -2,13 +2,6 @@ name: Kaggle Auto Scientist V2
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "kaggle_agent/v2_pipeline.py"
-      - "kaggle_agent/v2_runner.py"
-      - "config/agent.yaml"
-      - "requirements.txt"
-      - ".github/workflows/kaggle_v2.yml"
 
 permissions:
   contents: write
@@ -54,22 +47,22 @@ jobs:
           git reset --hard origin/main
 
       - name: Run V2 autonomous pipeline
-        run: python kaggle_agent/v2_runner.py
+        run: |
+          python kaggle_agent/v2_runner.py
+          python kaggle_agent/beginner_guide.py
 
-      - name: Commit V2 state, analysis, code and results
+      - name: Commit V2 state, analysis, code, beginner guide and results
         shell: bash
         run: |
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
 
-          # A Scout run or another repository write may have advanced main while V2 was working.
-          # If that happened, discard generated working-tree files, move to the newest main,
-          # and deterministically regenerate V2 outputs once on top of that commit.
           git fetch origin main
           if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
             echo "main advanced during V2; regenerating outputs on latest main"
             git reset --hard origin/main
             python kaggle_agent/v2_runner.py
+            python kaggle_agent/beginner_guide.py
           fi
 
           git add state/ reports/ competitions/
