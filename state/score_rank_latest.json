@@ -1,17 +1,17 @@
 {
   "competition": "playground-series-s6e10",
-  "checked_at": "2026-10-18T08:18:12.133008+00:00",
+  "checked_at": "2026-10-18T08:35:23.328451+00:00",
   "ranking_type": "Public",
-  "rank": 1599,
+  "rank": 958,
   "rank_verified": true,
   "rank_source": "kaggle_authenticated_userRank",
-  "ranked_teams": 2222,
+  "ranked_teams": 2224,
   "score": {
-    "source": "v2_3_gpu_status.json",
-    "model": "V2.3 GPU gpu_xgb_depth7",
-    "public_score": 0.95819,
-    "submission_id": 57345271,
-    "submitted_at": "2026-10-18T07:42:15.877000"
+    "source": "v2_5_status.json",
+    "model": "V2.5 blend_rank",
+    "public_score": 0.96035,
+    "submission_id": 57346852,
+    "submitted_at": "2026-10-18T08:34:41.130000"
   },
   "warnings": [],
   "leaderboard_url": "https://www.kaggle.com/competitions/playground-series-s6e10/leaderboard",
