@@ -1,3 +1,17 @@
+## V2.5｜公开方案对标 + 无泄漏特征工程
+
+**为什么 0.95819 Public LB 仍只在约第 1597 名？** 因为当前只有少量聚合特征和 GPU XGBoost；公开实验中真正产生差距的是目标编码、精确航线距离画像和更丰富的客群条件特征，并非单纯增大树深度。参见每个比赛的 `v25_peer_research.md`。
+
+新增独立可复现的 Kaggle T4 实验：
+- 所有原始字段的精确值做 cross-fitted TargetEncoder，外层 StratifiedKFold(3)，每个训练折内层 5 折目标编码；严禁让验证折标签或训练样本自身标签流入其 TE 值。
+- 精确 Flight Distance 的训练折航线画像、评分 × 出行客群条件特征。
+- LightGBM CPU + GPU XGBoost CUDA 和预设固定比例融合，4 种候选全部同 3 折 OOF 比较。
+- 只有新 CV > 当前 GPU 0.958531706 + 0.00010 才允许用至多一次 Kaggle 正式提交，随后与 0.95819 Public LB 对比；否则保留旧冠军。
+- 与已存在的 TPU JAX MLP 完全独立；每场《小白说明书》解释模型、分数、**认证公开排名 / 总队伍数、核验时间**。
+- 新增 GH Actions：**Kaggle Auto Scientist V2.5 GPU Feature Engineering**，可手动运行、或在核验状态未结束时定期只读取 Kaggle Notebook，不重复消耗模型训练和提交次数。
+
+实际实验结果请看 `state/v2_5_status.json`、`reports/v2_5_latest.md`；Kaggle 实时公开榜请看 `reports/score_rank_latest.md`。公开他人成绩并不等于我们的成绩，未确认 GPU、OOF 及 Public LB 前不能声称已提升。
+
 ## V2.4｜GPU + TPU 双线冲榜与自动换赛
 
 自动执行的两个旧赛 Notebook 保持独立：
