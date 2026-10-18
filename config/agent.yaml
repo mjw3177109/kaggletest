@@ -1,6 +1,6 @@
 agent:
   name: Kaggle Auto Scientist
-  version: V2
+  version: V2.2
   mode: auto_compete
 
 scout:
@@ -24,6 +24,20 @@ v2:
   kernel_poll_seconds: 20
   auto_submit: true
   prefer_cpu_for_tabular: true
+
+v22:
+  # Optuna 搜索配置：先在分层抽样数据上调参，再用全量 3 折评估
+  trials: 8
+  tuning_rows: 120000
+  tuning_folds: 2
+  full_folds: 3
+  seed: 20261018
+  min_cv_improvement: 0.00008
+  kernel_timeout_seconds: 3600
+  poll_timeout_seconds: 3200
+  auto_submit: true
+  max_new_submissions: 1
+  use_gpu: false
 
 safety:
   auto_accept_rules: false
