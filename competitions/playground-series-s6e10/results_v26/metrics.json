@@ -1,0 +1,60 @@
+{
+  "competition": "playground-series-s6e10",
+  "target": "satisfaction",
+  "gpu_verified": true,
+  "hardware": {
+    "devices": [
+      "Tesla T4, 15360 MiB",
+      "Tesla T4, 15360 MiB"
+    ],
+    "ok": true
+  },
+  "actual_xgboost_device": "cuda:0",
+  "train_rows": 699635,
+  "test_rows": 299844,
+  "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+  "folds": 3,
+  "inner_encoding_folds": 5,
+  "leakage_safe_target_encoding": true,
+  "features_per_fold": 104,
+  "fold_results": [
+    {
+      "fold": 1,
+      "lgb_auc": 0.9599837562397943,
+      "xgb_auc": 0.9600753485545441,
+      "xgb_device": "cuda:0",
+      "features": 104
+    },
+    {
+      "fold": 2,
+      "lgb_auc": 0.9607981635033237,
+      "xgb_auc": 0.9606775935450835,
+      "xgb_device": "cuda:0",
+      "features": 104
+    },
+    {
+      "fold": 3,
+      "lgb_auc": 0.96066280718865,
+      "xgb_auc": 0.9607827757573951,
+      "xgb_device": "cuda:0",
+      "features": 104
+    }
+  ],
+  "models": {
+    "lightgbm": 0.9604678936212891,
+    "xgboost": 0.9604932622566744,
+    "blend_mean": 0.9606092092673674,
+    "blend_rank": 0.960614633696302
+  },
+  "best_model": "blend_rank",
+  "best_cv_auc": 0.960614633696302,
+  "elapsed_seconds": 376.3,
+  "new_methods": [
+    "all-original-columns exact-value 5-fold target encoding",
+    "flight distance training-fold-only profile",
+    "service ratings by traveler segment",
+    "numeric class-group target encoding",
+    "fixed rank and raw blending candidates",
+    "inner-5fold-crossfit frequency: exact age/distance, traveler and rating segments"
+  ]
+}
