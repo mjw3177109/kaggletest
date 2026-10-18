@@ -1,0 +1,88 @@
+{
+  "competition": "playground-series-s6e10",
+  "version": "V2.8",
+  "updated_at": "2026-10-18T09:39:53.667727+00:00",
+  "incumbent_cv": 0.9606599604603964,
+  "incumbent_lb": 0.96035,
+  "incumbent_model": "V2.5 blend_rank",
+  "champion": "V2.5 blend_rank",
+  "submitted": false,
+  "kernel": "mjw3177109/kas-v28-catboost-playground-series-s6e10",
+  "kernel_url": "https://www.kaggle.com/code/mjw3177109/kas-v28-catboost-playground-series-s6e10",
+  "stage": "skipped_no_cv_gain",
+  "kernel_state": "kernel_complete",
+  "hardware": {
+    "devices": [
+      "Tesla T4, 15360 MiB",
+      "Tesla T4, 15360 MiB"
+    ],
+    "ok": true
+  },
+  "metrics": {
+    "competition": "playground-series-s6e10",
+    "target": "satisfaction",
+    "gpu_verified": true,
+    "hardware": {
+      "devices": [
+        "Tesla T4, 15360 MiB",
+        "Tesla T4, 15360 MiB"
+      ],
+      "ok": true
+    },
+    "actual_catboost_device": "GPU:0",
+    "train_rows": 699635,
+    "test_rows": 299844,
+    "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+    "folds": 3,
+    "inner_encoding_folds": 5,
+    "leakage_safe_target_encoding": true,
+    "features_per_fold": 92,
+    "fold_results": [
+      {
+        "fold": 1,
+        "lgb_auc": 0.9601227772819099,
+        "cat_auc": 0.9600491003094862,
+        "cat_device": "GPU",
+        "features": 92
+      },
+      {
+        "fold": 2,
+        "lgb_auc": 0.9607553165447926,
+        "cat_auc": 0.9607791123403999,
+        "cat_device": "GPU",
+        "features": 92
+      },
+      {
+        "fold": 3,
+        "lgb_auc": 0.9607274448389885,
+        "cat_auc": 0.9607376691664682,
+        "cat_device": "GPU",
+        "features": 92
+      }
+    ],
+    "models": {
+      "lightgbm": 0.9605301966924407,
+      "catboost": 0.9605090226920059,
+      "blend_mean": 0.9607075130600563,
+      "blend_rank": 0.9607259172925492
+    },
+    "best_model": "blend_rank",
+    "best_cv_auc": 0.9607259172925492,
+    "elapsed_seconds": 377.4,
+    "new_methods": [
+      "all-original-columns exact-value 5-fold target encoding",
+      "flight distance training-fold-only profile",
+      "service ratings by traveler segment",
+      "numeric class-group target encoding",
+      "fixed rank and raw blending candidates",
+      "CatBoost ordered GPU gradient boosting as independent model"
+    ]
+  },
+  "cv_gate": {
+    "candidate": 0.9607259172925492,
+    "benchmark": 0.9606599604603964,
+    "delta": 6.595683215282477e-05,
+    "threshold": 0.0001,
+    "passed": false
+  }
+}

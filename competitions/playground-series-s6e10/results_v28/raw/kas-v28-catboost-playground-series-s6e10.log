@@ -1,0 +1,14 @@
+[{"stream_name":"stderr","time":147.881733406,"data":"Default metric period is 5 because AUC is/are not implemented for GPU\n"}
+,{"stream_name":"stdout","time":172.047921606,"data":"V2.8 fold 1 : {'fold': 1, 'lgb_auc': 0.9601227772819099, 'cat_auc': 0.9600491003094862, 'cat_device': 'GPU', 'features': 92}\n"}
+,{"stream_name":"stderr","time":260.181633727,"data":"Default metric period is 5 because AUC is/are not implemented for GPU\n"}
+,{"stream_name":"stdout","time":278.160988153,"data":"V2.8 fold 2 : {'fold': 2, 'lgb_auc': 0.9607553165447926, 'cat_auc': 0.9607791123403999, 'cat_device': 'GPU', 'features': 92}\n"}
+,{"stream_name":"stderr","time":379.958607325,"data":"Default metric period is 5 because AUC is/are not implemented for GPU\n"}
+,{"stream_name":"stdout","time":398.584927495,"data":"V2.8 fold 3 : {'fold': 3, 'lgb_auc': 0.9607274448389885, 'cat_auc': 0.9607376691664682, 'cat_device': 'GPU', 'features': 92}\n"}
+,{"stream_name":"stdout","time":400.900390823,"data":"V2.8 GPU strongest OOF: blend_rank 0.9607259172925492\n"}
+,{"stream_name":"stderr","time":408.216957512,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":408.216989564,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":408.584549733,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":408.584576177,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":409.632162601,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":410.280947087,"data":"[NbConvertApp] Writing 348279 bytes to __results__.html\n"}
+]

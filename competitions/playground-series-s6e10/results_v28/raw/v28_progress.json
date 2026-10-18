@@ -1,0 +1,26 @@
+{
+  "folds_finished": 3,
+  "rows": [
+    {
+      "fold": 1,
+      "lgb_auc": 0.9601227772819099,
+      "cat_auc": 0.9600491003094862,
+      "cat_device": "GPU",
+      "features": 92
+    },
+    {
+      "fold": 2,
+      "lgb_auc": 0.9607553165447926,
+      "cat_auc": 0.9607791123403999,
+      "cat_device": "GPU",
+      "features": 92
+    },
+    {
+      "fold": 3,
+      "lgb_auc": 0.9607274448389885,
+      "cat_auc": 0.9607376691664682,
+      "cat_device": "GPU",
+      "features": 92
+    }
+  ]
+}
