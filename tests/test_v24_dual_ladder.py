@@ -119,6 +119,8 @@ class LadderTests(unittest.TestCase):
         result=ladder.decide(old,"new-competition",{"userHasEntered":True,"userRank":99},[],self.when)
         self.assertEqual(result["status"],"working_toward_top3")
         self.assertNotEqual(result["rank"],1)
+        self.assertNotIn("public_top3_achieved",result)
+        self.assertEqual(result["historical_public_top3"][0]["competition"], "previous")
 
 if __name__ == "__main__":
     unittest.main()
