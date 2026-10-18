@@ -57,13 +57,7 @@ jobs:
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
 
-          git fetch origin main
-          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
-            echo "main advanced during V2; regenerating outputs on latest main"
-            git reset --hard origin/main
-            python kaggle_agent/v2_runner.py
-            python kaggle_agent/beginner_guide.py
-          fi
+          # Never rerun Kaggle training during a GitHub write-back conflict.
 
           git add state/ reports/ competitions/
           if git diff --cached --quiet; then
@@ -72,4 +66,5 @@ jobs:
           fi
 
           git commit -m "bot: Kaggle Auto Scientist V2 run"
+          git pull --rebase origin main
           git push origin main
