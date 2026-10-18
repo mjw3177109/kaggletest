@@ -1,0 +1,21 @@
+{
+  "version": "V2.7",
+  "competition": "playground-series-s6e10",
+  "updated_at": "2026-10-18T09:28:12.219519+00:00",
+  "stage": "skipped_no_cv_gain",
+  "incumbent_lb": 0.96035,
+  "benchmark_cv": 0.9606599604603964,
+  "required_cv": 0.9607599605,
+  "submitted": false,
+  "metrics": {
+    "train_rows": 699635,
+    "test_rows": 299844,
+    "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+    "fusion": "fixed_50_50_rank_blend",
+    "v25_oof": 0.9606599601500012,
+    "v26_oof": 0.9606146334272929,
+    "blended_cv_auc": 0.9606946829000839,
+    "delta_against_champion": 3.4722439687495665e-05
+  },
+  "cv_gate_passed": false
+}
