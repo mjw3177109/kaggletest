@@ -140,7 +140,7 @@ def main(recover_only=False):
     status["kernel"] = handle
     status["kernel_url"] = f"https://www.kaggle.com/code/{handle}"
     try:
-        if not recover_only and status.get("stage") not in ("kernel_running", "kernel_complete"):
+        if not recover_only and status.get("stage") not in ("kernel_running", "kernel_complete", "kernel_queued"):
             shutil.copy2(ROOT / "kaggle_agent" / "v23_tpu_train.py", folder / "main.py")
             accelerator = str(config.get("accelerator", "TpuV5E8"))
             write_json(folder / "kernel-metadata.json", {
