@@ -6,7 +6,7 @@
   "stage": "complete",
   "baseline_cv": 0.9569278088980195,
   "baseline_public_score": "0.95738",
-  "kernel_state": "timeout",
+  "kernel_state": "complete",
   "recovered_at": "2026-10-18T02:10:07.101439+00:00",
   "metrics": {
     "target": "satisfaction",
@@ -88,5 +88,6 @@
     "publicScore": "0.95774",
     "privateScore": ""
   },
-  "public_score_delta": 0.00036000000000002697
+  "public_score_delta": 0.00036000000000002697,
+  "recovered_from_kernel_slug": "kas-v2-1-playground-series-s6e10"
 }
