@@ -1,0 +1,30 @@
+name: Kaggle V2.3 TPU Offline Tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "kaggle_agent/v23_*"
+      - "tests/test_v23.py"
+      - "config/agent.yaml"
+      - ".github/workflows/kaggle_v23_tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install small test dependencies only
+        run: pip install PyYAML pandas numpy scikit-learn
+      - name: Compile TPU sources, no TPU allocation required
+        run: |
+          python -m py_compile kaggle_agent/v23_tpu_train.py kaggle_agent/v23_tpu_pipeline.py kaggle_agent/v23_tpu_guide.py
+          python -m unittest discover -s tests -p "test_v23.py" -v
