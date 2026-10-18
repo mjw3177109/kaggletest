@@ -58,7 +58,7 @@ def report(status):
         f"- 比赛：{status.get('competition')}",
         f"- Kaggle Notebook：{status.get('kernel_url')}",
         f"- 运行阶段：{status.get('stage')}",
-        f"- 真实 T4：{h.get('ok',False)}；{h.get('devices','尚未验证')}",
+        f"- 真实 T4：{h.get('ok','尚未确认（Kernel 尚未执行）')}；{h.get('devices','尚未验证')}",
         "",
         "## 为什么改进？", "",
         "V2.3 GPU XGBoost 只针对原始特征和少量统计做调参，Public LB 0.95819。",
