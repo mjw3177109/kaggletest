@@ -311,7 +311,7 @@ def main():
         except (TypeError, ValueError, KeyError):
             fresh = False
         if fresh:
-            verified_rank = safe_rank(rank_snapshot.get("rank"))
+            verified_rank = safe_rank({"userRank": rank_snapshot.get("rank")})
             if verified_rank is not None:
                 rank_row = {**(rank_row or {}), "ref": current,
                             "userHasEntered": True, "userRank": verified_rank}
