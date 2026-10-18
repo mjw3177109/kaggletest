@@ -82,7 +82,7 @@ def report(status):
     gate=status.get("cv_gate") or {}
     score=(status.get("latest_submission") or {}).get("publicScore")
     lines=[
-        "# V2.6｜研究高分选手后的 GPU 特征工程实验", "",
+        "# V2.6｜客群条件频率交叉拟合 GPU 实验", "",
         f"- 生成时间 UTC：{now()}",
         f"- 比赛：{status.get('competition')}",
         f"- Kaggle Notebook：{status.get('kernel_url')}",
@@ -90,9 +90,9 @@ def report(status):
         f"- 真实 T4：{h.get('ok','尚未确认（Kernel 尚未执行）')}；{h.get('devices','尚未验证')}",
         "",
         "## 为什么改进？", "",
-        "V2.3 GPU XGBoost 只针对原始特征和少量统计做调参，Public LB 0.95819。",
+        "V2.5 使用无泄漏 Target Encoding + 航线画像获得 Public LB 0.96035，已成为当前正式冠军。",
         "公开高分实验提示，精确数值交叉拟合 Target Encoding、航线距离画像和旅客细分群特征更有价值。",
-        "V2.6 新增 5 折内部交叉拟合 TE；每个外层验证折只使用对应训练折生成的特征，禁止目标泄漏。",
+        "V2.6 在原有内部 5 折无泄漏 TE 基础上，增加 12 个按航程、年龄和客群评分组合的内部 5 折频率编码。",
         "",
         "## GPU/CPU 两模型候选与 OOF", "",
         f"- 原冠军：{status.get('incumbent_model')}",
