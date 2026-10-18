@@ -30,14 +30,15 @@ class LadderTests(unittest.TestCase):
         d=ladder.decide({}, "playground-series-s6e10", {
             "userHasEntered": True, "userRank": 0
         }, [self.row("playground-next", joined=True)], self.when)
-        self.assertEqual(d["status"], "rank_unverified")
-        self.assertNotIn("next_competition", d)
+        self.assertEqual(d["status"], "monitoring_deadline")
+        self.assertIsNone(d["next_competition"])
 
     def test_public_top3_is_not_prize(self):
         d=ladder.decide({}, "playground-series-s6e10", {
             "userHasEntered": True, "userRank": 3
         }, [self.row("playground-next", joined=True)], self.when)
-        self.assertEqual(d["status"], "next_entered_requires_task_check")
+        self.assertEqual(d["status"], "rotated_waiting_task_preflight")
+        self.assertEqual(d["active_competition"], "playground-next")
         self.assertEqual(d["next_competition"]["competition"], "playground-next")
         self.assertFalse(d["public_top3_achieved"]["official_prize_confirmed"])
 
@@ -50,7 +51,57 @@ class LadderTests(unittest.TestCase):
     def test_missing_current_entry_cannot_switch(self):
         d=ladder.decide({}, "playground-series-s6e10", None, [
             self.row("playground-next", joined=True)], self.when)
-        self.assertEqual(d["status"], "rank_unverified")
+        self.assertEqual(d["status"], "monitoring_deadline")
+
+    def test_near_submission_deadline_rotates_without_rank(self):
+        old={"active_competition": "playground-series-s6e10",
+             "active_deadline": (self.when + timedelta(hours=12)).isoformat()}
+        d=ladder.decide(old, "playground-series-s6e10", {
+            "ref": "playground-series-s6e10", "userHasEntered": True,
+            "userRank": 0, "deadline": (self.when + timedelta(hours=12)).isoformat()
+        }, [self.row("playground-next", joined=True)], self.when)
+        self.assertEqual(d["status"], "rotated_waiting_task_preflight")
+        self.assertIn("submission_deadline_window", d["handoff_reasons"])
+        self.assertEqual(d["active_competition"], "playground-next")
+        self.assertFalse(d["next_training_enabled"])
+
+    def test_contest_ended_rotates_even_if_entered_listing_missing(self):
+        old={"active_competition": "previous-competition",
+             "active_deadline": (self.when - timedelta(minutes=1)).isoformat()}
+        d=ladder.decide(old, "previous-competition", None,
+                        [self.row("playground-next", joined=True)], self.when)
+        self.assertEqual(d["active_competition"], "playground-next")
+        self.assertIn("competition_ended", d["handoff_reasons"])
+        self.assertIsNone(d.get("public_top3_achieved"))
+
+    def test_not_entered_deadline_trigger_does_not_fake_join(self):
+        old={"active_competition": "old-contest",
+             "active_deadline": (self.when - timedelta(days=2)).isoformat()}
+        d=ladder.decide(old, "old-contest", None,
+                        [self.row("playground-next", joined=False)], self.when)
+        self.assertEqual(d["status"], "next_awaits_rule_acceptance")
+        self.assertEqual(d["active_competition"], "old-contest")
+        self.assertIsNone(d["rank"])
+
+    def test_missing_both_deadline_and_rank_fails_closed(self):
+        d=ladder.decide({}, "unknown-future-contest", None,
+                        [self.row("playground-next", joined=True)], self.when)
+        self.assertEqual(d["status"], "rank_and_deadline_unverified")
+        self.assertEqual(d["active_competition"], "unknown-future-contest")
+
+    def test_entering_deadline_at_exact_48_hours(self):
+        deadline=self.when + timedelta(hours=48)
+        self.assertEqual(ladder.handoff_reasons(
+            {"userHasEntered": True, "userRank": 100}, deadline, self.when
+        ), ["submission_deadline_window"])
+
+    def test_next_competition_needs_more_than_handoff_window(self):
+        candidates=[
+            self.row("expires-tomorrow", joined=True, hours=24),
+            self.row("playground-eligible", joined=True, hours=96),
+        ]
+        items=ladder.next_candidates(candidates, "previous-competition", set(), self.when)
+        self.assertEqual([x["competition"] for x in items], ["playground-eligible"])
 
     def test_only_valid_eligible_contests(self):
         raw=[
