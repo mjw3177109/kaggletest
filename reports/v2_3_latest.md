@@ -17,8 +17,8 @@
 
 ## 3-Fold OOF 对比
 
-- V2.1 树模型 CV：0.9582786744608702
-- V2.1 Public LB：0.95774
+- V2.1 树模型 CV：0.9606599604603964
+- V2.1 Public LB：0.96035
 - V2.3 JAX TPU CV：尚未完成
 - CV 提升差值：未知
 - 提交门槛：未知
@@ -28,10 +28,15 @@
 
 - 已提交：False
 - 新 Public LB：未提交或未评分
-- 当前线上冠军：V2.1 ensemble
+- 当前线上冠军：V2.5 blend_rank
 
 V2.1 未存储逐行 OOF 预测，因此不能声称已比较了 TPU/树模型的联合融合分数。
 TPU 线单独验证，不覆盖 V2.1 树模型。
+
+## Kaggle 当前排名（和 Public LB 一起报告）
+
+- 当前 Public 排名：**未核实（需按最新成绩重新查询）**
+- 官方排名查询：reports/score_rank_latest.md
 
 ## Kaggle 仍在排队
 
@@ -42,10 +47,3 @@ KernelWorkerStatus.QUEUED 表示 Kaggle 尚未安排执行，
 ## 诊断信息
 
 mjw3177109/kas-v23-tpu-playground-series-s6e10 has status "KernelWorkerStatus.QUEUED"
-
-## Kaggle 当前排名（和 Public LB 一起报告）
-
-- 此名次关联的 Public LB：0.95774
-- 当前 Public 排名：**未核实（需按最新成绩重新查询）**
-- 官方排名查询：reports/score_rank_latest.md
-

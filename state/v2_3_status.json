@@ -1,15 +1,15 @@
 {
   "version": "V2.3",
   "competition": "playground-series-s6e10",
-  "incumbent_cv": 0.9582786744608702,
-  "incumbent_lb": "0.95774",
+  "incumbent_cv": 0.9606599604603964,
+  "incumbent_lb": "0.96035",
   "kernel": "mjw3177109/kas-v23-tpu-playground-series-s6e10",
   "kernel_url": "https://www.kaggle.com/code/mjw3177109/kas-v23-tpu-playground-series-s6e10",
   "stage": "kernel_queued",
   "kernel_state": "kernel_queued",
   "submitted": false,
-  "champion": "V2.1 ensemble",
+  "champion": "V2.5 blend_rank",
   "notes": "Verified by Kaggle CLI status (2026-10-18); no new training pushed during recovery and no submission made.",
-  "updated_at": "2026-10-18T07:42:04.655772+00:00",
+  "updated_at": "2026-10-18T08:45:31.549525+00:00",
   "error": "mjw3177109/kas-v23-tpu-playground-series-s6e10 has status \"KernelWorkerStatus.QUEUED\""
 }
