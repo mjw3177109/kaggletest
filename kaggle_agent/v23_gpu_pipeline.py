@@ -123,6 +123,8 @@ def main(recover_only=False):
         if stage in ("kernel_queued", "kernel_running", "kernel_access_error"):
             status["error"] = desc[-6500:]
             return
+        # A previously queued status is not an error after Kaggle has completed.
+        status.pop("error", None)
 
         raw = results / "raw"
         raw.mkdir(parents=True, exist_ok=True)
