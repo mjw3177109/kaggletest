@@ -1,0 +1,127 @@
+name: Kaggle V2.9.3 Real GPU Model Challenger
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Create new Kaggle T4 experiment or recover its existing Notebook"
+        type: choice
+        required: false
+        default: run
+        options:
+          - run
+          - recover_existing
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v293_gpu_challenger.yml"
+      - "kaggle_agent/v293_gpu_*.py"
+      - "tests/test_v293_gpu.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v293-gpu-s6e10
+  cancel-in-progress: false
+
+jobs:
+  real-t4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check CV/deadline gate and never relaunch completed kernels
+        id: gate
+        env:
+          INPUT_MODE: ${{ inputs.mode || 'run' }}
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,os
+          from pathlib import Path
+          from datetime import datetime,timezone
+          state_file=Path("state/v2_9_3_gpu_status.json")
+          s=json.loads(state_file.read_text(encoding="utf-8")) if state_file.exists() else {}
+          ladder=json.loads(Path("state/dual_ladder.json").read_text(encoding="utf-8"))
+          cutoff=datetime.fromisoformat(ladder["active_deadline"].replace("Z","+00:00"))
+          allow=ladder.get("active_competition")=="playground-series-s6e10" and datetime.now(timezone.utc)<cutoff
+          terminal={"complete","skipped_no_cv_gain","candidate_ready_unsubmitted","kernel_failed",
+                    "gpu_unavailable","incomparable_results","artifacts_missing","inactive_competition"}
+          allow=allow and s.get("stage") not in terminal
+          mode=os.environ.get("INPUT_MODE") or "run"
+          if s.get("kernel") and mode=="run":
+              mode="recover_existing"
+          print("allowed="+str(allow).lower())
+          print("mode="+mode)
+          PY
+
+      - name: Install Kaggle controller dependencies
+        if: steps.gate.outputs.allowed == 'true'
+        run: python -m pip install -r requirements.txt scikit-learn scipy lightgbm xgboost catboost
+
+      - name: Compile and test model, no leakage, no duplicate submission
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m py_compile kaggle_agent/v293_gpu_train.py kaggle_agent/v293_gpu_pipeline.py
+          python -m unittest discover -s tests -p 'test_v293_gpu.py' -v
+
+      - name: Push distinct T4 Notebook or recover the same one
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          RUN_MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          test -n "$KAGGLE_API_TOKEN" || { echo "Kaggle API Token missing"; exit 1; }
+          if [ "$RUN_MODE" = "recover_existing" ]; then
+            python kaggle_agent/v293_gpu_pipeline.py --recover-only
+          else
+            python kaggle_agent/v293_gpu_pipeline.py
+          fi
+
+      - name: Write back experiment status and safe metrics only
+        if: always() && steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test ! -f state/v2_9_3_gpu_status.json; then
+            echo "No real GPU status was created."
+            exit 0
+          fi
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_9_3_gpu_status.json reports/v2_9_3_gpu_latest.md
+          if test -d competitions/playground-series-s6e10/kaggle_gpu_v293; then
+            git add -A -- competitions/playground-series-s6e10/kaggle_gpu_v293/
+          fi
+          if test -d competitions/playground-series-s6e10/results_v293_gpu; then
+            git add -A -- competitions/playground-series-s6e10/results_v293_gpu/metrics.json competitions/playground-series-s6e10/results_v293_gpu/hardware.json || true
+          fi
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: V2.9.3 independent Kaggle T4 candidate status"
+          for attempt in 1 2 3; do
+            git pull --rebase origin "$GITHUB_REF_NAME"
+            if git push origin "HEAD:$GITHUB_REF_NAME"; then exit 0; fi
+            sleep $((attempt*2))
+          done
+          exit 1
+
+      - name: Upload GPU evidence (no competition data)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v293-real-gpu-evidence
+          path: |
+            state/v2_9_3_gpu_status.json
+            reports/v2_9_3_gpu_latest.md
+          if-no-files-found: warn
