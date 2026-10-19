@@ -33,7 +33,7 @@ jobs:
     timeout-minutes: 40
     env:
       KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
-      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -131,6 +131,10 @@ jobs:
           set -euo pipefail
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          if test ! -f state/v2_9_3_status.json; then
+            echo "Experiment status not created; nothing to write back."
+            exit 0
+          fi
           git add -A -- state/v2_9_3_status.json state/v2_9_experiments.json reports/v2_9_3_latest.md
           if git diff --cached --quiet; then
             echo "No new V2.9.3 experiment state."
