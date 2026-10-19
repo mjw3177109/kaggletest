@@ -146,6 +146,11 @@ def save(state):
     write(STATE,state)
     REPORT.parent.mkdir(parents=True,exist_ok=True)
     m=state.get("result") or {}
+    tested=[x for x in m.get("candidates",[]) if isinstance(x.get("cv_auc"),(float,int))]
+    best=max(tested,key=lambda x:x["cv_auc"]) if tested else {}
+    measured=m.get("cv_auc",best.get("cv_auc"))
+    measured_delta=m.get("delta",measured-float(state["benchmark_cv"]) if measured is not None and state.get("benchmark_cv") is not None else None)
+    measured_name=m.get("candidate",best.get("candidate"))
     lines=[
         "# V2.9.3｜Kaggle 真实 OOF 模型融合实验","",
         f"- 检查 UTC：{state['updated_at']}",
@@ -153,10 +158,10 @@ def save(state):
         f"- 竞赛：{COMP}",
         "- 训练来源：本人 V2.5 和 V2.8 Kaggle Notebook 的既有 GPU OOF；本轮不重复 GPU 训练。",
         f"- CV 最强历史基准：{state.get('benchmark_cv')}",
-        f"- 本轮最佳 CV：{m.get('cv_auc')}",
-        f"- CV 提升：{m.get('delta')}",
+        f"- 本轮最佳 CV：{measured}",
+        f"- CV 提升：{measured_delta}",
         f"- 最低提升门槛：{MIN_CV_GAIN}",
-        f"- 候选：{m.get('candidate')}",
+        f"- 候选：{measured_name}",
         f"- 是否已发送新的 Kaggle 提交：{state.get('submitted',False)}",
         f"- 新 Public LB：{(state.get('latest_submission') or {}).get('publicScore','未评分/未提交')}",
         f"- 旧 Public LB：{state.get('incumbent_lb')}",
@@ -178,7 +183,8 @@ def save(state):
 
 def do_evaluate(directory):
     old=read(STATE)
-    if old.get("stage") in TERMINAL or old.get("submission_attempted"):
+    lacks_fold_diagnostics=(old.get("stage")=="skipped_no_cv_gain" and not any("fold_gain_vs_v28" in x for x in ((old.get("result") or {}).get("candidates") or [])))
+    if (old.get("stage") in TERMINAL and not lacks_fold_diagnostics) or old.get("submission_attempted"):
         print("Existing terminal/submission-attempted V2.9.3 state; no repeat evaluation", old.get("stage"))
         return
     allowed_competition()
