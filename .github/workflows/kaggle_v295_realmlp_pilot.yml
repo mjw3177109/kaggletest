@@ -89,7 +89,8 @@ jobs:
           if old.get("kernel"):mode="recover_existing"
           print("should_run="+str(allow).lower())
           print("mode="+mode)
-          if not allow:print("Pilot guarded: previous GPU task not finished or experiment already terminal")
+          # Diagnostic belongs in stdout/stderr, never in GITHUB_OUTPUT.
+          if not allow:print("Pilot safely deferred until V2.9.4 exits.", file=__import__("sys").stderr)
           PY
 
       - name: Install authenticated Kaggle controller
