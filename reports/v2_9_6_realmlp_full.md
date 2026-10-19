@@ -1,6 +1,6 @@
 # V2.9.6 RealMLP 完整三折 GPU 实验
 
-- 核验 UTC：2026-10-19T13:58:47.147215+00:00
+- 核验 UTC：2026-10-19T14:00:20.450279+00:00
 - Kaggle kernel：https://www.kaggle.com/code/mjw3177109/kas-v296-realmlp-full-s6e10
 - 当前阶段：kernel_queued
 - 验证协议：StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)
