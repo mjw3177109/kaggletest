@@ -1,0 +1,35 @@
+name: Kaggle V2.9 Evolution Audit
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: kaggle-v29-evolution-audit
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Unit tests
+        run: python -m unittest discover -s tests -p test_v29_evolution.py -v
+      - name: Generate proposal and efficiency metrics
+        run: python kaggle_agent/v29_evolution.py
+      - name: Commit only V2.9 reports
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add state/v2_9_evolution.json reports/v2_9_evolution_latest.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: audit V2.9 evolution and TPU queue breaker"
+          git pull --rebase origin feature/v29-autonomous-evolution
+          git push origin HEAD:feature/v29-autonomous-evolution
