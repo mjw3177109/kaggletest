@@ -155,6 +155,29 @@
       "submission_id": null,
       "experiment_id": "9ebb81f115e7dc378e7a85781b8b3b79ff07064b0f2215d207b73b85a5655959",
       "created_at": "2026-10-19T13:36:36.290571+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v297_conditioned_te_cpu",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "tree": "LGBM47",
+        "conditional_te": 24,
+        "oof_frequency": 6,
+        "pre_registered_weight": 0.15,
+        "external_teacher": false
+      },
+      "status": "completed",
+      "completed_at": "2026-10-19T16:58:19.724704+00:00",
+      "cv": 0.9608357783021575,
+      "cpu_seconds": 404.30124283000004,
+      "gpu_seconds": 0,
+      "kernel_sources": [
+        "mjw3177109/kas-v297-conditional-cpu-s6e10"
+      ],
+      "experiment_id": "68482f8280640215d14f818fab06f831c12b83e31df322c21e4cd9fa297e25ac",
+      "created_at": "2026-10-19T16:58:19.724970+00:00"
     }
   ]
 }
