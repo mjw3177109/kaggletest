@@ -59,8 +59,9 @@ def main():
         ["kaggle","competitions","leaderboard",SLUG,"--show","--csv"],
     ):
         try:
-            leaderboard=parse(run(args))
-            attempts.append({"mode":args[-1],"parsed":bool(leaderboard)})
+            raw=run(args)
+            leaderboard=parse(raw)
+            attempts.append({"mode":args[-1],"parsed":bool(leaderboard),"public_output_preview":raw[:900] if not leaderboard else ""})
             if leaderboard:break
         except (RuntimeError,ValueError) as exc:
             attempts.append({"mode":args[-1],"error":str(exc)[:600]})
@@ -84,7 +85,7 @@ def main():
                   "","## CLI 诊断","",json.dumps(attempts,ensure_ascii=False,indent=2)])
     (ROOT/"reports/v2_9_4_top3_research.md").write_text("\n".join(lines)+"\n",encoding="utf-8")
     print(json.dumps(status,ensure_ascii=False,indent=2))
-    if not verified:raise SystemExit("Top3 is unverified, see generated diagnostic report")
+    if not verified:print("WARNING: top3 not yet verified; no identities inferred.")
 
 if __name__=="__main__":
     main()
