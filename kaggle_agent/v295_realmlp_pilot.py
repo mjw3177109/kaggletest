@@ -27,7 +27,7 @@ ROOT=Path(__file__).resolve().parents[1]
 STATUS=ROOT/"state/v2_9_5_realmlp_status.json"
 REPORT=ROOT/"reports/v2_9_5_realmlp_pilot.md"
 SLUG="playground-series-s6e10"
-KERNEL="mjw3177109/kas-v295-realmlp-pilot-s6e10"
+KERNEL="mjw3177109/v2-9-5-realmlp-strict-pilot"
 FOLD=0
 FINISHED={"pilot_evaluated","pilot_rejected","pilot_failed",
           "kernel_failed","hardware_unverified","output_failed",
@@ -53,7 +53,7 @@ def report(status):
     lines=["# V2.9.5｜RealMLP CUDA 单折探索性实验","",
            f"- UTC：{status['updated_at']}",
            f"- 状态：{status.get('stage','unknown')}",
-           f"- Kaggle Notebook：https://www.kaggle.com/code/{KERNEL}",
+           f"- Kaggle Notebook：https://www.kaggle.com/code/{status.get('kernel') or KERNEL}",
            "- 独立模型：RealMLP-TD，4 模型内集成、3 固定轮数、T4 GPU。",
            "- **这是原三折协议的第 0 折，不是完整三折 CV，也不是线上分数。**",
            f"- 同折 V2.9.3 参照 AUC：{m.get('baseline_fold_auc','未完成')}",
@@ -175,12 +175,12 @@ def execute(recover=False):
         folder.mkdir(parents=True,exist_ok=True)
         shutil.copy2(ROOT/"kaggle_agent/v295_realmlp_pilot_train.py",folder/"main.py")
         write(folder/"kernel-metadata.json", {
-            "id":KERNEL,"title":"V2.9.5 RealMLP strict pilot",
+            "id":"mjw3177109/kas-v295-realmlp-pilot-s6e10","title":"V2.9.5 RealMLP strict pilot",
             "code_file":"main.py","language":"python","kernel_type":"script",
             "is_private":True,"enable_gpu":True,"machine_shape":"NvidiaTeslaT4",
             "enable_internet":True,"dataset_sources":[],
             "competition_sources":[SLUG],"kernel_sources":[],"model_sources":[]})
-        status={"competition":SLUG,"kernel":KERNEL,"stage":"pushing_kernel",
+        status={"competition":SLUG,"kernel":"mjw3177109/kas-v295-realmlp-pilot-s6e10","stage":"pushing_kernel",
                 "submitted":False,"pilot_only":True}
         report(status)
         # If GitHub crashes after the push, its persisted handle prevents a second push.
@@ -191,8 +191,15 @@ def execute(recover=False):
             report(status)
             return status
         try:
-            kernel_handle((result.stdout or "")+"\n"+(result.stderr or ""),
-                          "mjw3177109",KERNEL.split("/",1)[1])
+            output_text=(result.stdout or "")+"\n"+(result.stderr or "")
+            import re
+            match=re.search(r'https?://(?:www\\.)?kaggle\\.com/code/([A-Za-z0-9_-]+)/([a-z0-9-]+)', output_text)
+            if not match or match.group(1).lower()!='mjw3177109':
+                raise RuntimeError('Kaggle returned no authenticated owner URL')
+            actual='/'.join(match.groups())
+            if actual not in (KERNEL,'mjw3177109/kas-v295-realmlp-pilot-s6e10'):
+                raise RuntimeError('Unrecognized canonical Kaggle slug: '+actual)
+            status['kernel']=actual
         except Exception as exc:
             status.update({"stage":"kernel_access_error","error":str(exc)})
             report(status)
@@ -201,7 +208,7 @@ def execute(recover=False):
         if existing.get("kernel")!=KERNEL:
             raise RuntimeError("Stored handle mismatch; refuse accidental kernel overwrite")
         status=existing
-    state,details=poll_kernel(KERNEL,90 if recover else 300,20)
+    state,details=poll_kernel(status['kernel'],90 if recover else 300,20)
     status["stage"]=state
     if state in ("kernel_queued","kernel_running","kernel_access_error"):
         status["last_kernel_message"]=details[-700:]
@@ -210,7 +217,7 @@ def execute(recover=False):
 
     output=ROOT/"competitions"/SLUG/"results_v295"/"raw"
     output.mkdir(parents=True,exist_ok=True)
-    p=call(["kaggle","kernels","output",KERNEL,"-p",str(output),"-o","-q"],timeout=600,check=False)
+    p=call(["kaggle","kernels","output",status["kernel"],"-p",str(output),"-o","-q"],timeout=600,check=False)
     if state!="kernel_complete" or p.returncode:
         status.update({"stage":"kernel_failed" if state!="kernel_complete" else "output_failed",
                        "error":(p.stderr or details or p.stdout)[-1200:]})
