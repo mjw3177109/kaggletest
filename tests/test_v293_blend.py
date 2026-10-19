@@ -22,13 +22,17 @@ class FusionTests(unittest.TestCase):
         old_train,old_test=m.N_TRAIN,m.N_TEST
         m.N_TRAIN,m.N_TEST=100,24
         try:
-            rng=np.random.default_rng(42)
+            rng=np.random.default_rng(0)
             y=np.array([0,1]*50)
-            good=y*0.7+rng.random(100)*0.3
-            oofs={"v25":good,"v28":good+np.linspace(0,.0001,100),
-                  "xgb":good,"cat":good}
+            # Complementary imperfect OOF models; blending should improve
+            # the V2.8 reference on each held-out fold.
+            model25=y+rng.normal(size=100)*.85
+            model28=y+rng.normal(size=100)*.85
+            oofs={"v25":model25,"v28":model28,
+                  "xgb":model25,"cat":model28}
             tests={"v25":np.linspace(.01,.99,24),"v28":np.linspace(.05,.95,24)}
-            result,pred=m.evaluate(y,oofs,tests,benchmark=.95)
+            baseline=m.roc_auc_score(y,m.rank(model28))
+            result,pred=m.evaluate(y,oofs,tests,benchmark=baseline)
             self.assertEqual(result["stage"],"candidate_ready")
             self.assertEqual(len(pred),24)
             self.assertEqual(len(result["candidates"]),4)
