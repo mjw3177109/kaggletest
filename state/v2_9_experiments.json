@@ -178,6 +178,30 @@
       ],
       "experiment_id": "68482f8280640215d14f818fab06f831c12b83e31df322c21e4cd9fa297e25ac",
       "created_at": "2026-10-19T16:58:19.724970+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v296_realmlp_full_threefold",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model": "realmlp_td",
+        "n_ens": 4,
+        "epochs": 3,
+        "weight_old": 0.8,
+        "weight_nn": 0.2
+      },
+      "status": "completed",
+      "completed_at": "2026-10-19T20:35:20.882570+00:00",
+      "cv": 0.9609541991872741,
+      "gpu_seconds": 639.9,
+      "kernel_sources": [
+        "mjw3177109/kas-v296-realmlp-full-s6e10"
+      ],
+      "submission_id": null,
+      "notes": "Kaggle GPU time is wall clock runtime, not metered utilization",
+      "experiment_id": "837f13e7a7162976fbda085056e5418f3d78e39d2f66f73882f66fae13352791",
+      "created_at": "2026-10-19T20:35:20.882809+00:00"
     }
   ]
 }

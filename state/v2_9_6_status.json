@@ -1,10 +1,100 @@
 {
   "competition": "playground-series-s6e10",
-  "stage": "kernel_queued",
+  "stage": "candidate_ready_unsubmitted",
   "kernel": "mjw3177109/kas-v296-realmlp-full-s6e10",
   "submitted": false,
   "pilot_used": true,
-  "updated_at": "2026-10-19T16:15:11.242006+00:00",
-  "kernel_state": "kernel_queued",
-  "kernel_message": "mjw3177109/kas-v296-realmlp-full-s6e10 has status \"KernelWorkerStatus.QUEUED\""
+  "updated_at": "2026-10-19T20:35:20.886318+00:00",
+  "kernel_state": "kernel_complete",
+  "kernel_message": "mjw3177109/kas-v296-realmlp-full-s6e10 has status \"KernelWorkerStatus.QUEUED\"",
+  "metrics": {
+    "competition": "playground-series-s6e10",
+    "model": "RealMLP-TD n_ens=4 3 epochs",
+    "stage": "three_folds_complete",
+    "train_rows": 699635,
+    "test_rows": 299844,
+    "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+    "folds": 3,
+    "fold_results": [
+      {
+        "fold": 0,
+        "validation_rows": 233212,
+        "auc": 0.9599567188723712,
+        "elapsed_seconds": 228.4,
+        "features": 37
+      },
+      {
+        "fold": 1,
+        "validation_rows": 233212,
+        "auc": 0.9607681783276395,
+        "elapsed_seconds": 198.46,
+        "features": 37
+      },
+      {
+        "fold": 2,
+        "validation_rows": 233211,
+        "auc": 0.9605709301920804,
+        "elapsed_seconds": 196.79,
+        "features": 37
+      }
+    ],
+    "full_oof_auc": 0.9604161415527913,
+    "gpu_verified": true,
+    "hardware": {
+      "ok": true,
+      "device": "Tesla T4",
+      "devices": [
+        "Tesla T4, 15360 MiB",
+        "Tesla T4, 15360 MiB"
+      ],
+      "torch_version": "2.11.0+cu128",
+      "cuda_available": true
+    },
+    "leakage_safe_inner_cross_fit": true,
+    "outer_validation_used_in_training": false,
+    "feature_count": 37,
+    "runtime_seconds": 639.9,
+    "ready_for_submission": false,
+    "pilot_validated_prior": true,
+    "source_inspiration": "published independent S6E10 RealMLP-TD reproducibility"
+  },
+  "hardware": {
+    "ok": true,
+    "device": "Tesla T4",
+    "devices": [
+      "Tesla T4, 15360 MiB",
+      "Tesla T4, 15360 MiB"
+    ],
+    "torch_version": "2.11.0+cu128",
+    "cuda_available": true
+  },
+  "comparison": {
+    "baseline_auc": 0.9607535043719558,
+    "realmlp_auc": 0.9604161415527913,
+    "candidate_auc": 0.9609541991872741,
+    "delta": 0.0002006948153182586,
+    "fold_baseline": [
+      0.9603317085463999,
+      0.960980849293355,
+      0.9609763332542067
+    ],
+    "fold_candidate": [
+      0.9605289101732883,
+      0.9612014724037952,
+      0.9611618720423881
+    ],
+    "fold_gain": [
+      0.00019720162688841025,
+      0.00022062311044013239,
+      0.00018553878818139413
+    ],
+    "pre_registered_weights": {
+      "v293": 0.8,
+      "realmlp": 0.2
+    },
+    "positive_folds": 3
+  },
+  "candidate_file_sha256": "587da92602b6b1188cbb4f83c9aa0b778a192901ea28fe935a9d207301ea7db3",
+  "submission_note": "KAS V296 REALMLP 587da92602b6",
+  "candidate_file": "/home/runner/work/kaggletest/kaggletest/competitions/playground-series-s6e10/results_v296/v296_submission.csv"
 }
