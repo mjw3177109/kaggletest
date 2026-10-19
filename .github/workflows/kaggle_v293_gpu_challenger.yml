@@ -23,7 +23,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: kaggle-v293-gpu-s6e10
+  group: kaggle-v29-evolution-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -75,7 +75,8 @@ jobs:
         if: steps.gate.outputs.allowed == 'true'
         run: |
           python -m py_compile kaggle_agent/v293_gpu_train.py kaggle_agent/v293_gpu_pipeline.py
-          python -m unittest discover -s tests -p 'test_v293_gpu.py' -v
+          python -m py_compile kaggle_agent/v293_gpu_submit.py
+          python -m unittest discover -s tests -p 'test_v293_gpu*.py' -v
 
       - name: Push distinct T4 Notebook or recover the same one
         if: steps.gate.outputs.allowed == 'true'
@@ -89,6 +90,21 @@ jobs:
             python kaggle_agent/v293_gpu_pipeline.py
           fi
 
+      - name: Prepare authenticated one-shot GPU submission only for a real CV winner
+        if: steps.gate.outputs.allowed == 'true'
+        id: submission_gate
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,subprocess,sys
+          from pathlib import Path
+          p=Path("state/v2_9_3_gpu_status.json")
+          state=json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+          ready=state.get("stage")=="candidate_ready_unsubmitted" and (state.get("cv_gate") or {}).get("passed") is True
+          if ready:
+              subprocess.run([sys.executable,"kaggle_agent/v293_gpu_submit.py","--prepare"],check=True)
+          print("ready="+str(bool(ready)).lower())
+          PY
+
       - name: Write back experiment status and safe metrics only
         if: always() && steps.gate.outputs.allowed == 'true'
         shell: bash
@@ -101,6 +117,9 @@ jobs:
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
           git add -A -- state/v2_9_3_gpu_status.json reports/v2_9_3_gpu_latest.md
+          if test -f state/v2_9_3_gpu_submission.json; then
+            git add -A -- state/v2_9_3_gpu_submission.json reports/v2_9_3_gpu_submission.md state/v2_9_experiments.json
+          fi
           if test -d competitions/playground-series-s6e10/kaggle_gpu_v293; then
             git add -A -- competitions/playground-series-s6e10/kaggle_gpu_v293/
           fi
@@ -116,6 +135,42 @@ jobs:
           done
           exit 1
 
+      - name: Reserve exactly one CV-winning GPU Kaggle submission
+        if: steps.submission_gate.outputs.ready == 'true'
+        run: python kaggle_agent/v293_gpu_submit.py --reserve
+
+      - name: Persist GPU reservation BEFORE sending the Kaggle submission
+        if: steps.submission_gate.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_9_3_gpu_submission.json reports/v2_9_3_gpu_submission.md
+          test -n "$(git diff --cached --name-only)" || { echo "No durable GPU submission reservation"; exit 1; }
+          git commit -m "bot: reserve one unique V2.9.3 GPU Kaggle submission"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
+
+      - name: Submit CV-verified GPU predictions once
+        if: steps.submission_gate.outputs.ready == 'true'
+        env:
+          V293_GPU_RESERVED_COMMITTED: "true"
+        run: python kaggle_agent/v293_gpu_submit.py --submit
+
+      - name: Save final Kaggle GPU submission and Public score evidence
+        if: always() && steps.submission_gate.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_9_3_gpu_submission.json state/v2_9_3_gpu_status.json state/v2_9_experiments.json reports/v2_9_3_gpu_submission.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: V2.9.3 GPU Kaggle verified submission outcome"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
+
       - name: Upload GPU evidence (no competition data)
         if: always()
         uses: actions/upload-artifact@v4
@@ -124,4 +179,6 @@ jobs:
           path: |
             state/v2_9_3_gpu_status.json
             reports/v2_9_3_gpu_latest.md
+            state/v2_9_3_gpu_submission.json
+            reports/v2_9_3_gpu_submission.md
           if-no-files-found: warn
