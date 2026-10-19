@@ -18,6 +18,8 @@ def run(args):
 def parse(text):
     """Return only explicit rank 1/2/3 rows, never infer rank from score order."""
     value=text.strip()
+    if value.startswith('Next Page Token ='):
+        value='\n'.join(value.splitlines()[1:]).strip()
     if not value:
         raise ValueError("Empty Kaggle leaderboard")
     rows=[]
@@ -36,6 +38,13 @@ def parse(text):
             rows=content
     if not rows:
         return []
+    # The authenticated Kaggle --show leaderboard is already ordered by rank.
+    # Derive ordinal position from OFFICIAL returned order, never sort by score.
+    if len(rows)>=3 and all(isinstance(row,dict) and all(k in row for k in ('teamId','teamName','score')) for row in rows[:3]):
+        if len({str(row['teamId']) for row in rows[:3]})==3:
+            return [{'rank':i+1,'team':str(row['teamName']).strip(),
+                     'team_id':row['teamId'],'public_score':str(row['score']),
+                     'rank_basis':'official_api_row_order'} for i,row in enumerate(rows[:3])]
     found={}
     for row in rows:
         if not isinstance(row,dict):continue
