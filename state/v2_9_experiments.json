@@ -1,0 +1,70 @@
+{
+  "experiments": [
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2_5",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "source_version": "v2_5"
+      },
+      "status": "completed",
+      "completed_at": "2026-10-18T08:34:55.554572+00:00",
+      "timestamp_provenance": "status_updated_at_proxy",
+      "cv": 0.9606599604603964,
+      "gpu_seconds": 377.3,
+      "submission_id": 57346852,
+      "public_lb": "0.96035",
+      "experiment_id": "6835cfb10267d0c2feba3a03eaca707b9de66788f06c756b2aa1aacecdf633fc",
+      "created_at": "2026-10-19T07:08:00.601120+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2_6",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "source_version": "v2_6"
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-18T09:27:24.596734+00:00",
+      "timestamp_provenance": "status_updated_at_proxy",
+      "cv": 0.960614633696302,
+      "gpu_seconds": 376.3,
+      "experiment_id": "f553abe311ea81583a837e4a5ed6139784a1ca5a673a2218f020153e32884add",
+      "created_at": "2026-10-19T07:08:00.601306+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2_7",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "source_version": "v2_7"
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-18T09:28:12.219519+00:00",
+      "timestamp_provenance": "status_updated_at_proxy",
+      "cv": 0.9606946829000839,
+      "gpu_seconds": null,
+      "experiment_id": "1b4e2f3061d99daf2a40618896b3fd19a001f7087d2294314fc821f5f7f08e7e",
+      "created_at": "2026-10-19T07:08:00.601476+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2_8",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "source_version": "v2_8"
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-18T09:39:53.667727+00:00",
+      "timestamp_provenance": "status_updated_at_proxy",
+      "cv": 0.9607259172925492,
+      "gpu_seconds": 377.4,
+      "experiment_id": "4f0e4820acddfe6c0fc45683935bda01d2e3186a6eac8ef24b4659f9d32e5deb",
+      "created_at": "2026-10-19T07:08:00.608232+00:00"
+    }
+  ]
+}

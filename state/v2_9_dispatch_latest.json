@@ -1,0 +1,19 @@
+{
+  "at": "2026-10-19T07:08:00.645743+00:00",
+  "queue": {
+    "queued": true,
+    "hours": 0,
+    "tripped": false,
+    "fallback": null
+  },
+  "selected": {
+    "kind": "model",
+    "candidate": "catboost_gpu_recovery",
+    "backend": "gpu"
+  },
+  "workflow": "kaggle_v28_catboost.yml",
+  "eligible": false,
+  "reason": "tpu_breaker_not_tripped",
+  "dispatched": false,
+  "dry_run": true
+}
