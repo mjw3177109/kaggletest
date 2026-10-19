@@ -327,14 +327,14 @@ def main():
                                nums_train,nums_test,fold)
         ym, yv = y[itr],y[iv]
         m1 = lgb.LGBMClassifier(
-            objective="binary", metric="auc", n_estimators=2800,
+            objective="binary", metric="auc", n_estimators=1100,
             learning_rate=0.035, num_leaves=95, max_depth=-1,
             subsample=0.85, subsample_freq=1, colsample_bytree=0.78,
             reg_lambda=4.0, reg_alpha=0.12, min_child_samples=48,
             n_jobs=4, verbosity=-1, random_state=SEED + fold,
         )
-        m1.fit(xtr,ym,eval_set=[(xva,yv)],eval_metric="auc",
-               callbacks=[lgb.early_stopping(120,verbose=False)])
+        # Fixed tree count: never use outer validation labels to select fit steps.
+        m1.fit(xtr,ym)
         lval=m1.predict_proba(xva)[:,1]
         ltest=m1.predict_proba(xt)[:,1]
         oof["lightgbm"][iv]=lval
@@ -344,13 +344,13 @@ def main():
 
         m2=xgb.XGBClassifier(
             objective="binary:logistic", eval_metric="auc", tree_method="hist",
-            device="cuda", max_depth=7, n_estimators=2800,
+            device="cuda", max_depth=7, n_estimators=1200,
             learning_rate=0.030, min_child_weight=8,
             subsample=0.9, colsample_bytree=0.82,reg_alpha=0.10,
-            reg_lambda=5.0,early_stopping_rounds=120,
+            reg_lambda=5.0,
             n_jobs=4,random_state=SEED+fold,
         )
-        m2.fit(xtr,ym,eval_set=[(xva,yv)],verbose=False)
+        m2.fit(xtr,ym,verbose=False)
         device=json.loads(m2.get_booster().save_config()).get("learner",{}).get("generic_param",{}).get("device","")
         if not str(device).startswith("cuda"):
             raise RuntimeError("XGBoost ran without CUDA: "+str(device))
@@ -396,6 +396,7 @@ def main():
         "validation":"StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
         "folds":FOLDS,"inner_encoding_folds":5,
         "leakage_safe_target_encoding":True,
+        "outer_valid_used_for_early_stopping":False,
         "features_per_fold":folds[0]["features"],"fold_results":folds,
         "models":results,"best_model":chosen,"best_cv_auc":results[chosen],
         "elapsed_seconds":round(time.monotonic()-begin,1),
