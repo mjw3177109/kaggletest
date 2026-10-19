@@ -1,0 +1,11 @@
+{
+  "requested": "TpuV5E8",
+  "actual": "tpu",
+  "ok": true,
+  "jax_backend": "tpu",
+  "platforms": [
+    "tpu"
+  ],
+  "device_count": 8,
+  "jax_version": "0.11.0"
+}
