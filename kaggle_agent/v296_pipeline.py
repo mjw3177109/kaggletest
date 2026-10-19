@@ -35,7 +35,9 @@ FOLDER=ROOT/"competitions"/SLUG/"kaggle_gpu_v296"
 TRIAL_GAIN=0.00006
 TERMINAL={"skipped_no_cv_gain","candidate_ready_unsubmitted","model_failed",
           "kernel_failed","invalid_results","validation_mismatch",
-          "gpu_unverified","output_failed","push_failed","access_error"}
+          "gpu_unverified","output_failed","push_failed","access_error",
+          "submission_reserved","submitting","submission_pending",
+          "submission_unverified","submission_ambiguous","complete"}
 
 
 def now():
