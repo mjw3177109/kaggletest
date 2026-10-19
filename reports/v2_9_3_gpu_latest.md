@@ -1,9 +1,9 @@
 # V2.9.3 GPU｜CatBoost GPU 多样化建模实验
 
-- 生成时间 UTC：2026-10-19T07:30:32.275548+00:00
+- 生成时间 UTC：2026-10-19T07:37:49.282237+00:00
 - 比赛：playground-series-s6e10
 - Kaggle Notebook：https://www.kaggle.com/code/mjw3177109/kas-v293-gpu-playground-series-s6e10
-- 运行阶段：kernel_queued
+- 运行阶段：kernel_running
 - 真实 T4：尚未确认（Kernel 尚未执行）；尚未验证
 
 ## 为什么改进？
@@ -41,7 +41,5 @@ V2.9.3 GPU 保留 V2.5 已验证的内层 5 折无泄漏目标编码，新增真
 
 任何外部公开方法或成绩都不是本站实测。上线是否有效，只以本次真实 OOF 和官方 Public LB 判断。
 
-说明：Notebook 还在等待 Kaggle 分配 GPU；并非训练中。
-
 ## 错误/状态诊断
-mjw3177109/kas-v293-gpu-playground-series-s6e10 has status "KernelWorkerStatus.QUEUED"
+mjw3177109/kas-v293-gpu-playground-series-s6e10 has status "KernelWorkerStatus.RUNNING"

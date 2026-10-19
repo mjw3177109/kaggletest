@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.3 GPU",
-  "updated_at": "2026-10-19T07:30:32.275227+00:00",
+  "updated_at": "2026-10-19T07:37:49.281896+00:00",
   "incumbent_cv": 0.9607535043719558,
   "incumbent_lb": 0.96035,
   "incumbent_model": "V2.5 blend_rank",
@@ -9,7 +9,7 @@
   "submitted": false,
   "kernel": "mjw3177109/kas-v293-gpu-playground-series-s6e10",
   "kernel_url": "https://www.kaggle.com/code/mjw3177109/kas-v293-gpu-playground-series-s6e10",
-  "stage": "kernel_queued",
-  "kernel_state": "kernel_queued",
-  "error": "mjw3177109/kas-v293-gpu-playground-series-s6e10 has status \"KernelWorkerStatus.QUEUED\""
+  "stage": "kernel_running",
+  "kernel_state": "kernel_running",
+  "error": "mjw3177109/kas-v293-gpu-playground-series-s6e10 has status \"KernelWorkerStatus.RUNNING\""
 }
