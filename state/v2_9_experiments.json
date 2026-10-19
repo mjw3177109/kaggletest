@@ -91,6 +91,35 @@
       ],
       "experiment_id": "b129c99ee40e41f178b502b9e0e698d571001435458c3fd3098fefb404c70091",
       "created_at": "2026-10-19T07:24:11.653024+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v293_v25_35_v28_65",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "sources": [
+          "v25",
+          "v28"
+        ],
+        "candidate": "v25_35_v28_65",
+        "weights": {
+          "v25": 0.35,
+          "v28": 0.65
+        },
+        "min_gain": 2e-05
+      },
+      "status": "planned",
+      "cv": 0.9607535043719558,
+      "gpu_seconds": 0,
+      "cpu_seconds": 9.212,
+      "completed_at": null,
+      "kernel_sources": [
+        "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+        "mjw3177109/kas-v28-catboost-playground-series-s6e10"
+      ],
+      "experiment_id": "a58cd7becbc42056868987bfed52ef6d4648f3b3e6cada27670a78026991526f",
+      "created_at": "2026-10-19T07:47:35.497049+00:00"
     }
   ]
 }

@@ -1,14 +1,29 @@
 {
   "version": "V2.9.3",
   "competition": "playground-series-s6e10",
-  "stage": "skipped_no_cv_gain",
+  "stage": "candidate_ready",
   "benchmark_cv": 0.9607259172925492,
   "incumbent_lb": 0.96035,
   "submitted": false,
   "submission_attempted": false,
-  "updated_at": "2026-10-19T07:40:57.343082+00:00",
+  "updated_at": "2026-10-19T07:47:35.496058+00:00",
   "result": {
-    "stage": "skipped_no_cv_gain",
+    "stage": "candidate_ready",
+    "candidate": "v25_35_v28_65",
+    "cv_auc": 0.9607535043719558,
+    "fold_auc": [
+      0.9603317085463999,
+      0.960980849293355,
+      0.9609763332542067
+    ],
+    "weights": {
+      "v25": 0.35,
+      "v28": 0.65
+    },
+    "benchmark_cv": 0.9607259172925492,
+    "min_cv_gain": 2e-05,
+    "delta": 2.758707940664351e-05,
+    "signature": "033383e58777",
     "candidates": [
       {
         "candidate": "v25_60_v28_40",
@@ -57,8 +72,8 @@
         "status": "unavailable_test_predictions"
       }
     ],
-    "benchmark_cv": 0.9607259172925492,
-    "min_cv_gain": 3e-05,
-    "cpu_seconds": 8.176
-  }
+    "cpu_seconds": 9.212
+  },
+  "candidate_file_sha256": "80eb889ebb0f8e08b802f6db9bdb7383b77577391a35d33d67b7fb1b0487597c",
+  "submission_note": "KAS V293 BLEND 033383e58777"
 }
