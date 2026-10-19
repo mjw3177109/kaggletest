@@ -1,12 +1,12 @@
 {
   "version": "V2.9.3",
   "competition": "playground-series-s6e10",
-  "stage": "candidate_ready",
+  "stage": "submission_reserved",
   "benchmark_cv": 0.9607259172925492,
   "incumbent_lb": 0.96035,
   "submitted": false,
-  "submission_attempted": false,
-  "updated_at": "2026-10-19T07:47:35.496058+00:00",
+  "submission_attempted": true,
+  "updated_at": "2026-10-19T07:47:38.981646+00:00",
   "result": {
     "stage": "candidate_ready",
     "candidate": "v25_35_v28_65",
@@ -75,5 +75,6 @@
     "cpu_seconds": 9.212
   },
   "candidate_file_sha256": "80eb889ebb0f8e08b802f6db9bdb7383b77577391a35d33d67b7fb1b0487597c",
-  "submission_note": "KAS V293 BLEND 033383e58777"
+  "submission_note": "KAS V293 BLEND 033383e58777",
+  "reserved_at": "2026-10-19T07:47:38.981633+00:00"
 }

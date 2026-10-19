@@ -1,7 +1,7 @@
 # V2.9.3｜Kaggle 真实 OOF 模型融合实验
 
-- 检查 UTC：2026-10-19T07:47:35.496058+00:00
-- 阶段：candidate_ready
+- 检查 UTC：2026-10-19T07:47:38.981646+00:00
+- 阶段：submission_reserved
 - 竞赛：playground-series-s6e10
 - 训练来源：本人 V2.5 和 V2.8 Kaggle Notebook 的既有 GPU OOF；本轮不重复 GPU 训练。
 - CV 最强历史基准：0.9607259172925492
