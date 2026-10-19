@@ -47,7 +47,10 @@ jobs:
 
       - name: Run complete V2.9 test suite
         run: |
-          python -m unittest discover -s tests -p 'test_v29*.py' -v
+          python -m unittest discover -s tests -p 'test_v29_evolution.py' -v
+          python -m unittest discover -s tests -p 'test_v291*.py' -v
+          python -m unittest discover -s tests -p 'test_v292*.py' -v
+          # V2.9.3 numpy/pandas/scipy checks run in its isolated CPU fusion workflow.
 
       - name: Import previously verified model outcomes
         run: python kaggle_agent/v292_ingest.py
