@@ -1,0 +1,54 @@
+{
+  "version": "V2.9.3",
+  "competition": "playground-series-s6e10",
+  "stage": "skipped_no_cv_gain",
+  "benchmark_cv": 0.9607259172925492,
+  "incumbent_lb": 0.96035,
+  "submitted": false,
+  "submission_attempted": false,
+  "updated_at": "2026-10-19T07:24:11.652291+00:00",
+  "result": {
+    "stage": "skipped_no_cv_gain",
+    "candidates": [
+      {
+        "candidate": "v25_60_v28_40",
+        "cv_auc": 0.9607400931315118,
+        "fold_auc": [
+          0.9603245266612898,
+          0.9609606199618013,
+          0.9609658037568338
+        ],
+        "delta_vs_best": 1.4175838962571241e-05,
+        "weights": {
+          "v25": 0.6,
+          "v28": 0.4
+        }
+      },
+      {
+        "candidate": "v25_35_v28_65",
+        "cv_auc": 0.9607535043719558,
+        "fold_auc": [
+          0.9603317085463999,
+          0.960980849293355,
+          0.9609763332542067
+        ],
+        "delta_vs_best": 2.758707940664351e-05,
+        "weights": {
+          "v25": 0.35,
+          "v28": 0.65
+        }
+      },
+      {
+        "candidate": "xgb_50_cat_50",
+        "status": "unavailable_test_predictions"
+      },
+      {
+        "candidate": "v25_25_v28_50_cat_25",
+        "status": "unavailable_test_predictions"
+      }
+    ],
+    "benchmark_cv": 0.9607259172925492,
+    "min_cv_gain": 3e-05,
+    "cpu_seconds": 9.569
+  }
+}
