@@ -1,14 +1,14 @@
 # V2.9.3｜Kaggle 真实 OOF 模型融合实验
 
-- 检查 UTC：2026-10-19T07:24:11.652291+00:00
+- 检查 UTC：2026-10-19T07:40:57.343082+00:00
 - 阶段：skipped_no_cv_gain
 - 竞赛：playground-series-s6e10
 - 训练来源：本人 V2.5 和 V2.8 Kaggle Notebook 的既有 GPU OOF；本轮不重复 GPU 训练。
 - CV 最强历史基准：0.9607259172925492
-- 本轮最佳 CV：None
-- CV 提升：None
+- 本轮最佳 CV：0.9607535043719558
+- CV 提升：2.758707940664351e-05
 - 最低提升门槛：3e-05
-- 候选：None
+- 候选：v25_35_v28_65
 - 是否已发送新的 Kaggle 提交：False
 - 新 Public LB：未评分/未提交
 - 旧 Public LB：0.96035
