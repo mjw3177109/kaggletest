@@ -90,10 +90,14 @@ jobs:
           import json
           from pathlib import Path
           state=json.loads(Path("state/v2_9_3_status.json").read_text(encoding="utf-8"))
+          result=state.get("result") or {}
+          selected=next((c for c in result.get("candidates",[])
+                         if c.get("candidate")==result.get("candidate")),{})
+          fold_gain=selected.get("fold_gain_vs_v28") or []
+          robust=len(fold_gain)==3 and all(float(x)>0 for x in fold_gain)
           eligible=(state.get("stage")=="candidate_ready" and
-                    (state.get("result") or {}).get("cv_auc",0)>=
-                     state.get("benchmark_cv",1)+0.00003 and
-                    not state.get("submission_attempted",False))
+                    result.get("cv_auc",0)>=state.get("benchmark_cv",1)+0.00002 and
+                    robust and not state.get("submission_attempted",False))
           print("ready="+str(eligible).lower())
           PY
 
