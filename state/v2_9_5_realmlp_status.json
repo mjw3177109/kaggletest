@@ -1,0 +1,9 @@
+{
+  "competition": "playground-series-s6e10",
+  "kernel": "mjw3177109/kas-v295-realmlp-pilot-s6e10",
+  "stage": "kernel_access_error",
+  "submitted": false,
+  "pilot_only": true,
+  "updated_at": "2026-10-19T13:38:09.559152+00:00",
+  "error": "Expected mjw3177109/kas-v295-realmlp-pilot-s6e10 but Kaggle returned mjw3177109/v2-9-5-realmlp-strict-pilot"
+}
