@@ -1,9 +1,11 @@
 {
   "competition": "playground-series-s6e10",
-  "kernel": "mjw3177109/kas-v295-realmlp-pilot-s6e10",
-  "stage": "kernel_access_error",
+  "kernel": "mjw3177109/v2-9-5-realmlp-strict-pilot",
+  "stage": "kernel_created_unverified",
   "submitted": false,
   "pilot_only": true,
   "updated_at": "2026-10-19T13:38:09.559152+00:00",
-  "error": "Expected mjw3177109/kas-v295-realmlp-pilot-s6e10 but Kaggle returned mjw3177109/v2-9-5-realmlp-strict-pilot"
+  "kernel_url": "https://www.kaggle.com/code/mjw3177109/v2-9-5-realmlp-strict-pilot",
+  "recovery_note": "Kaggle authenticated push returned a canonical title-based Notebook slug different from requested ID; reattach without creating a second kernel.",
+  "requested_kernel": "mjw3177109/kas-v295-realmlp-pilot-s6e10"
 }
