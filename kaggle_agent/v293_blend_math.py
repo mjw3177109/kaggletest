@@ -102,6 +102,7 @@ def evaluate(y, oofs, tests, benchmark, min_gain=MIN_CV_GAIN):
     splits = list(cv.split(np.zeros(len(y), dtype=np.uint8), y))
     candidates = []
     eligible = []
+    baseline_folds = [float(roc_auc_score(y[iv], rank(oofs['v28'])[iv])) for _,iv in splits]
     for name, weights in PRE_REGISTERED:
         if not all(key in tests and key in oofs for key in weights):
             candidates.append({"candidate": name, "status": "unavailable_test_predictions"})
@@ -112,6 +113,7 @@ def evaluate(y, oofs, tests, benchmark, min_gain=MIN_CV_GAIN):
         if not np.isfinite(score) or not all(np.isfinite(f) for f in folds):
             raise ValueError("Nonfinite experiment AUC")
         row = {"candidate": name, "cv_auc": score, "fold_auc": folds,
+               "fold_gain_vs_v28": [float(a-b) for a,b in zip(folds,baseline_folds)],
                "delta_vs_best": score - benchmark, "weights": weights}
         candidates.append(row)
         # A small blend win must not cause an outsized single-fold regression.
