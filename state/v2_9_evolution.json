@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-19T09:21:16.658596+00:00",
+  "checked_at": "2026-10-19T13:41:05.873015+00:00",
   "competition": "playground-series-s6e10",
   "mode": "proposal_only_no_training_or_submission",
   "next_experiment": {
@@ -7,10 +7,10 @@
     "candidate": "cross_fitted_segment_interactions"
   },
   "tpu": {
-    "stage": "queued",
-    "queued_hours": 2.22,
-    "breaker_tripped": false,
-    "fallback": "none",
+    "stage": "timed_out",
+    "queued_hours": 6.55,
+    "breaker_tripped": true,
+    "fallback": "gpu_or_cpu_candidate_planning",
     "requires_queued_since": false,
     "age_basis": "first_observed_at_or_verified_queued_since"
   },

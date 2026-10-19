@@ -1,10 +1,10 @@
 {
-  "at": "2026-10-19T09:21:16.611716+00:00",
+  "at": "2026-10-19T13:41:05.829295+00:00",
   "queue": {
     "queued": true,
-    "hours": 2.221,
-    "tripped": false,
-    "fallback": null
+    "hours": 6.551,
+    "tripped": true,
+    "fallback": "recommend_cpu_or_gpu_experiment"
   },
   "selected": {
     "kind": "model",
@@ -12,8 +12,8 @@
     "backend": "gpu"
   },
   "workflow": "kaggle_v28_catboost.yml",
-  "eligible": false,
-  "reason": "tpu_breaker_not_tripped",
+  "eligible": true,
+  "reason": "ok",
   "dispatched": false,
   "dry_run": true
 }
