@@ -122,6 +122,39 @@
       "created_at": "2026-10-19T07:47:35.497049+00:00",
       "submission_id": 57388384,
       "public_lb": "0.96035"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v294_external_teacher_route_xgb",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "algorithms": [
+          "lightgbm",
+          "xgboost_cuda"
+        ],
+        "original_teacher": "teejmahal20/airline-passenger-satisfaction",
+        "route_category_profile": "outer_fold_only",
+        "frequency_encoding": "outer_fold_only",
+        "outer_early_stopping": false
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-19T13:36:34.548511+00:00",
+      "cv": 0.9607525307822926,
+      "gpu_seconds": 506.0,
+      "kernel_sources": [
+        "mjw3177109/kas-v294-original-route-playground-series-s6e10"
+      ],
+      "gpu_evidence": {
+        "devices": [
+          "Tesla T4, 15360 MiB",
+          "Tesla T4, 15360 MiB"
+        ],
+        "ok": true
+      },
+      "submission_id": null,
+      "experiment_id": "9ebb81f115e7dc378e7a85781b8b3b79ff07064b0f2215d207b73b85a5655959",
+      "created_at": "2026-10-19T13:36:36.290571+00:00"
     }
   ]
 }
