@@ -1,8 +1,8 @@
 {
   "competition": "playground-series-s6e10",
-  "stage": "submission_reserved",
+  "stage": "complete",
   "kernel": "mjw3177109/kas-v296-realmlp-full-s6e10",
-  "submitted": false,
+  "submitted": true,
   "pilot_used": true,
   "updated_at": "2026-10-19T20:35:20.886318+00:00",
   "kernel_state": "kernel_complete",
@@ -98,5 +98,16 @@
   "submission_note": "KAS V296 REALMLP 587da92602b6",
   "candidate_file": "/home/runner/work/kaggletest/kaggletest/competitions/playground-series-s6e10/results_v296/v296_submission.csv",
   "submission_attempted": true,
-  "reserved_at": "2026-10-19T20:35:23.712811+00:00"
+  "reserved_at": "2026-10-19T20:35:23.712811+00:00",
+  "latest_submission": {
+    "ref": 57408736,
+    "fileName": "v296_submission.csv",
+    "date": "2026-10-19T20:35:27.883000",
+    "description": "KAS V296 REALMLP 587da92602b6",
+    "status": "SubmissionStatus.COMPLETE",
+    "publicScore": "0.96059",
+    "privateScore": ""
+  },
+  "public_lb_delta": 0.00024,
+  "public_champion": "V2.9.6 RealMLP"
 }

@@ -198,10 +198,11 @@
       "kernel_sources": [
         "mjw3177109/kas-v296-realmlp-full-s6e10"
       ],
-      "submission_id": null,
+      "submission_id": 57408736,
       "notes": "Kaggle GPU time is wall clock runtime, not metered utilization",
       "experiment_id": "837f13e7a7162976fbda085056e5418f3d78e39d2f66f73882f66fae13352791",
-      "created_at": "2026-10-19T20:35:20.882809+00:00"
+      "created_at": "2026-10-19T20:35:20.882809+00:00",
+      "public_lb": "0.96059"
     }
   ]
 }
