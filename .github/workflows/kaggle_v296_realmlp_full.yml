@@ -1,0 +1,171 @@
+name: Kaggle V2.9.6 Full RealMLP T4 and CV Gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        description: "Run one unique Kaggle full 3-fold RealMLP Notebook or recover it"
+        default: run
+        options: [run, recover_existing]
+  push:
+    branches: [feature/v29-autonomous-evolution]
+    paths:
+      - ".github/workflows/kaggle_v296_realmlp_full.yml"
+      - "kaggle_agent/v296_*.py"
+      - "tests/test_v296_*.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v29-evolution-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  full-gpu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check distinct experiment ledger and detect safe recovery
+        id: gate
+        env:
+          MODE: ${{ inputs.mode || 'run' }}
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,os
+          from pathlib import Path
+          def state(name):
+              p=Path("state")/name
+              return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else {}
+          pilot=state("v2_9_5_realmlp_status.json")
+          current=state("v2_9_6_status.json")
+          end={"skipped_no_cv_gain","candidate_ready_unsubmitted","complete",
+               "kernel_failed","validation_mismatch","gpu_unverified",
+               "output_failed","push_failed","access_error"}
+          viable=(pilot.get("stage")=="pilot_evaluated" and
+                  pilot.get("comparison",{}).get("next_step")=="more_folds_needed" and
+                  current.get("stage") not in end)
+          mode=os.getenv("MODE","run")
+          if current.get("kernel"):mode="recover_existing"
+          print("allow="+str(viable).lower())
+          print("mode="+mode)
+          PY
+
+      - name: Install Kaggle OOF evaluator dependencies
+        if: steps.gate.outputs.allow == 'true'
+        run: |
+          python -m pip install -r requirements.txt scipy scikit-learn
+
+      - name: Compile every RealMLP full model, controller, and one-shot submit
+        if: steps.gate.outputs.allow == 'true'
+        run: |
+          python -m py_compile kaggle_agent/v296_realmlp_full_train.py kaggle_agent/v296_pipeline.py kaggle_agent/v296_submit.py
+          python -m unittest discover -s tests -p 'test_v296_*.py' -v
+
+      - name: Push once or recover existing REAL full GPU notebook
+        id: training
+        if: steps.gate.outputs.allow == 'true'
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          test -n "$KAGGLE_API_TOKEN" || { echo "Kaggle token absent"; exit 1; }
+          test "$KAGGLE_USERNAME" = "mjw3177109" || { echo "Unexpected owner"; exit 1; }
+          if [ "$MODE" = "recover_existing" ]; then
+            python kaggle_agent/v296_pipeline.py --recover-only
+          else
+            python kaggle_agent/v296_pipeline.py
+          fi
+
+      - name: Save actual CV metrics and first result into GitHub BEFORE any submission
+        if: steps.training.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_9_6_status.json state/v2_9_experiments.json reports/v2_9_6_realmlp_full.md
+          if test -d competitions/playground-series-s6e10/kaggle_gpu_v296; then
+            git add -A -- competitions/playground-series-s6e10/kaggle_gpu_v296/
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m "bot: V2.9.6 actual T4 full RealMLP verified CV"
+            git pull --rebase origin "$GITHUB_REF_NAME"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
+
+      - name: Check candidate is a genuine OOF winner
+        if: steps.training.outcome == 'success'
+        id: cv
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          s=json.loads(Path("state/v2_9_6_status.json").read_text(encoding="utf-8"))
+          c=s.get("comparison") or {}
+          ready=(s.get("stage")=="candidate_ready_unsubmitted" and
+                 not s.get("submitted") and not s.get("submission_attempted") and
+                 c.get("positive_folds",0)>=2 and
+                 c.get("delta",0)>=0.00006 and
+                 min(c.get("fold_gain") or [-1])>-0.00005)
+          print("ready="+str(ready).lower())
+          PY
+
+      - name: Reserve single Kaggle submission using account quota and duplicate check
+        if: steps.cv.outputs.ready == 'true'
+        run: python kaggle_agent/v296_submit.py --reserve
+
+      - name: Commit unique one-shot reservation BEFORE Kaggle submit
+        if: steps.cv.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/v2_9_6_status.json
+          test -n "$(git diff --cached --name-only)" || { echo "Reservation not committed"; exit 1; }
+          git commit -m "bot: reserve unique V2.9.6 RealMLP submit"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
+
+      - name: Submit CV-qualified Kaggle predictions just ONCE
+        if: steps.cv.outputs.ready == 'true'
+        env:
+          V296_RESERVED_COMMITTED: "true"
+        run: python kaggle_agent/v296_submit.py --submit
+
+      - name: Commit final scored Kaggle Public LB and immutable ledger reference
+        if: always() && steps.training.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_9_6_status.json state/v2_9_experiments.json reports/v2_9_6_realmlp_full.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: V2.9.6 Kaggle Public LB / candidate evidence"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
+
+      - name: Upload public-safe RealMLP provenance only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v296-realmlp-cv-evidence
+          path: |
+            state/v2_9_6_status.json
+            reports/v2_9_6_realmlp_full.md
+          if-no-files-found: warn
