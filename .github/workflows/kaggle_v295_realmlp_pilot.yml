@@ -1,0 +1,145 @@
+name: Kaggle V2.9.5 Independent RealMLP Pilot
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        description: "Only run after V2.9.4 has completed"
+        default: run
+        options: [run, recover_existing]
+  push:
+    branches: [feature/v29-autonomous-evolution]
+    paths:
+      - ".github/workflows/kaggle_v295_realmlp_pilot.yml"
+      - "kaggle_agent/v295_*.py"
+      - "tests/test_v295_realmlp.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v295-realmlp-pilot
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install controller scientific dependencies
+        run: python -m pip install -r requirements.txt numpy pandas scipy scikit-learn
+      - name: Compile and regression-test no-leakage and no-submit
+        run: |
+          python -m py_compile kaggle_agent/v295_realmlp_pilot_train.py kaggle_agent/v295_realmlp_pilot.py
+          python -m unittest discover -s tests -p 'test_v295_realmlp.py' -v
+
+  pilot:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Gate free GPU capacity, never overlap V2.9.4
+        id: gate
+        env:
+          INPUT_MODE: ${{ inputs.mode || 'run' }}
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          import os
+          from pathlib import Path
+          from datetime import datetime,timezone
+          def load(name):
+              p=Path("state")/name
+              return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+          ladder=load("dual_ladder.json")
+          v294=load("v2_9_4_status.json")
+          old=load("v2_9_5_realmlp_status.json")
+          good={"skipped_no_cv_gain","candidate_ready_unsubmitted","complete",
+                "kernel_failed","gpu_unavailable","artifacts_missing",
+                "incomparable_results","output_failed"}
+          terminal={"pilot_evaluated","pilot_rejected","pilot_failed",
+                    "kernel_failed","hardware_unverified","output_failed",
+                    "validation_mismatch","kernel_access_error","push_failed"}
+          cutoff=ladder.get("active_deadline") or ""
+          try:
+              deadline=datetime.fromisoformat(cutoff.replace("Z","+00:00"))
+              active=deadline.tzinfo is not None and datetime.now(timezone.utc)<deadline
+          except ValueError:
+              active=False
+          active=active and ladder.get("active_competition")=="playground-series-s6e10"
+          allow=active and v294.get("stage") in good and old.get("stage") not in terminal
+          mode=os.environ.get("INPUT_MODE","run")
+          if old.get("kernel"):mode="recover_existing"
+          print("should_run="+str(allow).lower())
+          print("mode="+mode)
+          if not allow:print("Pilot guarded: previous GPU task not finished or experiment already terminal")
+          PY
+
+      - name: Install authenticated Kaggle controller
+        if: steps.gate.outputs.should_run == 'true'
+        run: python -m pip install -r requirements.txt numpy pandas scipy scikit-learn
+
+      - name: Initiate or recover one pre-registered T4 pilot
+        if: steps.gate.outputs.should_run == 'true'
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          set -euo pipefail
+          test -n "$KAGGLE_API_TOKEN"
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          if [ "$MODE" = "recover_existing" ]; then
+              python kaggle_agent/v295_realmlp_pilot.py --recover-only
+          else
+              python kaggle_agent/v295_realmlp_pilot.py
+          fi
+
+      - name: Persist true Kaggle evidence only
+        if: always() && steps.gate.outputs.should_run == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! test -f state/v2_9_5_realmlp_status.json; then
+              echo "No pilot status; do not make up results."
+              exit 0
+          fi
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_9_5_realmlp_status.json reports/v2_9_5_realmlp_pilot.md
+          if test -d competitions/playground-series-s6e10/kaggle_gpu_v295; then
+              git add -A -- competitions/playground-series-s6e10/kaggle_gpu_v295/
+          fi
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: V2.9.5 one-fold RealMLP Kaggle evidence"
+          for attempt in 1 2 3; do
+              git pull --rebase origin "$GITHUB_REF_NAME"
+              if git push origin "HEAD:$GITHUB_REF_NAME"; then exit 0; fi
+              sleep $((2*attempt))
+          done
+          exit 1
+
+      - name: Upload evidence, never models or competition predictions
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v295-realmlp-pilot-evidence
+          path: |
+            state/v2_9_5_realmlp_status.json
+            reports/v2_9_5_realmlp_pilot.md
+          if-no-files-found: ignore
