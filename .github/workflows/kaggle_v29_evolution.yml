@@ -21,14 +21,14 @@ jobs:
         with:
           python-version: "3.11"
       - name: Unit tests
-        run: python -m unittest discover -s tests -p 'test_v29*.py' -v
-      - name: Validate V2.9.1 ledger and queue tracker\n        run: python -m py_compile kaggle_agent/v291_ledger.py\n      - name: Generate proposal and efficiency metrics
+        run: python -m unittest discover -s tests -p 'test_v29*.py' -v\n          python -m unittest discover -s tests -p 'test_v292*.py' -v
+      - name: Validate V2.9.1 ledger and queue tracker\n        run: python -m py_compile kaggle_agent/v291_ledger.py\n      - name: Import real outcomes and create daily report\n        run: python kaggle_agent/v292_ingest.py\n      - name: Fallback dry-run audit\n        run: python kaggle_agent/v292_dispatch.py\n      - name: Generate proposal and efficiency metrics
         run: python kaggle_agent/v29_evolution.py
       - name: Commit only V2.9 reports
         run: |
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
-          git add state/v2_9_evolution.json reports/v2_9_evolution_latest.md
+          git add state/v2_9_evolution.json reports/v2_9_evolution_latest.md state/v2_9_experiments.json state/v2_9_dispatch_latest.json state/v2_9_queue_memory.json reports/v2_9_efficiency_daily.md
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "bot: audit V2.9 evolution and TPU queue breaker"
           git pull --rebase origin feature/v29-autonomous-evolution
