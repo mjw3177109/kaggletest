@@ -17,7 +17,9 @@ SEED = 20261018
 VALIDATION = "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)"
 N_TRAIN = 699635
 N_TEST = 299844
-MIN_CV_GAIN = 0.00003
+# One pre-registered exploratory LB probe after all three paired folds improved.
+# Limit enforcement and durable Git reservation live in v293_pipeline.py.
+MIN_CV_GAIN = 0.00002
 # Fixed *before* evaluating labels; avoid broad on-OOF hyperparameter search.
 PRE_REGISTERED = (
     ("v25_60_v28_40", {"v25": .60, "v28": .40}),
@@ -117,7 +119,7 @@ def evaluate(y, oofs, tests, benchmark, min_gain=MIN_CV_GAIN):
                "delta_vs_best": score - benchmark, "weights": weights}
         candidates.append(row)
         # A small blend win must not cause an outsized single-fold regression.
-        if score >= benchmark + min_gain:
+        if score >= benchmark + min_gain and all(g > 0 for g in row["fold_gain_vs_v28"]):
             eligible.append((score, name, weights, fused, folds))
     if not eligible:
         return {"stage": "skipped_no_cv_gain", "candidates": candidates, "benchmark_cv": benchmark,
