@@ -1,12 +1,7 @@
 # V2.9 每日精进审计
 
 {
-  "ingested_versions": [
-    "v2_5",
-    "v2_6",
-    "v2_7",
-    "v2_8"
-  ],
+  "ingested_versions": [],
   "competition": "playground-series-s6e10",
   "metrics": {
     "date_utc": "2026-10-19",
