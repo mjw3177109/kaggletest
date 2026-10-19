@@ -1,7 +1,7 @@
 {
   "version": "V2.4 ladder",
   "active_competition": "playground-series-s6e10",
-  "updated_at": "2026-10-19T01:24:56.214790+00:00",
+  "updated_at": "2026-10-19T01:25:26.232358+00:00",
   "public_rank_verified": true,
   "status": "working_toward_top3",
   "warning": "",
@@ -18,12 +18,12 @@
   "rank": 988,
   "active_deadline": "2026-10-31T23:59:00+00:00",
   "deadline_source": "archived Kaggle competition deadline",
-  "hours_to_deadline": 310.57,
+  "hours_to_deadline": 310.56,
   "handoff_reasons": [],
   "next_competition": null,
   "next_training_enabled": false,
   "rank_source": "kaggle_authenticated_userRank",
-  "rank_checked_at": "2026-10-19T01:24:51.901439+00:00",
+  "rank_checked_at": "2026-10-19T01:25:22.520228+00:00",
   "ranked_teams": 2286,
   "latest_scored_submission": {
     "source": "v2_5_status.json",
