@@ -21,8 +21,8 @@ jobs:
         with:
           python-version: "3.11"
       - name: Unit tests
-        run: python -m unittest discover -s tests -p test_v29_evolution.py -v
-      - name: Generate proposal and efficiency metrics
+        run: python -m unittest discover -s tests -p 'test_v29*.py' -v
+      - name: Validate V2.9.1 ledger and queue tracker\n        run: python -m py_compile kaggle_agent/v291_ledger.py\n      - name: Generate proposal and efficiency metrics
         run: python kaggle_agent/v29_evolution.py
       - name: Commit only V2.9 reports
         run: |
