@@ -46,8 +46,11 @@ def evaluate(now=None):
     competition=ladder.get("active_competition","playground-series-s6e10")
     tpu=states["v2_3"]
     queued=tpu.get("stage")=="kernel_queued" and tpu.get("competition")==competition
-    first=stamp(tpu.get("queued_since") or tpu.get("created_at"))
-    # updated_at reflects polling, not queue entry; do not use it to claim age.
+    memory=read(STATE/"v2_9_queue_memory.json")
+    same_kernel=bool(tpu.get("kernel") and memory.get("kernel")==tpu.get("kernel") and memory.get("queued"))
+    first=stamp(tpu.get("queued_since") or tpu.get("created_at") or
+                (memory.get("first_seen_at") if same_kernel else None))
+    # first_seen_at is our observation time, NOT confirmed Kaggle queue entry.\n    # updated_at reflects polling and must never be used as the start time.
     age=(now-first).total_seconds()/3600 if queued and first else None
     tripped=bool(queued and age is not None and age>=QUEUE_HOURS)
     fallback="gpu_or_cpu_candidate_planning" if tripped else "none"
@@ -79,7 +82,7 @@ def evaluate(now=None):
       "checked_at":now.isoformat(),"competition":competition,
       "mode":"proposal_only_no_training_or_submission",
       "next_experiment":proposal,
-      "tpu":{"stage":queue_state,"queued_hours":round(age,2) if age is not None else None,"breaker_tripped":tripped,"fallback":fallback,"requires_queued_since":queued and age is None},
+      "tpu":{"stage":queue_state,"queued_hours":round(age,2) if age is not None else None,"breaker_tripped":tripped,"fallback":fallback,"requires_queued_since":queued and age is None,"age_basis":("first_observed_at_or_verified_queued_since" if age is not None else "unknown")},
       "efficiency":{"date_utc":day,"new_distinct_completed_experiments":len(today),"known_distinct_experiments":len(seen),
         "best_known_cv":best,"cv_delta_vs_v25":round(best-float(baseline),10) if best is not None and baseline is not None else None,
         "measured_gpu_hours":round(sum(float(x["gpu_seconds"]) for x in today if x["gpu_seconds"] is not None)/3600,4),
