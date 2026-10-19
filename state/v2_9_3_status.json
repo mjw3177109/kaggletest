@@ -1,12 +1,12 @@
 {
   "version": "V2.9.3",
   "competition": "playground-series-s6e10",
-  "stage": "submission_reserved",
+  "stage": "complete",
   "benchmark_cv": 0.9607259172925492,
   "incumbent_lb": 0.96035,
-  "submitted": false,
+  "submitted": true,
   "submission_attempted": true,
-  "updated_at": "2026-10-19T07:47:38.981646+00:00",
+  "updated_at": "2026-10-19T07:47:59.078248+00:00",
   "result": {
     "stage": "candidate_ready",
     "candidate": "v25_35_v28_65",
@@ -76,5 +76,16 @@
   },
   "candidate_file_sha256": "80eb889ebb0f8e08b802f6db9bdb7383b77577391a35d33d67b7fb1b0487597c",
   "submission_note": "KAS V293 BLEND 033383e58777",
-  "reserved_at": "2026-10-19T07:47:38.981633+00:00"
+  "reserved_at": "2026-10-19T07:47:38.981633+00:00",
+  "latest_submission": {
+    "ref": 57388384,
+    "fileName": "v293_submission.csv",
+    "date": "2026-10-19T07:47:43.917000",
+    "description": "KAS V293 BLEND 033383e58777",
+    "status": "SubmissionStatus.COMPLETE",
+    "publicScore": "0.96035",
+    "privateScore": ""
+  },
+  "public_lb_delta": 0.0,
+  "champion": "V2.5 blend_rank"
 }
