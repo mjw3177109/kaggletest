@@ -1,10 +1,10 @@
 # V2.9.3 GPU｜CatBoost GPU 多样化建模实验
 
-- 生成时间 UTC：2026-10-19T07:37:49.282237+00:00
+- 生成时间 UTC：2026-10-19T07:40:52.236681+00:00
 - 比赛：playground-series-s6e10
 - Kaggle Notebook：https://www.kaggle.com/code/mjw3177109/kas-v293-gpu-playground-series-s6e10
-- 运行阶段：kernel_running
-- 真实 T4：尚未确认（Kernel 尚未执行）；尚未验证
+- 运行阶段：skipped_no_cv_gain
+- 真实 T4：True；['Tesla T4, 15360 MiB', 'Tesla T4, 15360 MiB']
 
 ## 为什么改进？
 
@@ -17,10 +17,10 @@ V2.9.3 GPU 保留 V2.5 已验证的内层 5 折无泄漏目标编码，新增真
 - 原冠军：V2.5 blend_rank
 - 原冠军 CV：0.9607535043719558
 - 原冠军 Public LB：0.96035
-- LightGBM CPU + CatBoost GPU 最佳模型：尚未完成
-- 新 3-Fold OOF：尚未完成
-- CV 超越差值：暂无
-- 门槛：0.0001
+- LightGBM CPU + CatBoost GPU 最佳模型：blend_rank
+- 新 3-Fold OOF：0.9607374958191325
+- CV 超越差值：-1.600855282335445e-05
+- 门槛：6e-05
 - 达标：False
 - 是否已提交：False
 - 新 Public LB：尚未提交/未评分
@@ -41,5 +41,9 @@ V2.9.3 GPU 保留 V2.5 已验证的内层 5 折无泄漏目标编码，新增真
 
 任何外部公开方法或成绩都不是本站实测。上线是否有效，只以本次真实 OOF 和官方 Public LB 判断。
 
-## 错误/状态诊断
-mjw3177109/kas-v293-gpu-playground-series-s6e10 has status "KernelWorkerStatus.RUNNING"
+| 候选 | 同3折 OOF AUC |
+|---|---:|
+| lightgbm | 0.96055923 |
+| catboost | 0.96056667 |
+| blend_mean | 0.96072334 |
+| blend_rank | 0.96073750 |
