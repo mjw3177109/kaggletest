@@ -114,7 +114,7 @@ def report(status):
     gate=status.get("cv_gate") or {}
     score=(status.get("latest_submission") or {}).get("publicScore")
     lines=[
-        "# V2.9.4 Original Teacher + Route Context｜CatBoost GPU 多样化建模实验", "",
+        "# V2.9.4 Original Teacher + Route Context｜独立原始数据教师 + 航线画像实验", "",
         f"- 生成时间 UTC：{now()}",
         f"- 比赛：{status.get('competition')}",
         f"- Kaggle Notebook：{status.get('kernel_url')}",
@@ -124,16 +124,16 @@ def report(status):
         "## 为什么改进？", "",
         "V2.5 使用无泄漏 Target Encoding + 航线画像获得 Public LB 0.96035，已成为当前正式冠军。",
         "公开高分实验提示，精确数值交叉拟合 Target Encoding、航线距离画像和旅客细分群特征更有价值。",
-        "V2.9.4 Original Teacher + Route Context 保留 V2.5 已验证的内层 5 折无泄漏目标编码，新增真正运行在 NVIDIA T4 上的 CatBoost 算法分支，寻找不同树模型的互补性。",
+        "V2.9.4 Original Teacher + Route Context 保留 V2.5 已验证的内层 5 折无泄漏目标编码，新增独立原始标签训练的教师分数、逐折航线/客群概率及 GPU XGBoost，不使用外层验证标签早停。",
         "",
         "## GPU/CPU 两模型候选与 OOF", "",
         f"- 原冠军：{status.get('incumbent_model')}",
         f"- 原冠军 CV：{status.get('incumbent_cv')}",
         f"- 原冠军 Public LB：{status.get('incumbent_lb')}",
-        f"- LightGBM CPU + CatBoost GPU 最佳模型：{m.get('best_model','尚未完成')}",
+        f"- LightGBM CPU + XGBoost GPU 最佳模型：{m.get('best_model','尚未完成')}",
         f"- 新 3-Fold OOF：{m.get('best_cv_auc','尚未完成')}",
         f"- CV 超越差值：{gate.get('delta','暂无')}",
-        f"- 门槛：{gate.get('threshold',0.0001)}",
+        f"- 门槛：{gate.get('threshold',0.00006)}",
         f"- 达标：{gate.get('passed',False)}",
         f"- 是否已提交：{status.get('submitted',False)}",
         f"- 新 Public LB：{score if score not in (None,'') else '尚未提交/未评分'}",
@@ -286,7 +286,8 @@ def main(recover_only=False):
                 or int(metrics.get("train_rows",-1))!=champ["train_rows"]
                 or int(metrics.get("folds",0))!=3
                 or len(metrics.get("fold_results",[]))!=3
-                or not all(row.get("cat_device")=="GPU" for row in metrics.get("fold_results",[]))):
+                or metrics.get("outer_valid_used_for_early_stopping") is not False
+                or not all(str(row.get("xgb_device","")).startswith("cuda") for row in metrics.get("fold_results",[]))):
             status.update({"stage":"incomparable_results","error":"GPU/CV/target encoding evidence invalid"})
             return
         validate_submission(sp,metrics["target"],int(metrics["test_rows"]))
