@@ -1,0 +1,84 @@
+name: Kaggle V2.9.8 Read-only Three-model Fusion
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v298_readonly_fusion.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v298-archived-oof-s6e10
+  cancel-in-progress: false
+
+jobs:
+  archived-oof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install scientific and Kaggle CLI dependencies
+        run: |
+          python -m pip install -r requirements.txt numpy pandas scipy scikit-learn
+
+      - name: Validate authenticated Kaggle account and contest
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, "kaggle_agent")
+          import v298_fusion as p
+          p.check_competition()
+          print("Competition valid; existing outputs only")
+          PY
+
+      - name: Run source safety tests before remote access
+        run: |
+          python -m py_compile kaggle_agent/v298_fusion.py
+          python -m unittest discover -s tests -p 'test_v298_*.py' -v
+
+      - name: Read prior Kaggle artifacts and score once
+        run: python kaggle_agent/v298_fusion.py --audit-existing-only
+
+      - name: Persist CV metrics only (no raw predictions)
+        if: success()
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/v2_9_8_status.json state/v2_9_experiments.json reports/v2_9_8_fusion.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: V2.9.8 read-only fusion verified CV"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+
+      - name: Archive public-safe validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v298-readonly-fusion-report
+          path: |
+            state/v2_9_8_status.json
+            reports/v2_9_8_fusion.md
+          if-no-files-found: ignore
