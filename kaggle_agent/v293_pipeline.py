@@ -184,7 +184,8 @@ def save(state):
 def do_evaluate(directory):
     old=read(STATE)
     lacks_fold_diagnostics=(old.get("stage")=="skipped_no_cv_gain" and not any("fold_gain_vs_v28" in x for x in ((old.get("result") or {}).get("candidates") or [])))
-    if (old.get("stage") in TERMINAL and not lacks_fold_diagnostics) or old.get("submission_attempted"):
+    newly_authorized_exploration=(old.get("stage")=="skipped_no_cv_gain" and float((old.get("result") or {}).get("min_cv_gain",MIN_CV_GAIN))>MIN_CV_GAIN)
+    if (old.get("stage") in TERMINAL and not (lacks_fold_diagnostics or newly_authorized_exploration)) or old.get("submission_attempted"):
         print("Existing terminal/submission-attempted V2.9.3 state; no repeat evaluation", old.get("stage"))
         return
     allowed_competition()
