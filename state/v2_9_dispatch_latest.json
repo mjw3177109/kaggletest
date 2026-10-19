@@ -1,8 +1,8 @@
 {
-  "at": "2026-10-19T07:48:13.770850+00:00",
+  "at": "2026-10-19T08:05:30.947472+00:00",
   "queue": {
     "queued": true,
-    "hours": 0.67,
+    "hours": 0.958,
     "tripped": false,
     "fallback": null
   },
