@@ -1,0 +1,124 @@
+{
+  "stage": "robustness_complete",
+  "competition": "playground-series-s6e10",
+  "verified_at_utc": "2026-10-20T01:18:02.072555+00:00",
+  "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+  "source_artifacts": {
+    "v25": {
+      "notebook": "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+      "sha256": "f86ad876ac279865c059d4466ce76a7f7cfcae1a11a5ed45f68092136bdd5a74",
+      "submission_sha256": "adb4b48b917f7e8e86ba4fb5a723069e185b27a0dfe5f7ed814beaf01af0c92f"
+    },
+    "v28": {
+      "notebook": "mjw3177109/kas-v28-catboost-playground-series-s6e10",
+      "sha256": "06170ae706973234a7b97c2dc3e18ca6bd0f3b72a0e48f605ab4b9d0313e8691",
+      "submission_sha256": "22bc466b10bb8944cb8296ee47c7231fc780310aee4d1c12cecd33932a7f41af"
+    },
+    "v296": {
+      "notebook": "mjw3177109/kas-v296-realmlp-full-s6e10",
+      "sha256": "ee849ba5ae5aafa57998df48c5c612eaf0227461100def5aabc4c9096314a598"
+    },
+    "v297": {
+      "notebook": "mjw3177109/kas-v297-conditional-cpu-s6e10",
+      "sha256": "92a92e1ad0e5a44d27aba6ea7d3c5fad779d01f799f9b838911c3c03cea6c3a8"
+    },
+    "v294": {
+      "notebook": "mjw3177109/kas-v294-original-route-playground-series-s6e10",
+      "sha256": "9de31b2f509e4f1973f5df9f560200d2e71344d7b4f9ce4a1145f4e53f4797fe",
+      "submission_sha256": "1db97da7c58789d6bffbf7f2bcea67ba134239bbab4e647109262e03e97de48a"
+    }
+  },
+  "auc": {
+    "v296": 0.9609541989886212,
+    "v298": 0.9610183558267038,
+    "v299": 0.9610561936366048
+  },
+  "paired_bootstrap": {
+    "v298": {
+      "lower_025": 4.574757201448176e-05,
+      "median": 6.405629694500314e-05,
+      "upper_975": 7.756611517375498e-05,
+      "positive_fraction": 1.0,
+      "draws": 120,
+      "seed": 20261020
+    },
+    "v299": {
+      "lower_025": 8.426168252358146e-05,
+      "median": 0.00010144897325531366,
+      "upper_975": 0.00011812548792025923,
+      "positive_fraction": 1.0,
+      "draws": 120,
+      "seed": 20261020
+    }
+  },
+  "worst_subgroups": [
+    {
+      "feature": "Gender",
+      "group": "Male",
+      "rows": 351683,
+      "baseline_auc": 0.9603392327749266,
+      "candidate_auc": 0.9604392004451627,
+      "gain": 9.996767023612296e-05
+    },
+    {
+      "feature": "Customer Type",
+      "group": "Loyal Customer",
+      "rows": 576990,
+      "baseline_auc": 0.9613659349738718,
+      "candidate_auc": 0.9614689131525848,
+      "gain": 0.00010297817871296466
+    },
+    {
+      "feature": "Gender",
+      "group": "Female",
+      "rows": 347952,
+      "baseline_auc": 0.9615430046940078,
+      "candidate_auc": 0.9616461939990627,
+      "gain": 0.00010318930505492929
+    },
+    {
+      "feature": "Type of Travel",
+      "group": "Business travel",
+      "rows": 497441,
+      "baseline_auc": 0.9577010888969328,
+      "candidate_auc": 0.9578322711856359,
+      "gain": 0.0001311822887030134
+    },
+    {
+      "feature": "Class",
+      "group": "Eco",
+      "rows": 327404,
+      "baseline_auc": 0.9053040445902968,
+      "candidate_auc": 0.9054370852122753,
+      "gain": 0.00013304062197849742
+    },
+    {
+      "feature": "Class",
+      "group": "Eco Plus",
+      "rows": 30019,
+      "baseline_auc": 0.9316467770429075,
+      "candidate_auc": 0.9317846249027195,
+      "gain": 0.00013784785981196812
+    },
+    {
+      "feature": "Customer Type",
+      "group": "disloyal Customer",
+      "rows": 122645,
+      "baseline_auc": 0.9250033498122316,
+      "candidate_auc": 0.9251454697521126,
+      "gain": 0.00014211993988100247
+    },
+    {
+      "feature": "Class",
+      "group": "Business",
+      "rows": 342212,
+      "baseline_auc": 0.9407458079837168,
+      "candidate_auc": 0.9408952076785103,
+      "gain": 0.00014939969479355053
+    }
+  ],
+  "subgroups_audited": 9,
+  "submission": false,
+  "new_model_training": false,
+  "warning": "Bootstrap reuses original OOF. It is not a new CV seed or an official LB."
+}
