@@ -13,6 +13,7 @@ from sklearn.metrics import roc_auc_score
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"kaggle_agent"))
+import v2913_realmlp_ens8_train as original
 import v2914_dual_realmlp_train as model
 import v2914_pipeline as controller
 
@@ -49,7 +50,8 @@ class DualMLPSafety(unittest.TestCase):
         self.assertIn("count_original_Leg room service",x)
         self.assertNotIn("satisfaction",x)
         self.assertNotIn("id",x)
-        self.assertGreater(len(x.columns),37)
+        prior,_,_,_=original.engineer(train,validation)
+        self.assertGreater(len(x.columns),len(prior.columns))
         assert pd.api.types.is_categorical_dtype(x["dual_Age"].dtype)
         same=train.copy()
         same["satisfaction"]=1-same["satisfaction"]
