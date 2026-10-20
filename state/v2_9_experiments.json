@@ -338,7 +338,9 @@
         "mjw3177109/kas-v2913-realmlp-ens8-t4-s6e10"
       ],
       "experiment_id": "33e0f5a240889a8aa8b88181ec938337f556e01b86c0d2073f4f6ebbfedf61a8",
-      "created_at": "2026-10-20T05:24:36.790419+00:00"
+      "created_at": "2026-10-20T05:24:36.790419+00:00",
+      "submission_id": 57423879,
+      "public_lb": "0.96083"
     }
   ]
 }
