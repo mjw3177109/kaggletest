@@ -59,6 +59,43 @@ def candidates_for(slug):
     # Only an authenticated, fully scored Kaggle submission is eligible; a
     # successful CV candidate or a reserved/pending Kaggle request is NOT.
     if slug == "playground-series-s6e10":
+        # A future V2915 public score is eligible only when tied to a
+        # durably reserved SHA and an independently qualified 3fold OOF.
+        # A leaderboard result cannot be inferred from Kaggle CV alone.
+        newer = read(ROOT / "state" / "v2_9_15_submission.json")
+        proposal = read(ROOT / "state" / "v2_9_15_status.json")
+        entry15 = newer.get("submission") or {}
+        sha15 = str(proposal.get("candidate_test_hash") or "")
+        note15 = "KAS V2915 5E " + sha15[:16]
+        comp15 = proposal.get("comparison") or {}
+        if (newer.get("competition") == slug
+            and newer.get("stage") == "complete"
+            and newer.get("submitted") is True
+            and newer.get("submission_attempted") is True
+            and proposal.get("stage") == "candidate_ready_unsubmitted"
+            and proposal.get("submitted") is False
+            and len(sha15) == 64
+            and newer.get("prediction_hash") == sha15
+            and newer.get("submission_note") == note15
+            and float(comp15.get("gain", 0)) >= .00008
+            and float(comp15.get("candidate_auc", 0)) >= .96125635576833
+            and entry15.get("status") == "SubmissionStatus.COMPLETE"
+            and entry15.get("description") == note15
+            and entry15.get("publicScore") not in (None, "")):
+            try:
+                ref = int(entry15.get("ref"))
+                score15 = float(entry15["publicScore"])
+                if (ref > 0 and 0 <= score15 <= 1
+                    and abs(score15-float(newer.get("official_lb"))) < 1e-9):
+                    found.append({
+                        "source":"v2_9_15_submission.json",
+                        "model":"V2.9.15 RealMLP 5epoch blended",
+                        "public_score":score15,
+                        "submission_id":ref,
+                        "submitted_at":entry15.get("date"),
+                    })
+            except (ValueError, TypeError):
+                pass
         # Newly completed V2913 official Kaggle submission (not CV alone).
         v2913 = read(ROOT / "state" / "v2_9_13_submission.json")
         experiment = read(ROOT / "state" / "v2_9_13_status.json")
