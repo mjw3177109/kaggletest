@@ -15,7 +15,10 @@
     "known_existing_control": "v2911_status_complete",
     "checked_at_utc": "2026-10-20T03:33:07Z"
   },
-  "launch_attempts": 0,
+  "launch_attempts": 1,
   "kernel_state": "kernel_queued",
-  "kernel_message": "mjw3177109/kas-v2912-native-cat-cpu-s6e10 has status \"KernelWorkerStatus.QUEUED\""
+  "kernel_message": "mjw3177109/kas-v2912-native-cat-cpu-s6e10 has status \"KernelWorkerStatus.QUEUED\"",
+  "kernel_creation_actions_run": 39365170011,
+  "kernel_url": "https://www.kaggle.com/code/mjw3177109/kas-v2912-native-cat-cpu-s6e10",
+  "launch_attempt_note": "Only one new CPU notebook push; GH Actions 39365170011 passed 10 safety tests."
 }
