@@ -1,0 +1,155 @@
+name: Kaggle V2.9.13 Official Submit Once (Ens8)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "One Kaggle submission from immutable ens8 OOF, or read-only recovery"
+        required: true
+        type: choice
+        default: submit_once
+        options: [submit_once, recover_only]
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2913_submit_once.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-s6e10-official-submit-v2913-once
+  cancel-in-progress: false
+
+jobs:
+  official-v2913:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      REQUESTED_MODE: ${{ inputs.mode || 'submit_once' }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Gate on complete T4 OOF, official prior Kaggle LB, and no previous submit
+        id: gate
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,os
+          from datetime import datetime,timezone
+          from pathlib import Path
+          def read(filename):
+              p=Path("state")/filename
+              return json.loads(p.read_text()) if p.exists() else {}
+          current=read("v2_9_13_status.json")
+          previous=read("v2_9_9_submission.json")
+          reserved=read("v2_9_13_submission.json")
+          ladder=read("dual_ladder.json")
+          metric=current.get("metrics") or {}
+          comp=current.get("comparison") or {}
+          try:
+              final=datetime.fromisoformat(ladder.get("active_deadline","").replace("Z","+00:00"))
+              deadline_ok=final.tzinfo is not None and datetime.now(timezone.utc)<final
+          except ValueError:
+              deadline_ok=False
+          allowed=(os.environ.get("REQUESTED_MODE")=="submit_once"
+               and deadline_ok and ladder.get("active_competition")=="playground-series-s6e10"
+               and current.get("stage")=="candidate_ready_unsubmitted"
+               and current.get("submitted") is False
+               and metric.get("gpu_verified") is True
+               and (metric.get("hardware") or {}).get("ok") is True
+               and comp.get("positive_folds")==3
+               and float(comp.get("gain",0))>=.00006
+               and abs(float(comp.get("candidate_auc",0))-.96117635576833)<.000002
+               and previous.get("stage")=="complete"
+               and previous.get("submitted") is True
+               and str((previous.get("submission") or {}).get("ref"))=="57421208"
+               and not reserved)
+          recovery=(os.environ.get("REQUESTED_MODE")=="recover_only" or bool(reserved))
+          print("allowed="+str(allowed).lower())
+          print("recovery="+str(recovery).lower())
+          PY
+
+      - name: Install Kaggle CLI and frozen-model scorer
+        if: steps.gate.outputs.allowed == 'true' || steps.gate.outputs.recovery == 'true'
+        run: python -m pip install -r requirements.txt numpy pandas scipy scikit-learn
+
+      - name: Run all one-shot and T4 CV safety tests
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          python -m py_compile kaggle_agent/v2913_submit.py kaggle_agent/v2913_pipeline.py
+          python -m unittest discover -s tests -p 'test_v2913_submit.py' -v
+
+      - name: Rebuild 299844-row exact prediction and reserve Kaggle quota ONCE
+        if: steps.gate.outputs.allowed == 'true'
+        run: python kaggle_agent/v2913_submit.py --reserve
+
+      - name: Durably commit reservation to GitHub BEFORE Kaggle submission
+        id: reservation
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/v2_9_13_submission.json reports/v2_9_13_submission.md
+          test -n "$(git diff --cached --name-only)" || exit 1
+          git commit -m "bot: durably reserve single V2913 official Kaggle submission"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then
+              echo "reserved=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+
+      - name: Execute exactly ONE authenticated Kaggle competition submit
+        if: steps.reservation.outputs.reserved == 'true'
+        env:
+          V2913_RESERVED_COMMITTED: "true"
+        run: python kaggle_agent/v2913_submit.py --submit
+
+      - name: Read-only status recovery, NEVER resubmit
+        if: steps.gate.outputs.recovery == 'true'
+        run: python kaggle_agent/v2913_submit.py --recover
+
+      - name: Persist official submission ID, LB or ambiguous state without retry
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_9_13_submission.json reports/v2_9_13_submission.md state/v2_9_experiments.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: verify V2913 Kaggle one-shot official score"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+
+      - name: Upload immutable-safe status only, exclude private/raw Kaggle data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2913-official-public-lb-proof
+          path: |
+            state/v2_9_13_submission.json
+            reports/v2_9_13_submission.md
+          if-no-files-found: ignore
