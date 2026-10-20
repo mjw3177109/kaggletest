@@ -138,7 +138,7 @@ def evaluate(train,test,archive,statuses,audit_legacy_order=False):
     incumbent=.8*rank(base)+.2*rank(real)
     benchmark=float(roc_auc_score(y,incumbent))
     if abs(benchmark-EXPECTED_V296)>0.000002:
-        raise ValueError("Cannot reconstruct V296 incumbent")
+        raise ValueError(f"Cannot reconstruct V296 incumbent: measured={benchmark:.12f}, expected={EXPECTED_V296:.12f}, gap={benchmark-EXPECTED_V296:.12f}")
     candidate=.65*rank(base)+.20*rank(real)+.15*rank(conditional)
     auc=float(roc_auc_score(y,candidate))
     fold_auc=[];fold_gain=[]
