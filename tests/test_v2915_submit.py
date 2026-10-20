@@ -86,5 +86,33 @@ class OneShotFiveEpochSafety(unittest.TestCase):
         self.assertIn('guard.quota(rows)',contents)
         self.assertIn('s["stage"]="submitting"',contents)
 
+
+    def test_kaggle_official_history_is_checked_before_one_shot_reservation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            state=Path(directory)/"v2915_submission.json"
+            with (patch.object(m,"STATE",state),
+                  patch.object(m,"score_file",return_value=("a"*64,"b"*64)),
+                  patch.object(m.guard,"history",return_value=[{"ref": 42}]),
+                  patch.object(m.guard,"matching",return_value={"ref": 42}),
+                  patch.object(m.guard,"quota") as quota,
+                  patch.object(m,"save") as save):
+                with self.assertRaisesRegex(RuntimeError,"duplicate official Kaggle submission"):
+                    m.reserve()
+                quota.assert_not_called()
+                save.assert_not_called()
+
+    def test_kaggle_quota_exhaustion_cannot_create_reservation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            state=Path(directory)/"v2915_submission.json"
+            with (patch.object(m,"STATE",state),
+                  patch.object(m,"score_file",return_value=("a"*64,"b"*64)),
+                  patch.object(m.guard,"history",return_value=[]),
+                  patch.object(m.guard,"matching",return_value=None),
+                  patch.object(m.guard,"quota",return_value=False),
+                  patch.object(m,"save") as save):
+                with self.assertRaisesRegex(RuntimeError,"Kaggle submission quota exhausted"):
+                    m.reserve()
+                save.assert_not_called()
+
 if __name__=="__main__":
     unittest.main()
