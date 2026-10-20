@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-19T07:47:09.435625+00:00",
+  "generated_at": "2026-10-20T07:35:22.621643+00:00",
   "agent": {
     "name": "Kaggle Auto Scientist",
     "version": "V2.3",
@@ -13,10 +13,10 @@
       "deadline": "2026-11-09 23:59:00",
       "category": "Featured",
       "reward": "450,000 Usd",
-      "teamCount": 266,
+      "teamCount": 271,
       "userHasEntered": false,
       "userRank": 0,
-      "daysRemaining": 21,
+      "daysRemaining": 20,
       "score": 30
     },
     {
@@ -25,10 +25,10 @@
       "deadline": "2026-11-02 23:59:00",
       "category": "Featured",
       "reward": "850,000 Usd",
-      "teamCount": 4492,
+      "teamCount": 4531,
       "userHasEntered": false,
       "userRank": 0,
-      "daysRemaining": 14,
+      "daysRemaining": 13,
       "score": 20
     },
     {
@@ -37,10 +37,10 @@
       "deadline": "2026-11-02 23:59:00",
       "category": "Featured",
       "reward": "700,000 Usd",
-      "teamCount": 3049,
+      "teamCount": 3081,
       "userHasEntered": false,
       "userRank": 0,
-      "daysRemaining": 14,
+      "daysRemaining": 13,
       "score": 20
     }
   ]
