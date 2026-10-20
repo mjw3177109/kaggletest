@@ -341,6 +341,28 @@
       "created_at": "2026-10-20T05:24:36.790419+00:00",
       "submission_id": 57423879,
       "public_lb": "0.96083"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2914_dual_realmlp_ens8",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model": "RealMLP Ens8 dual all numeric",
+        "weights": {
+          "v2913": 0.9,
+          "v2914": 0.1
+        }
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-20T11:59:45.106878+00:00",
+      "cv": 0.9612261589523977,
+      "gpu_seconds": 801.3,
+      "kernel_sources": [
+        "mjw3177109/kas-v2914-dual-numeric-realmlp-t4-s6e10"
+      ],
+      "experiment_id": "582ed33f83e47ca515b353feed5f4588e61489c660fd4dff00caeb45237b9a3d",
+      "created_at": "2026-10-20T11:59:45.107154+00:00"
     }
   ]
 }
