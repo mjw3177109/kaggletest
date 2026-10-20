@@ -73,5 +73,27 @@ class V2915RankSafety(unittest.TestCase):
             save(d,"v2_9_15_submission.json",good)
             self.assertIsNone(ranked.candidates_for(SLUG))
 
+
+    def test_checked_in_v2915_official_score_is_an_eligible_rank_source(self):
+        # Keep public-score candidate selection tied to a real completed Kaggle
+        # submission, even when Actions-generated state commits do not emit
+        # follow-up push workflow events.
+        path=ROOT/"state/v2_9_15_submission.json"
+        if not path.is_file():
+            return
+        record=json.loads(path.read_text())
+        if record.get("stage")!="complete" or record.get("submitted") is not True:
+            return
+        entry=record.get("submission") or {}
+        if entry.get("status")!="SubmissionStatus.COMPLETE":
+            return
+        score=float(entry["publicScore"])
+        winner=ranked.candidates_for(SLUG)
+        self.assertIsNotNone(winner)
+        self.assertGreaterEqual(winner["public_score"],score)
+        if abs(winner["public_score"]-score)<1e-12:
+            self.assertEqual(winner["submission_id"],entry["ref"])
+            self.assertEqual(winner["source"],"v2_9_15_submission.json")
+
 if __name__=="__main__":
     unittest.main()
