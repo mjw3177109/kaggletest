@@ -107,7 +107,7 @@ class NativeCatSafety(unittest.TestCase):
     def test_known_owner_mine_list_proves_missing_id(self):
         probes=[
             SimpleNamespace(returncode=1,stderr="Permission 'kernels.get' was denied",stdout=""),
-            SimpleNamespace(returncode=0,stderr="",stdout="Not found\\n"),
+            SimpleNamespace(returncode=0,stderr="",stdout="Not found"),
             SimpleNamespace(returncode=0,stderr="",stdout=
                 'mjw3177109/kas-v2911-segment-contrast-cpu-s6e10 has status "KernelWorkerStatus.COMPLETE"'),
         ]
@@ -124,7 +124,7 @@ class NativeCatSafety(unittest.TestCase):
     def test_unverified_list_fails_closed(self):
         results=[
             SimpleNamespace(returncode=1,stderr="permission denied",stdout=""),
-            SimpleNamespace(returncode=0,stderr="",stdout="Not found\\n"),
+            SimpleNamespace(returncode=0,stderr="",stdout="Not found"),
             SimpleNamespace(returncode=1,stderr="offline",stdout=""),
         ]
         with patch.object(pipe,"kaggle",side_effect=results):
