@@ -285,6 +285,33 @@
       ],
       "experiment_id": "0bed33ba189f37603147afbc0d0017c510b9ac4a687326e87447a15dfa9d0ae8",
       "created_at": "2026-10-20T03:24:24.438854+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2912_segment_contrast_cpu",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "algorithm": "CatBoostCPU750D6",
+        "new_features": "native_catboost_ordered_ctr",
+        "weights": {
+          "v293": 0.5,
+          "realmlp": 0.2,
+          "conditional": 0.15,
+          "teacher": 0.05,
+          "native_cat": 0.1
+        }
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-20T04:04:15.726664+00:00",
+      "cv": 0.9610139234538764,
+      "cpu_seconds": 544.953505284,
+      "gpu_seconds": 0,
+      "kernel_sources": [
+        "mjw3177109/kas-v2912-native-cat-cpu-s6e10"
+      ],
+      "experiment_id": "4ad3ebd806449ed15594ed26f14b05398899e1f807379e2165ea1835de36e30d",
+      "created_at": "2026-10-20T04:04:15.726983+00:00"
     }
   ]
 }
