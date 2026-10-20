@@ -1,0 +1,139 @@
+name: Kaggle V2.9.15 RealMLP Ens8 Five-Epoch T4
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Create unique V2915 Notebook once or recover its saved ID"
+        type: choice
+        required: false
+        default: run
+        options:
+          - run
+          - recover_existing
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2915_realmlp_5epoch.yml"
+      - "kaggle_agent/v2915_*.py"
+      - "tests/test_v2915_*.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v2915-t4-five-epoch-unique
+  cancel-in-progress: false
+
+jobs:
+  independent-realmlp-five-epoch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      REQUESTED_MODE: ${{ inputs.mode || 'run' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Read only terminal V2914, official V2913 and contest deadline
+        id: gate
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,os
+          from pathlib import Path
+          from datetime import datetime,timezone
+          def read(name):
+              f=Path("state")/name
+              return json.loads(f.read_text()) if f.exists() else {}
+          rank=read("v2_9_13_submission.json")
+          v2913=read("v2_9_13_status.json")
+          v2914=read("v2_9_14_status.json")
+          current=read("v2_9_15_status.json")
+          ladder=read("dual_ladder.json")
+          terminal={"candidate_ready_unsubmitted","skipped_no_cv_gain",
+                    "kernel_failed","output_failed","validation_mismatch",
+                    "push_failed","kernel_access_error"}
+          try:
+              deadline=datetime.fromisoformat(str(ladder.get("active_deadline","")).replace("Z","+00:00"))
+              active=deadline.tzinfo is not None and datetime.now(timezone.utc)<deadline
+          except ValueError:
+              active=False
+          passed=(active and ladder.get("active_competition")=="playground-series-s6e10"
+             and rank.get("stage")=="complete" and rank.get("submitted") is True
+             and str((rank.get("submission") or {}).get("ref"))=="57423879"
+             and abs(float(rank.get("official_lb",0))-.96083)<1e-9
+             and v2913.get("stage")=="candidate_ready_unsubmitted"
+             and abs(float((v2913.get("comparison") or {}).get("candidate_auc",0))-.96117635576833)<.000002
+             and v2914.get("stage")=="skipped_no_cv_gain"
+             and abs(float((v2914.get("comparison") or {}).get("candidate_auc",0))-.9612261589523977)<.000002
+             and current.get("stage") not in terminal)
+          mode=os.getenv("REQUESTED_MODE") or "run"
+          if current.get("kernel"):mode="recover_existing"
+          print("allowed="+str(passed).lower())
+          print("mode="+mode)
+          PY
+
+      - name: Install Kaggle scientific OOF verifier
+        if: steps.gate.outputs.allowed == 'true'
+        run: python -m pip install -r requirements.txt numpy pandas scipy scikit-learn
+
+      - name: Compile single-run model; assert fold/seed safety and frozen OOF blend
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2915_realmlp_5epoch_train.py kaggle_agent/v2915_pipeline.py
+          python -m unittest discover -s tests -p 'test_v2915_*.py' -v
+
+      - name: Create unique authenticated T4 Notebook or recover saved canonical ID
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          if test "$MODE" = "recover_existing"; then
+            python kaggle_agent/v2915_pipeline.py --recover-only
+          else
+            python kaggle_agent/v2915_pipeline.py
+          fi
+
+      - name: Durably persist authentic Kaggle stage, SHA and full OOF gate
+        if: always() && steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_9_15_status.json state/v2_9_experiments.json reports/v2_9_15_realmlp_5epoch.md
+          if test -d competitions/playground-series-s6e10/kaggle_gpu_v2915; then
+            git add -A -- competitions/playground-series-s6e10/kaggle_gpu_v2915/
+          fi
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: V2915 independent RealMLP five-epoch OOF and T4 evidence"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+
+      - name: Archive only result summary, never raw Kaggle OOF or test data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2915-five-epoch-oof-validation
+          path: |
+            state/v2_9_15_status.json
+            reports/v2_9_15_realmlp_5epoch.md
+          if-no-files-found: ignore
