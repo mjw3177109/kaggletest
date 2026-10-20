@@ -1,8 +1,19 @@
 {
   "competition": "playground-series-s6e10",
-  "stage": "kernel_access_error",
+  "stage": "preflight",
   "kernel": null,
   "submitted": false,
-  "error": "Cannot establish canonical notebook absence; no push allowed",
-  "updated_at": "2026-10-20T03:31:41.685074+00:00"
+  "updated_at": "2026-10-20T03:33:07Z",
+  "previous_failure": {
+    "stage": "kernel_access_error",
+    "reason": "Cannot establish canonical notebook absence; no push allowed",
+    "at": "2026-10-20T03:31:41.685074+00:00"
+  },
+  "preflight_verified": {
+    "diagnostic_actions_run": 39364857931,
+    "notebook_search": "owner_mine_exact_slug_not_found",
+    "known_existing_control": "v2911_status_complete",
+    "checked_at_utc": "2026-10-20T03:33:07Z"
+  },
+  "launch_attempts": 0
 }
