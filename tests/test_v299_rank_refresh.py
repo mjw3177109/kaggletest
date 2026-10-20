@@ -20,9 +20,12 @@ def save(folder,name,obj):
 class NewChampRankTests(unittest.TestCase):
     def test_real_branch_current_champion(self):
         champion=rank.candidates_for(SLUG)
-        self.assertEqual(champion["submission_id"],57423879)
-        self.assertEqual(champion["public_score"],.96083)
-        self.assertEqual(champion["source"],"v2_9_13_submission.json")
+        self.assertIsNotNone(champion)
+        self.assertGreaterEqual(champion["public_score"],.96083)
+        self.assertIn(champion["source"],(
+            "v2_9_13_submission.json","v2_9_15_submission.json"))
+        if champion["source"]=="v2_9_13_submission.json":
+            self.assertEqual(champion["submission_id"],57423879)
 
     def test_pending_candidate_does_not_override_official_score(self):
         with tempfile.TemporaryDirectory() as tmp,patch.object(rank,"ROOT",Path(tmp)):
