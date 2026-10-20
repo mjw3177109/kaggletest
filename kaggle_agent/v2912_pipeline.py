@@ -195,6 +195,21 @@ def run(recover=False):
     if not s.get("kernel"):
         if recover:
             print("No existing CPU Notebook; recovery must never create a kernel");return s
+        # Authoritative preflight: a previously created canonical ID must NEVER
+        # be pushed again, even if GitHub status persistence was interrupted.
+        probe=kaggle(["kaggle","kernels","status",KERNEL],timeout=60,check=False)
+        if probe.returncode==0:
+            s.update({"kernel":KERNEL,"stage":"kernel_queued",
+                      "preexisting_kernel_recovered":True})
+            persist(s)
+        else:
+            reason=(probe.stderr or probe.stdout or "").lower()
+            if not any(mark in reason for mark in ("404","not found","not_found")):
+                s.update({"stage":"kernel_access_error",
+                          "error":"Cannot establish canonical notebook absence; no push allowed"})
+                persist(s)
+                return s
+    if not s.get("kernel"):
         WORKDIR.mkdir(parents=True,exist_ok=True)
         shutil.copy2(ROOT/"kaggle_agent/v2912_native_cat_cpu_train.py",WORKDIR/"main.py")
         write(WORKDIR/"kernel-metadata.json",{
