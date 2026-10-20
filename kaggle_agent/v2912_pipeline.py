@@ -23,10 +23,10 @@ import v299_teacher_fusion as teacher
 
 ROOT=Path(__file__).resolve().parents[1]
 SLUG="playground-series-s6e10"
-KERNEL="mjw3177109/kas-v2912-segment-contrast-cpu-s6e10"
-STATE=ROOT/"state/v2_9_11_status.json"
+KERNEL="mjw3177109/kas-v2912-native-cat-cpu-s6e10"
+STATE=ROOT/"state/v2_9_12_status.json"
 LEDGER=ROOT/"state/v2_9_experiments.json"
-REPORT=ROOT/"reports/v2_9_11_segment_cpu.md"
+REPORT=ROOT/"reports/v2_9_12_native_cat_cpu.md"
 WORKDIR=ROOT/"competitions"/SLUG/"kaggle_cpu_v2912"
 OUTDIR=ROOT/"competitions"/SLUG/"results_v2912"
 BASELINE=0.9610561936366048
@@ -198,7 +198,7 @@ def run(recover=False):
         WORKDIR.mkdir(parents=True,exist_ok=True)
         shutil.copy2(ROOT/"kaggle_agent/v2912_native_cat_cpu_train.py",WORKDIR/"main.py")
         write(WORKDIR/"kernel-metadata.json",{
-            "id":KERNEL,"title":"kas-v2912-segment-contrast-cpu-s6e10",
+            "id":KERNEL,"title":"kas-v2912-native-cat-cpu-s6e10",
             "code_file":"main.py","language":"python","kernel_type":"script",
             "is_private":True,"enable_gpu":False,"enable_internet":False,
             "dataset_sources":[],"competition_sources":[SLUG],
