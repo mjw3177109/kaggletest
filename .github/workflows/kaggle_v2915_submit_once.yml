@@ -1,0 +1,166 @@
+name: Kaggle V2.9.15 Conditional Official Submit Once
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Submit only a strictly qualified V2915, otherwise read-only recover"
+        type: choice
+        required: true
+        default: submit_if_qualified
+        options: [submit_if_qualified, recover_only]
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2915_submit_once.yml"
+      - "kaggle_agent/v2915_submit.py"
+      - "tests/test_v2915_submit.py"
+      - "state/v2_9_15_status.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-s6e10-v2915-one-shot-submission
+  cancel-in-progress: false
+
+jobs:
+  submit-only-if-gated:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      REQUESTED_MODE: ${{ inputs.mode || 'submit_if_qualified' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Determine if V2915 was genuinely promoted by independent OOF audit
+        id: gate
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,os
+          from pathlib import Path
+          from datetime import datetime,timezone
+          def read(name):
+              f=Path("state")/name
+              return json.loads(f.read_text()) if f.exists() else {}
+          experiment=read("v2_9_15_status.json")
+          prior=read("v2_9_13_submission.json")
+          locked=read("v2_9_15_submission.json")
+          competition=read("dual_ladder.json")
+          scores=experiment.get("comparison") or {}
+          metrics=experiment.get("metrics") or {}
+          try:
+              deadline=datetime.fromisoformat(str(competition.get("active_deadline","")).replace("Z","+00:00"))
+              active=deadline.tzinfo is not None and datetime.now(timezone.utc)<deadline
+          except ValueError:
+              active=False
+          passed=(active and competition.get("active_competition")=="playground-series-s6e10"
+            and experiment.get("stage")=="candidate_ready_unsubmitted"
+            and experiment.get("submitted") is False
+            and str(experiment.get("kernel"))=="mjw3177109/kas-v2915-realmlp-5epoch-t4-s6e10"
+            and metrics.get("stage")=="three_folds_complete"
+            and metrics.get("gpu_verified") is True and (metrics.get("hardware") or {}).get("ok") is True
+            and scores.get("fixed_weights")=={
+                "v2913_rank":.8,"v2914_dual_rank":.1,"v2915_five_epoch_rank":.1}
+            and float(scores.get("candidate_auc",0))>=.96125635576833
+            and float(scores.get("gain",0))>=.00008
+            and int(scores.get("positive_folds",0))>=2
+            and min(scores.get("fold_gain") or [-1])>-.00005
+            and len(experiment.get("source_artifacts") or {})==8
+            and len(str(experiment.get("candidate_test_hash","")))==64
+            and prior.get("stage")=="complete" and prior.get("submitted") is True
+            and str((prior.get("submission") or {}).get("ref"))=="57423879"
+            and abs(float(prior.get("official_lb",0))-.96083)<1e-9
+            and not locked and os.getenv("REQUESTED_MODE")=="submit_if_qualified")
+          recovery=(bool(locked) or os.getenv("REQUESTED_MODE")=="recover_only")
+          print("allowed="+str(passed).lower())
+          print("recovery="+str(recovery).lower())
+          print("reason="+("qualified_unsubmitted" if passed else
+                          "already_reserved_recover_only" if recovery else "strict_cv_not_qualified"))
+          PY
+
+      - name: Install complete Kaggle CLI and archived OOF audit dependencies
+        if: steps.gate.outputs.allowed == 'true' || steps.gate.outputs.recovery == 'true'
+        run: python -m pip install -r requirements.txt numpy pandas scipy scikit-learn
+
+      - name: Enforce all one-shot and no-premature-submit tests
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          python -m py_compile kaggle_agent/v2915_submit.py kaggle_agent/v2915_pipeline.py
+          python -m unittest discover -s tests -p 'test_v2915_submit.py' -v
+
+      - name: Reconstruct eight original Kaggle OOF sources and immutable 299844-row test predictions
+        if: steps.gate.outputs.allowed == 'true'
+        run: python kaggle_agent/v2915_submit.py --reserve
+
+      - name: DURABLY commit exact one-use submission reservation before Kaggle write
+        id: reservation
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/v2_9_15_submission.json reports/v2_9_15_submission.md
+          test -n "$(git diff --cached --name-only)" || exit 1
+          git commit -m "bot: reserve immutable one-shot V2915 Kaggle submission"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then
+              echo "committed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+
+      - name: Submit exactly ONCE only after durable reservation, quota and SHA
+        if: steps.reservation.outputs.committed == 'true'
+        env:
+          V2915_RESERVED_COMMITTED: "true"
+        run: python kaggle_agent/v2915_submit.py --submit
+
+      - name: Read-only recovery of already attempted official submission
+        if: steps.gate.outputs.recovery == 'true'
+        run: python kaggle_agent/v2915_submit.py --recover
+
+      - name: Preserve official ID, Public LB or ambiguous write state without retrying
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_9_15_submission.json reports/v2_9_15_submission.md state/v2_9_experiments.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: V2915 official Kaggle submission evidence"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+
+      - name: Upload safe submission status only, no full OOF or competition data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2915-official-gated-submission-evidence
+          path: |
+            state/v2_9_15_submission.json
+            reports/v2_9_15_submission.md
+          if-no-files-found: ignore
