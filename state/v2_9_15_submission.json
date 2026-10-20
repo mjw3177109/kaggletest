@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
-  "stage": "submission_reserved",
-  "submitted": false,
+  "stage": "complete",
+  "submitted": true,
   "submission_attempted": true,
   "reserved_at": "2026-10-20T16:43:10.227356+00:00",
   "submission_note": "KAS V2915 5E 906185547dcd5f0c",
@@ -9,6 +9,16 @@
   "candidate_file_sha256": "8eff8f08bb76d66daf49098e689b72908e185c9974a476bbe26e99cf0b0ad687",
   "cv_auc": 0.9612850399332336,
   "threefold_verified": true,
-  "submission": null,
-  "updated_at": "2026-10-20T16:43:10.227494+00:00"
+  "submission": {
+    "ref": 57446286,
+    "fileName": "v2915_submission.csv",
+    "date": "2026-10-20T16:43:14.180000",
+    "description": "KAS V2915 5E 906185547dcd5f0c",
+    "status": "SubmissionStatus.COMPLETE",
+    "publicScore": "0.96099",
+    "privateScore": ""
+  },
+  "updated_at": "2026-10-20T16:43:38.550224+00:00",
+  "official_lb": 0.96099,
+  "public_lb_delta_vs_v2913": 0.000160000000000049
 }

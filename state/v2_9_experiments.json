@@ -388,7 +388,9 @@
         "mjw3177109/kas-v2915-realmlp-5epoch-t4-s6e10"
       ],
       "experiment_id": "beaa8b49fdf22509fdc01ae7596d14b33c8abec467eaa3c7c63a07bd4dfbdfe3",
-      "created_at": "2026-10-20T13:58:52.717732+00:00"
+      "created_at": "2026-10-20T13:58:52.717732+00:00",
+      "submission_id": 57446286,
+      "public_lb": "0.96099"
     }
   ]
 }
