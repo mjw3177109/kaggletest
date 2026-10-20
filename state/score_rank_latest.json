@@ -1,17 +1,17 @@
 {
   "competition": "playground-series-s6e10",
-  "checked_at": "2026-10-20T05:26:38.574341+00:00",
+  "checked_at": "2026-10-20T05:33:09.786791+00:00",
   "ranking_type": "Public",
-  "rank": 899,
+  "rank": 839,
   "rank_verified": true,
   "rank_source": "kaggle_authenticated_userRank",
   "ranked_teams": 2431,
   "score": {
-    "source": "v2_9_9_submission.json",
-    "model": "V2.9.9 Four-model fusion",
-    "public_score": 0.9607,
-    "submission_id": 57421208,
-    "submitted_at": "2026-10-20T04:07:27.337000"
+    "source": "v2_9_13_submission.json",
+    "model": "V2.9.13 RealMLP Ens8 fusion",
+    "public_score": 0.96083,
+    "submission_id": 57423879,
+    "submitted_at": "2026-10-20T05:30:37.840000"
   },
   "warnings": [],
   "leaderboard_url": "https://www.kaggle.com/competitions/playground-series-s6e10/leaderboard",
