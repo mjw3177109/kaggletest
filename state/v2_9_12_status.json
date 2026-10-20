@@ -1,0 +1,8 @@
+{
+  "competition": "playground-series-s6e10",
+  "stage": "kernel_access_error",
+  "kernel": null,
+  "submitted": false,
+  "error": "Cannot establish canonical notebook absence; no push allowed",
+  "updated_at": "2026-10-20T03:31:41.685074+00:00"
+}
