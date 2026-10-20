@@ -230,6 +230,34 @@
       ],
       "experiment_id": "16bd9d86b5d43f9a6d20422f8908d33cfd439da80fa08f48a4e6d2b8e7c0436f",
       "created_at": "2026-10-20T01:08:57.860048+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v299_archived_teacher_fixed_four_model",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "weights": {
+          "v293": 0.6,
+          "realmlp": 0.2,
+          "conditional": 0.15,
+          "teacher_v294": 0.05
+        },
+        "min_gain": 0.0001
+      },
+      "status": "completed",
+      "completed_at": "2026-10-20T01:12:06.633341+00:00",
+      "cv": 0.9610561936366048,
+      "gpu_seconds": 0,
+      "kernel_sources": [
+        "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+        "mjw3177109/kas-v28-catboost-playground-series-s6e10",
+        "mjw3177109/kas-v296-realmlp-full-s6e10",
+        "mjw3177109/kas-v297-conditional-cpu-s6e10",
+        "mjw3177109/kas-v294-original-route-playground-series-s6e10"
+      ],
+      "experiment_id": "f334317fef64b870116121acffdfe3bbfc18d5dc610897e3516127a98a5a4e3c",
+      "created_at": "2026-10-20T01:12:06.633979+00:00"
     }
   ]
 }
