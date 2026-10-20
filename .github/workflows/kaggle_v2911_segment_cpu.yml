@@ -1,0 +1,135 @@
+name: Kaggle V2.9.11 Independent Segment Contrast CPU
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Run one distinct CPU kernel once, or recover saved canonical notebook"
+        required: false
+        type: choice
+        default: run
+        options:
+          - run
+          - recover_existing
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2911_segment_cpu.yml"
+      - "kaggle_agent/v2911_*.py"
+      - "tests/test_v2911_*.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v2911-single-cpu-s6e10
+  cancel-in-progress: false
+
+jobs:
+  independent-segment-cpu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify contest, mature incumbent, unique CPU notebook
+        id: gate
+        env:
+          REQUESTED_MODE: ${{ inputs.mode || 'run' }}
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,os
+          from pathlib import Path
+          from datetime import datetime,timezone
+          def read(name):
+              path=Path("state")/name
+              return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+          ladder=read("dual_ladder.json")
+          old=read("v2_9_7_status.json")
+          previous=read("v2_9_9_status.json")
+          stability=read("v2_9_10_robustness_status.json")
+          current=read("v2_9_11_status.json")
+          terminal={"candidate_ready_unsubmitted","skipped_no_cv_gain",
+                    "kernel_failed","output_failed","validation_mismatch",
+                    "push_failed","kernel_access_error"}
+          deadline=ladder.get("active_deadline","")
+          try:
+              end=datetime.fromisoformat(deadline.replace("Z","+00:00"))
+              open_now=end.tzinfo is not None and datetime.now(timezone.utc)<end
+          except ValueError:
+              open_now=False
+          allowed=(open_now and ladder.get("active_competition")=="playground-series-s6e10"
+              and old.get("stage")=="candidate_ready_unsubmitted"
+              and previous.get("stage")=="candidate_ready_unsubmitted"
+              and stability.get("stage")=="robustness_complete"
+              and current.get("stage") not in terminal)
+          mode=os.environ.get("REQUESTED_MODE") or "run"
+          if current.get("kernel"):mode="recover_existing"
+          print("allowed="+str(allowed).lower())
+          print("mode="+mode)
+          PY
+
+      - name: Install scientific pipeline and Kaggle CLI
+        if: steps.gate.outputs.allowed == 'true'
+        run: python -m pip install -r requirements.txt numpy pandas scipy scikit-learn lightgbm
+
+      - name: Verify CPU interaction model, cross-fit and no-duplicate regressions
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m py_compile kaggle_agent/v2911_segment_cpu_train.py kaggle_agent/v2911_pipeline.py
+          python -m unittest discover -s tests -p 'test_v2911_*.py' -v
+
+      - name: Run exactly one CPU Notebook or recover original
+        id: experiment
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          if test "$MODE" = "recover_existing"; then
+            python kaggle_agent/v2911_pipeline.py --recover-only
+          else
+            python kaggle_agent/v2911_pipeline.py
+          fi
+
+      - name: Persist Kaggle stage before any later recovery
+        if: always() && steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_9_11_status.json state/v2_9_experiments.json reports/v2_9_11_segment_cpu.md
+          if test -d competitions/playground-series-s6e10/kaggle_cpu_v2911; then
+            git add -A -- competitions/playground-series-s6e10/kaggle_cpu_v2911/
+          fi
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: V2911 independent CPU segment contrast evidence"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+
+      - name: Upload safe V2911 CPU provenance only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2911-segment-cpu-metrics
+          path: |
+            state/v2_9_11_status.json
+            reports/v2_9_11_segment_cpu.md
+          if-no-files-found: ignore
