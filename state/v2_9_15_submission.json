@@ -1,0 +1,14 @@
+{
+  "competition": "playground-series-s6e10",
+  "stage": "submission_reserved",
+  "submitted": false,
+  "submission_attempted": true,
+  "reserved_at": "2026-10-20T16:43:10.227356+00:00",
+  "submission_note": "KAS V2915 5E 906185547dcd5f0c",
+  "prediction_hash": "906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7",
+  "candidate_file_sha256": "8eff8f08bb76d66daf49098e689b72908e185c9974a476bbe26e99cf0b0ad687",
+  "cv_auc": 0.9612850399332336,
+  "threefold_verified": true,
+  "submission": null,
+  "updated_at": "2026-10-20T16:43:10.227494+00:00"
+}
