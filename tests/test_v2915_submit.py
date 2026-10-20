@@ -13,8 +13,12 @@ sys.path.insert(0,str(ROOT/"kaggle_agent"))
 import v2915_submit as m
 
 class OneShotFiveEpochSafety(unittest.TestCase):
-    def test_live_not_ready_candidate_must_not_submit(self):
-        with patch.object(m.old,"check_competition"):
+    def test_incomplete_candidate_must_not_submit(self):
+        # Remain deterministic when the real V2915 experiment later passes CV.
+        with (patch.object(m.old,"check_competition"),
+              patch.object(m,"read",return_value={
+                 "competition":"playground-series-s6e10",
+                 "stage":"kernel_running","submitted":False})):
             with self.assertRaisesRegex(RuntimeError,"V2915 strict full-OOF"):
                 m.qualified()
 
