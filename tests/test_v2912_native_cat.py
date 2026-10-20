@@ -100,8 +100,36 @@ class NativeCatSafety(unittest.TestCase):
                       returncode=1,stderr="403 denied",stdout="")) as kaggle):
                 result=pipe.run(recover=False)
                 self.assertEqual(result["stage"],"kernel_access_error")
-                self.assertEqual(kaggle.call_count,1)
-                self.assertEqual(kaggle.call_args.args[0][2],"status")
+                self.assertEqual(kaggle.call_count,2)
+                self.assertEqual(kaggle.call_args_list[0].args[0][2],"status")
+                self.assertEqual(kaggle.call_args_list[1].args[0][2],"list")
+
+    def test_known_owner_mine_list_proves_missing_id(self):
+        probes=[
+            SimpleNamespace(returncode=1,stderr="Permission 'kernels.get' was denied",stdout=""),
+            SimpleNamespace(returncode=0,stderr="",stdout="Not found\\n"),
+            SimpleNamespace(returncode=0,stderr="",stdout=
+                'mjw3177109/kas-v2911-segment-contrast-cpu-s6e10 has status "KernelWorkerStatus.COMPLETE"'),
+        ]
+        with patch.object(pipe,"kaggle",side_effect=probes) as client:
+            self.assertFalse(pipe.existing_or_absent())
+            self.assertEqual(client.call_count,3)
+
+    def test_existing_kernel_never_pushes_or_probes_again(self):
+        with patch.object(pipe,"kaggle",return_value=SimpleNamespace(
+                returncode=0,stderr="",stdout='KernelWorkerStatus.QUEUED')) as client:
+            self.assertTrue(pipe.existing_or_absent())
+            self.assertEqual(client.call_count,1)
+
+    def test_unverified_list_fails_closed(self):
+        results=[
+            SimpleNamespace(returncode=1,stderr="permission denied",stdout=""),
+            SimpleNamespace(returncode=0,stderr="",stdout="Not found\\n"),
+            SimpleNamespace(returncode=1,stderr="offline",stdout=""),
+        ]
+        with patch.object(pipe,"kaggle",side_effect=results):
+            with self.assertRaisesRegex(RuntimeError,"owner control failed"):
+                pipe.existing_or_absent()
 
     def test_script_has_no_submission(self):
         source=(ROOT/"kaggle_agent/v2912_pipeline.py").read_text(encoding="utf-8")
