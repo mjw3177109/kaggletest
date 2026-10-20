@@ -1,4 +1,4 @@
-name: Kaggle V299 Authenticated Public Rank Refresh
+name: Kaggle Latest Authenticated Public Rank Refresh
 
 on:
   workflow_dispatch:
@@ -43,7 +43,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_v24_rank_tracker.py' -v
           python -m unittest discover -s tests -p 'test_v299_rank_refresh.py' -v
 
-      - name: Fetch authenticated Kaggle Public rank for V299 score
+      - name: Fetch authenticated Kaggle Public rank for current scored submission
         run: |
           python kaggle_agent/v24_rank_tracker.py
           python - <<'PY'
@@ -52,9 +52,9 @@ jobs:
           s=json.loads(Path("state/score_rank_latest.json").read_text())
           model=s.get("score") or {}
           if (s.get("competition")!="playground-series-s6e10"
-              or model.get("submission_id")!=57421208
-              or model.get("source")!="v2_9_9_submission.json"
-              or abs(float(model.get("public_score",0))-.96070)>1e-9):
+              or model.get("submission_id")!=57423879
+              or model.get("source")!="v2_9_13_submission.json"
+              or abs(float(model.get("public_score",0))-.96083)>1e-9):
               raise RuntimeError("Refuse stale or wrong official scored Public rank")
           print("Authenticated rank:",s.get("rank"),"Teams:",s.get("ranked_teams"))
           print("Rank source:",s.get("rank_source"),"Checked UTC:",s.get("checked_at"))
@@ -71,7 +71,7 @@ jobs:
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
           git add -- state/score_rank_latest.json reports/score_rank_latest.md
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "bot: refresh authenticated Kaggle rank for V299 0.96070"
+          git commit -m "bot: refresh authenticated Kaggle rank for V2913 0.96083"
           for attempt in 1 2 3; do
             git pull --rebase origin feature/v29-autonomous-evolution
             if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
@@ -83,7 +83,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: v299-authenticated-public-rank
+          name: latest-authenticated-public-rank
           path: |
             state/score_rank_latest.json
             reports/score_rank_latest.md
