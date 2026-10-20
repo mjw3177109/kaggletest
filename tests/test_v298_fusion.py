@@ -63,8 +63,8 @@ class SafeFusion(unittest.TestCase):
             "v297":{"train_id":tid[perm],"target":y[perm],"oof_conditional":cond[perm],
                     "test_id":sid[q],"test_conditional":np.linspace(.2,.8,m)[q]},
         }
-        base=.35*rankdata(a)/n+.65*rankdata(b)/n
-        benchmark=.8*rankdata(base)/n+.2*rankdata(real)/n
+        base=.35*p.rank(a)+.65*p.rank(b)
+        benchmark=.8*p.rank(base)+.2*p.rank(real)
         states={"v25":{},"v28":{},
                 "v296":{"metrics":{"full_oof_auc":roc_auc_score(y,real)}},
                 "v297":{"metrics":{"full_cv_auc":roc_auc_score(y,cond)}}}
