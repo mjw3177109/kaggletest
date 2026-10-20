@@ -1,3 +1,5 @@
+# V2912: only an authenticated owner mine-list + known-kernel control can prove absence.
+# A direct Kaggle kernels.get permission error is NOT evidence of a missing notebook.
 name: Kaggle V2.9.12 Native Categorical CatBoost CPU
 
 on:
