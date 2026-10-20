@@ -48,9 +48,9 @@ jobs:
       - name: Run complete V2.9 test suite
         run: |
           python -m unittest discover -s tests -p 'test_v29_evolution.py' -v
-          python -m unittest discover -s tests -p 'test_v291*.py' -v
+          python -m unittest discover -s tests -p 'test_v291_ledger.py' -v
           python -m unittest discover -s tests -p 'test_v292*.py' -v
-          # V2.9.3 numpy/pandas/scipy checks run in its isolated CPU fusion workflow.
+          # Scientific V2911/other numpy tests run inside their dependency-pinned isolated workflows.
 
       - name: Import previously verified model outcomes
         run: python kaggle_agent/v292_ingest.py
