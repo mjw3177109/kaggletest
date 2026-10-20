@@ -185,6 +185,32 @@ def verify_outputs(raw,s):
        "kernel_sources":[s.get("kernel")]})
     return s
 
+def existing_or_absent():
+    """Require owner-authenticated evidence before *any* new Notebook push.
+
+    Kaggle v2.2.4 returns kernels.get permission denied even for nonexistent
+    handles. Therefore status failure alone is never proof of absence.
+    """
+    status=kaggle(["kaggle","kernels","status",KERNEL],timeout=80,check=False)
+    if status.returncode==0:
+        return True
+    slug=KERNEL.split("/",1)[1]
+    mine=kaggle(["kaggle","kernels","list","--mine","--search",slug,
+                 "--page-size","50","-v"],timeout=100,check=False)
+    if mine.returncode!=0:
+        raise RuntimeError("Cannot authenticate Kaggle owner-owned Notebook list; refuse push")
+    listing=mine.stdout.strip()
+    if KERNEL.lower() in listing.lower():
+        return True
+    if listing.lower()!="not found":
+        raise RuntimeError("Ambiguous Kaggle mine-list result; refuse duplicate kernel push")
+    known=kaggle(["kaggle","kernels","status",
+                  "mjw3177109/kas-v2911-segment-contrast-cpu-s6e10"],
+                 timeout=80,check=False)
+    if known.returncode!=0 or "KernelWorkerStatus." not in known.stdout:
+        raise RuntimeError("Kaggle known-existing Notebook owner control failed; refuse push")
+    return False
+
 def run(recover=False):
     old=read(STATE)
     if old.get("stage") in TERMINAL:
@@ -195,20 +221,18 @@ def run(recover=False):
     if not s.get("kernel"):
         if recover:
             print("No existing CPU Notebook; recovery must never create a kernel");return s
-        # Authoritative preflight: a previously created canonical ID must NEVER
-        # be pushed again, even if GitHub status persistence was interrupted.
-        probe=kaggle(["kaggle","kernels","status",KERNEL],timeout=60,check=False)
-        if probe.returncode==0:
+        # Never equate a kernels.get permissions error with absence. List only
+        # this owner's kernels, and verify access to a known existing notebook.
+        try:
+            exists=existing_or_absent()
+        except RuntimeError as exc:
+            s.update({"stage":"kernel_access_error","error":str(exc)[-700:]})
+            persist(s)
+            return s
+        if exists:
             s.update({"kernel":KERNEL,"stage":"kernel_queued",
                       "preexisting_kernel_recovered":True})
             persist(s)
-        else:
-            reason=(probe.stderr or probe.stdout or "").lower()
-            if not any(mark in reason for mark in ("404","not found","not_found")):
-                s.update({"stage":"kernel_access_error",
-                          "error":"Cannot establish canonical notebook absence; no push allowed"})
-                persist(s)
-                return s
     if not s.get("kernel"):
         WORKDIR.mkdir(parents=True,exist_ok=True)
         shutil.copy2(ROOT/"kaggle_agent/v2912_native_cat_cpu_train.py",WORKDIR/"main.py")
