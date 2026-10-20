@@ -20,9 +20,9 @@ def save(folder,name,obj):
 class NewChampRankTests(unittest.TestCase):
     def test_real_branch_current_champion(self):
         champion=rank.candidates_for(SLUG)
-        self.assertEqual(champion["submission_id"],57421208)
-        self.assertEqual(champion["public_score"],.96070)
-        self.assertEqual(champion["source"],"v2_9_9_submission.json")
+        self.assertEqual(champion["submission_id"],57423879)
+        self.assertEqual(champion["public_score"],.96083)
+        self.assertEqual(champion["source"],"v2_9_13_submission.json")
 
     def test_pending_candidate_does_not_override_official_score(self):
         with tempfile.TemporaryDirectory() as tmp,patch.object(rank,"ROOT",Path(tmp)):
@@ -52,6 +52,45 @@ class NewChampRankTests(unittest.TestCase):
             x=rank.candidates_for(SLUG)
             self.assertEqual(x["source"],"v2_9_9_submission.json")
             self.assertEqual(x["submission_id"],57421208)
+
+    def test_completed_v2913_beats_prior_official(self):
+        with tempfile.TemporaryDirectory() as tmp,patch.object(rank,"ROOT",Path(tmp)):
+            save(tmp,"v2_9_13_status.json",{
+                "stage":"candidate_ready_unsubmitted",
+                "comparison":{"candidate_auc":.96117635576833}})
+            save(tmp,"v2_9_13_submission.json",{
+                "competition":SLUG,"stage":"complete","submitted":True,
+                "official_lb":.96083,"submission_note":"KAS V2913 ENS8 demo",
+                "submission":{"ref":57423879,"status":"SubmissionStatus.COMPLETE",
+                  "description":"KAS V2913 ENS8 demo","publicScore":".96083"}})
+            save(tmp,"v2_9_9_status.json",{
+                "stage":"candidate_ready_unsubmitted","candidate_cv":.9610561936366048})
+            save(tmp,"v2_9_9_submission.json",{
+                "competition":SLUG,"stage":"complete","submitted":True,
+                "official_lb":.96070,"submission_note":"KAS V299 demo",
+                "submission":{"ref":57421208,"status":"SubmissionStatus.COMPLETE",
+                  "description":"KAS V299 demo","publicScore":".96070"}})
+            found=rank.candidates_for(SLUG)
+            self.assertEqual(found["submission_id"],57423879)
+
+    def test_pending_v2913_cannot_replace_scored_v299(self):
+        with tempfile.TemporaryDirectory() as tmp,patch.object(rank,"ROOT",Path(tmp)):
+            save(tmp,"v2_9_13_status.json",{
+                "stage":"candidate_ready_unsubmitted",
+                "comparison":{"candidate_auc":.96117635576833}})
+            save(tmp,"v2_9_13_submission.json",{
+                "competition":SLUG,"stage":"submission_reserved","submitted":False,
+                "official_lb":.99999,"submission_note":"PREMATURE",
+                "submission":{"ref":57423879,"status":"SubmissionStatus.COMPLETE",
+                  "description":"PREMATURE","publicScore":".99999"}})
+            save(tmp,"v2_9_9_status.json",{
+                "stage":"candidate_ready_unsubmitted","candidate_cv":.9610561936366048})
+            save(tmp,"v2_9_9_submission.json",{
+                "competition":SLUG,"stage":"complete","submitted":True,
+                "official_lb":.96070,"submission_note":"VALID",
+                "submission":{"ref":57421208,"status":"SubmissionStatus.COMPLETE",
+                  "description":"VALID","publicScore":".96070"}})
+            self.assertEqual(rank.candidates_for(SLUG)["submission_id"],57421208)
 
     def test_wrong_description_rejected(self):
         with tempfile.TemporaryDirectory() as tmp,patch.object(rank,"ROOT",Path(tmp)):
