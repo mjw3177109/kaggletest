@@ -9,7 +9,7 @@
     "best_cv_today": 0.96117635576833,
     "measured_gpu_hours": 0.218,
     "gpu_usage_coverage": "reported_all",
-    "new_submission_count": 1
+    "new_submission_count": 2
   }
 }
 
