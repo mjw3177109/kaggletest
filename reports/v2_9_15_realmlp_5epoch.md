@@ -1,7 +1,7 @@
 # V2.9.15 5-epoch RealMLP Ens8 independent audit
 
-- UTC: 2026-10-20T12:06:45.286834+00:00
-- Stage: kernel_queued
+- UTC: 2026-10-20T12:10:09.339396+00:00
+- Stage: kernel_running
 - Kaggle Notebook: https://www.kaggle.com/code/mjw3177109/kas-v2915-realmlp-5epoch-t4-s6e10
 - Independent model 3fold CV: pending
 - Official V2913 Public LB: 0.96083 (submission 57423879)
