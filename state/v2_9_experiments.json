@@ -363,6 +363,32 @@
       ],
       "experiment_id": "582ed33f83e47ca515b353feed5f4588e61489c660fd4dff00caeb45237b9a3d",
       "created_at": "2026-10-20T11:59:45.107154+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2915_five_epoch_realmlp_ens8",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261021,
+        "epochs": 5,
+        "n_ens": 8,
+        "lr": 0.038,
+        "blend": {
+          "v2913": 0.8,
+          "v2914": 0.1,
+          "v2915": 0.1
+        }
+      },
+      "status": "completed",
+      "completed_at": "2026-10-20T13:58:52.717458+00:00",
+      "cv": 0.9612850399332336,
+      "gpu_seconds": 834.7,
+      "kernel_sources": [
+        "mjw3177109/kas-v2915-realmlp-5epoch-t4-s6e10"
+      ],
+      "experiment_id": "beaa8b49fdf22509fdc01ae7596d14b33c8abec467eaa3c7c63a07bd4dfbdfe3",
+      "created_at": "2026-10-20T13:58:52.717732+00:00"
     }
   ]
 }
