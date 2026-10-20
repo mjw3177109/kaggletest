@@ -9,6 +9,8 @@ on:
       - ".github/workflows/kaggle_v299_rank_refresh.yml"
       - "kaggle_agent/v24_rank_tracker.py"
       - "tests/test_v299_rank_refresh.py"
+      - "tests/test_v2915_rank_refresh.py"
+      - "state/v2_9_15_submission.json"
 
 permissions:
   contents: write
@@ -42,20 +44,29 @@ jobs:
           test -n "$KAGGLE_API_TOKEN"
           python -m unittest discover -s tests -p 'test_v24_rank_tracker.py' -v
           python -m unittest discover -s tests -p 'test_v299_rank_refresh.py' -v
+          python -m unittest discover -s tests -p 'test_v2915_rank_refresh.py' -v
 
       - name: Fetch authenticated Kaggle Public rank for current scored submission
         run: |
           python kaggle_agent/v24_rank_tracker.py
           python - <<'PY'
-          import json
+          import json,sys
           from pathlib import Path
+          sys.path.insert(0,"kaggle_agent")
+          from v24_rank_tracker import candidates_for
           s=json.loads(Path("state/score_rank_latest.json").read_text())
           model=s.get("score") or {}
+          authoritative=candidates_for("playground-series-s6e10")
+          if authoritative is None:
+              raise RuntimeError("No verified scored Kaggle submission exists")
           if (s.get("competition")!="playground-series-s6e10"
-              or model.get("submission_id")!=57423879
-              or model.get("source")!="v2_9_13_submission.json"
-              or abs(float(model.get("public_score",0))-.96083)>1e-9):
-              raise RuntimeError("Refuse stale or wrong official scored Public rank")
+              or model.get("submission_id")!=authoritative["submission_id"]
+              or model.get("source")!=authoritative["source"]
+              or abs(float(model.get("public_score",0))-
+                     authoritative["public_score"])>1e-9):
+              raise RuntimeError("Refuse stale, guessed or mismatched official Public rank")
+          print("Authenticated scored submission:",authoritative["submission_id"])
+          print("Official scored Public LB:",authoritative["public_score"])
           print("Authenticated rank:",s.get("rank"),"Teams:",s.get("ranked_teams"))
           print("Rank source:",s.get("rank_source"),"Checked UTC:",s.get("checked_at"))
           if s.get("rank") is None:
@@ -71,7 +82,7 @@ jobs:
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
           git add -- state/score_rank_latest.json reports/score_rank_latest.md
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "bot: refresh authenticated Kaggle rank for V2913 0.96083"
+          git commit -m "bot: refresh Kaggle authenticated public rank for current scored champion"
           for attempt in 1 2 3; do
             git pull --rebase origin feature/v29-autonomous-evolution
             if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
