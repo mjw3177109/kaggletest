@@ -1,19 +1,19 @@
 # Kaggle Auto Scientist｜GPU+TPU 双线冲榜与截止期自动换赛
 
-- 检查时间：2026-10-20T22:26:33.611449+00:00
+- 检查时间：2026-10-20T22:44:18.366556+00:00
 - 当前比赛：playground-series-s6e10
-- Kaggle 官方公开榜名次：815
+- Kaggle 官方公开榜名次：816
 - 是否有有效排名证据：True
-- 官方排行榜队伍数：2523
+- 官方排行榜队伍数：2524
 - 排名数据源：kaggle_authenticated_userRank
-- 排名最后核验：2026-10-20T22:26:29.928534+00:00
+- 排名最后核验：2026-10-20T22:44:15.048531+00:00
 - 最新已提交 Public LB：0.96035
 - GPU：complete；https://www.kaggle.com/code/mjw3177109/kas-v23-gpu-playground-series-s6e10
 - TPU：skipped_no_cv_gain；https://www.kaggle.com/code/mjw3177109/kas-v23-tpu-playground-series-s6e10
 - 换赛阶段：working_toward_top3
 - 当前比赛最终截止：2026-10-31T23:59:00+00:00
 - 截止时间证据：archived Kaggle competition deadline
-- 距离截止（小时）：265.54
+- 距离截止（小时）：265.24
 - 已触发换赛条件：[]
 
 ## 转换规则
