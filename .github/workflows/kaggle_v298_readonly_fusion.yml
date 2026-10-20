@@ -7,6 +7,8 @@ on:
       - feature/v29-autonomous-evolution
     paths:
       - ".github/workflows/kaggle_v298_readonly_fusion.yml"
+      - "kaggle_agent/v298_*.py"
+      - "tests/test_v298_*.py"
 
 permissions:
   contents: write
