@@ -16,8 +16,9 @@ on:
       - feature/v29-autonomous-evolution
     paths:
       - ".github/workflows/kaggle_v2915_realmlp_5epoch.yml"
-      - "kaggle_agent/v2915_*.py"
-      - "tests/test_v2915_*.py"
+      - "kaggle_agent/v2915_pipeline.py"
+      - "kaggle_agent/v2915_realmlp_5epoch_train.py"
+      - "tests/test_v2915_five_epoch.py"
 
 permissions:
   contents: write
