@@ -59,6 +59,31 @@ def candidates_for(slug):
     # Only an authenticated, fully scored Kaggle submission is eligible; a
     # successful CV candidate or a reserved/pending Kaggle request is NOT.
     if slug == "playground-series-s6e10":
+        # Newly completed V2913 official Kaggle submission (not CV alone).
+        v2913 = read(ROOT / "state" / "v2_9_13_submission.json")
+        experiment = read(ROOT / "state" / "v2_9_13_status.json")
+        official = v2913.get("submission") or {}
+        if (v2913.get("competition") == slug
+            and v2913.get("stage") == "complete"
+            and v2913.get("submitted") is True
+            and experiment.get("stage") == "candidate_ready_unsubmitted"
+            and float((experiment.get("comparison") or {}).get("candidate_auc", 0)) >= .96117635576833 - .000002
+            and official.get("status") == "SubmissionStatus.COMPLETE"
+            and str(official.get("ref")) == "57423879"
+            and official.get("description") == v2913.get("submission_note")
+            and official.get("publicScore") not in (None, "")):
+            try:
+                public = float(official["publicScore"])
+                if 0 <= public <= 1 and abs(public-float(v2913.get("official_lb"))) < 1e-9:
+                    found.append({
+                        "source":"v2_9_13_submission.json",
+                        "model":"V2.9.13 RealMLP Ens8 fusion",
+                        "public_score":public,
+                        "submission_id":official.get("ref"),
+                        "submitted_at":official.get("date"),
+                    })
+            except (ValueError, TypeError):
+                pass
         recent = read(ROOT / "state" / "v2_9_9_submission.json")
         candidate = read(ROOT / "state" / "v2_9_9_status.json")
         entry = recent.get("submission") or {}
