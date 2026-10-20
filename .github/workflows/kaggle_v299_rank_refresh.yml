@@ -1,0 +1,90 @@
+name: Kaggle V299 Authenticated Public Rank Refresh
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v299_rank_refresh.yml"
+      - "kaggle_agent/v24_rank_tracker.py"
+      - "tests/test_v299_rank_refresh.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v299-public-rank-audit
+  cancel-in-progress: false
+
+jobs:
+  verified-rank:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Kaggle CLI
+        run: python -m pip install -r requirements.txt
+
+      - name: Verify current scored source, rank identity and no guessed place
+        run: |
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          python -m unittest discover -s tests -p 'test_v24_rank_tracker.py' -v
+          python -m unittest discover -s tests -p 'test_v299_rank_refresh.py' -v
+
+      - name: Fetch authenticated Kaggle Public rank for V299 score
+        run: |
+          python kaggle_agent/v24_rank_tracker.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          s=json.loads(Path("state/score_rank_latest.json").read_text())
+          model=s.get("score") or {}
+          if (s.get("competition")!="playground-series-s6e10"
+              or model.get("submission_id")!=57421208
+              or model.get("source")!="v2_9_9_submission.json"
+              or abs(float(model.get("public_score",0))-.96070)>1e-9):
+              raise RuntimeError("Refuse stale or wrong official scored Public rank")
+          print("Authenticated rank:",s.get("rank"),"Teams:",s.get("ranked_teams"))
+          print("Rank source:",s.get("rank_source"),"Checked UTC:",s.get("checked_at"))
+          if s.get("rank") is None:
+              print("OFFICIAL RANK UNKNOWN - do not infer a rank from score")
+          PY
+
+      - name: Commit updated ranked score evidence to feature branch
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/score_rank_latest.json reports/score_rank_latest.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: refresh authenticated Kaggle rank for V299 0.96070"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+
+      - name: Publish rank evidence without competition data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v299-authenticated-public-rank
+          path: |
+            state/score_rank_latest.json
+            reports/score_rank_latest.md
+          if-no-files-found: ignore

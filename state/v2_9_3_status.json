@@ -1,0 +1,91 @@
+{
+  "version": "V2.9.3",
+  "competition": "playground-series-s6e10",
+  "stage": "complete",
+  "benchmark_cv": 0.9607259172925492,
+  "incumbent_lb": 0.96035,
+  "submitted": true,
+  "submission_attempted": true,
+  "updated_at": "2026-10-19T07:47:59.078248+00:00",
+  "result": {
+    "stage": "candidate_ready",
+    "candidate": "v25_35_v28_65",
+    "cv_auc": 0.9607535043719558,
+    "fold_auc": [
+      0.9603317085463999,
+      0.960980849293355,
+      0.9609763332542067
+    ],
+    "weights": {
+      "v25": 0.35,
+      "v28": 0.65
+    },
+    "benchmark_cv": 0.9607259172925492,
+    "min_cv_gain": 2e-05,
+    "delta": 2.758707940664351e-05,
+    "signature": "033383e58777",
+    "candidates": [
+      {
+        "candidate": "v25_60_v28_40",
+        "cv_auc": 0.9607400931315118,
+        "fold_auc": [
+          0.9603245266612898,
+          0.9609606199618013,
+          0.9609658037568338
+        ],
+        "fold_gain_vs_v28": [
+          3.07527161285126e-05,
+          -4.618997616723242e-06,
+          2.2108856653879627e-05
+        ],
+        "delta_vs_best": 1.4175838962571241e-05,
+        "weights": {
+          "v25": 0.6,
+          "v28": 0.4
+        }
+      },
+      {
+        "candidate": "v25_35_v28_65",
+        "cv_auc": 0.9607535043719558,
+        "fold_auc": [
+          0.9603317085463999,
+          0.960980849293355,
+          0.9609763332542067
+        ],
+        "fold_gain_vs_v28": [
+          3.793460123868719e-05,
+          1.561033393704392e-05,
+          3.263835402678161e-05
+        ],
+        "delta_vs_best": 2.758707940664351e-05,
+        "weights": {
+          "v25": 0.35,
+          "v28": 0.65
+        }
+      },
+      {
+        "candidate": "xgb_50_cat_50",
+        "status": "unavailable_test_predictions"
+      },
+      {
+        "candidate": "v25_25_v28_50_cat_25",
+        "status": "unavailable_test_predictions"
+      }
+    ],
+    "cpu_seconds": 9.212
+  },
+  "candidate_file_sha256": "80eb889ebb0f8e08b802f6db9bdb7383b77577391a35d33d67b7fb1b0487597c",
+  "submission_note": "KAS V293 BLEND 033383e58777",
+  "reserved_at": "2026-10-19T07:47:38.981633+00:00",
+  "latest_submission": {
+    "ref": 57388384,
+    "fileName": "v293_submission.csv",
+    "date": "2026-10-19T07:47:43.917000",
+    "description": "KAS V293 BLEND 033383e58777",
+    "status": "SubmissionStatus.COMPLETE",
+    "publicScore": "0.96035",
+    "privateScore": ""
+  },
+  "public_lb_delta": 0.0,
+  "champion": "V2.5 blend_rank"
+}

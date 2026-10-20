@@ -1,0 +1,135 @@
+# V2912: only an authenticated owner mine-list + known-kernel control can prove absence.
+# A direct Kaggle kernels.get permission error is NOT evidence of a missing notebook.
+name: Kaggle V2.9.12 Native Categorical CatBoost CPU
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Create unique CPU Notebook once, or recover saved notebook"
+        required: false
+        type: choice
+        default: run
+        options:
+          - run
+          - recover_existing
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2912_native_cat_cpu.yml"
+      - "kaggle_agent/v2912_*.py"
+      - "tests/test_v2912_*.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v2912-native-cat-unique-s6e10
+  cancel-in-progress: false
+
+jobs:
+  independent-native-catboost:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate prior completed experiment, Kaggle contest, unique kernel state
+        id: gate
+        env:
+          REQUESTED_MODE: ${{ inputs.mode || 'run' }}
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,os
+          from datetime import datetime,timezone
+          from pathlib import Path
+          def read(path):
+              f=Path("state")/path
+              return json.loads(f.read_text()) if f.exists() else {}
+          ladder=read("dual_ladder.json")
+          existing=read("v2_9_12_status.json")
+          prior=read("v2_9_11_status.json")
+          best=read("v2_9_9_status.json")
+          deadline=ladder.get("active_deadline","")
+          try:
+              dt=datetime.fromisoformat(deadline.replace("Z","+00:00"))
+              contest_open=dt.tzinfo is not None and datetime.now(timezone.utc)<dt
+          except ValueError:
+              contest_open=False
+          terminal={"candidate_ready_unsubmitted","skipped_no_cv_gain","kernel_failed",
+                    "output_failed","validation_mismatch","push_failed","kernel_access_error"}
+          allow=(contest_open and ladder.get("active_competition")=="playground-series-s6e10"
+               and prior.get("stage") in ("candidate_ready_unsubmitted","skipped_no_cv_gain")
+               and best.get("stage")=="candidate_ready_unsubmitted"
+               and abs(float(best.get("candidate_cv",0))-0.9610561936366048)<0.000002
+               and existing.get("stage") not in terminal)
+          mode=os.environ.get("REQUESTED_MODE") or "run"
+          if existing.get("kernel"):mode="recover_existing"
+          print("allowed="+str(allow).lower())
+          print("mode="+mode)
+          PY
+
+      - name: Install native CPU CatBoost and OOF evaluation tools
+        if: steps.gate.outputs.allowed == 'true'
+        run: python -m pip install -r requirements.txt numpy pandas scipy scikit-learn catboost
+
+      - name: Compile model and pass unit + tiny CPU CatBoost smoke tests
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2912_native_cat_cpu_train.py kaggle_agent/v2912_pipeline.py
+          python -m unittest discover -s tests -p 'test_v2912_*.py' -v
+
+      - name: Run single unique CatBoost Notebook or recover existing
+        id: experiment
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          if test "$MODE" = "recover_existing"; then
+            python kaggle_agent/v2912_pipeline.py --recover-only
+          else
+            python kaggle_agent/v2912_pipeline.py
+          fi
+
+      - name: Persist Kaggle kernel state and verified CV BEFORE next recovery
+        if: always() && steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_9_12_status.json state/v2_9_experiments.json reports/v2_9_12_native_cat_cpu.md
+          if test -d competitions/playground-series-s6e10/kaggle_cpu_v2912; then
+            git add -A -- competitions/playground-series-s6e10/kaggle_cpu_v2912/
+          fi
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: V2912 original CPU CatBoost OOF/queue evidence"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+
+      - name: Archive public-safe CPU metrics only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2912-cpu-native-cat-metrics
+          path: |
+            state/v2_9_12_status.json
+            reports/v2_9_12_native_cat_cpu.md
+          if-no-files-found: ignore

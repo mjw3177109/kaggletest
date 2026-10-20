@@ -1,0 +1,281 @@
+{
+  "competition": "playground-series-s6e10",
+  "stage": "skipped_no_cv_gain",
+  "kernel": "mjw3177109/kas-v2911-segment-contrast-cpu-s6e10",
+  "submitted": false,
+  "updated_at": "2026-10-20T03:24:24.445052+00:00",
+  "kernel_state": "kernel_complete",
+  "kernel_message": "mjw3177109/kas-v2911-segment-contrast-cpu-s6e10 has status \"KernelWorkerStatus.RUNNING\"",
+  "metrics": {
+    "competition": "playground-series-s6e10",
+    "model": "LightGBM traveler-contrast-context independent",
+    "train_rows": 699635,
+    "test_rows": 299844,
+    "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+    "folds": 3,
+    "fold_results": [
+      {
+        "fold": 0,
+        "validation_rows": 233212,
+        "auc": 0.9597492703131574,
+        "features": 65,
+        "top_importances": [
+          [
+            "Flight Distance",
+            1731.0
+          ],
+          [
+            "conditional_te_23",
+            1718.0
+          ],
+          [
+            "conditional_te_22",
+            1557.0
+          ],
+          [
+            "conditional_te_21",
+            1358.0
+          ],
+          [
+            "conditional_te_19",
+            1299.0
+          ],
+          [
+            "conditional_te_20",
+            1088.0
+          ],
+          [
+            "conditional_te_18",
+            1021.0
+          ],
+          [
+            "conditional_te_10",
+            983.0
+          ],
+          [
+            "conditional_te_30",
+            978.0
+          ],
+          [
+            "conditional_te_15",
+            966.0
+          ],
+          [
+            "conditional_te_11",
+            936.0
+          ],
+          [
+            "conditional_te_17",
+            919.0
+          ],
+          [
+            "conditional_te_14",
+            910.0
+          ],
+          [
+            "freq_pair_2",
+            909.0
+          ],
+          [
+            "Age",
+            891.0
+          ]
+        ]
+      },
+      {
+        "fold": 1,
+        "validation_rows": 233212,
+        "auc": 0.9606250745860433,
+        "features": 65,
+        "top_importances": [
+          [
+            "Flight Distance",
+            1782.0
+          ],
+          [
+            "conditional_te_23",
+            1712.0
+          ],
+          [
+            "conditional_te_22",
+            1470.0
+          ],
+          [
+            "conditional_te_19",
+            1407.0
+          ],
+          [
+            "conditional_te_21",
+            1243.0
+          ],
+          [
+            "conditional_te_18",
+            1123.0
+          ],
+          [
+            "conditional_te_20",
+            1016.0
+          ],
+          [
+            "conditional_te_10",
+            998.0
+          ],
+          [
+            "conditional_te_30",
+            956.0
+          ],
+          [
+            "freq_gap_1",
+            938.0
+          ],
+          [
+            "conditional_te_11",
+            937.0
+          ],
+          [
+            "freq_pair_2",
+            935.0
+          ],
+          [
+            "conditional_te_17",
+            922.0
+          ],
+          [
+            "freq_pair_1",
+            920.0
+          ],
+          [
+            "conditional_te_14",
+            917.0
+          ]
+        ]
+      },
+      {
+        "fold": 2,
+        "validation_rows": 233211,
+        "auc": 0.9604997607587974,
+        "features": 65,
+        "top_importances": [
+          [
+            "conditional_te_23",
+            1711.0
+          ],
+          [
+            "Flight Distance",
+            1644.0
+          ],
+          [
+            "conditional_te_22",
+            1497.0
+          ],
+          [
+            "conditional_te_19",
+            1339.0
+          ],
+          [
+            "conditional_te_21",
+            1282.0
+          ],
+          [
+            "conditional_te_30",
+            1113.0
+          ],
+          [
+            "conditional_te_20",
+            1099.0
+          ],
+          [
+            "conditional_te_18",
+            1097.0
+          ],
+          [
+            "conditional_te_10",
+            1020.0
+          ],
+          [
+            "freq_pair_2",
+            983.0
+          ],
+          [
+            "conditional_te_11",
+            980.0
+          ],
+          [
+            "conditional_te_14",
+            979.0
+          ],
+          [
+            "freq_gap_1",
+            918.0
+          ],
+          [
+            "conditional_te_17",
+            883.0
+          ],
+          [
+            "freq_pair_1",
+            882.0
+          ]
+        ]
+      }
+    ],
+    "full_cv_auc": 0.9602850478697817,
+    "inner_target_folds": 5,
+    "inner_frequency_folds": 5,
+    "conditional_keys": 34,
+    "data_source": "competition_train_only",
+    "external_teacher": false,
+    "outer_validation_used_for_early_stopping": false,
+    "stage": "full_threefold_complete",
+    "elapsed_seconds": 567.2871587980001,
+    "submitted": false
+  },
+  "comparison": {
+    "baseline_auc": 0.9610561936366048,
+    "standalone_auc": 0.9602850478697819,
+    "candidate_auc": 0.9610656177185143,
+    "gain": 9.424081909514825e-06,
+    "fold_gain": [
+      -2.9398588705653594e-06,
+      2.1384332376861437e-05,
+      8.404258924898933e-06
+    ],
+    "positive_folds": 2,
+    "fixed_weights": {
+      "v293": 0.5,
+      "realmlp": 0.2,
+      "conditional": 0.15,
+      "teacher": 0.05,
+      "new_segment": 0.1
+    }
+  },
+  "source_artifacts": {
+    "v25": {
+      "notebook": "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+      "sha256": "f86ad876ac279865c059d4466ce76a7f7cfcae1a11a5ed45f68092136bdd5a74",
+      "submission_sha256": "adb4b48b917f7e8e86ba4fb5a723069e185b27a0dfe5f7ed814beaf01af0c92f"
+    },
+    "v28": {
+      "notebook": "mjw3177109/kas-v28-catboost-playground-series-s6e10",
+      "sha256": "06170ae706973234a7b97c2dc3e18ca6bd0f3b72a0e48f605ab4b9d0313e8691",
+      "submission_sha256": "22bc466b10bb8944cb8296ee47c7231fc780310aee4d1c12cecd33932a7f41af"
+    },
+    "v296": {
+      "notebook": "mjw3177109/kas-v296-realmlp-full-s6e10",
+      "sha256": "ee849ba5ae5aafa57998df48c5c612eaf0227461100def5aabc4c9096314a598"
+    },
+    "v297": {
+      "notebook": "mjw3177109/kas-v297-conditional-cpu-s6e10",
+      "sha256": "92a92e1ad0e5a44d27aba6ea7d3c5fad779d01f799f9b838911c3c03cea6c3a8"
+    },
+    "v294": {
+      "notebook": "mjw3177109/kas-v294-original-route-playground-series-s6e10",
+      "sha256": "9de31b2f509e4f1973f5df9f560200d2e71344d7b4f9ce4a1145f4e53f4797fe",
+      "submission_sha256": "1db97da7c58789d6bffbf7f2bcea67ba134239bbab4e647109262e03e97de48a"
+    },
+    "v2911": {
+      "notebook": "mjw3177109/kas-v2911-segment-contrast-cpu-s6e10",
+      "sha256": "b7f6740dadbcf97aaf31db0f39950f4d167bd3f86a796782cbd1bccdcab9c1a9"
+    }
+  }
+}

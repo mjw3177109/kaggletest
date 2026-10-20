@@ -1,0 +1,344 @@
+{
+  "experiments": [
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2_5",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "source_version": "v2_5"
+      },
+      "status": "completed",
+      "completed_at": "2026-10-18T08:34:55.554572+00:00",
+      "timestamp_provenance": "status_updated_at_proxy",
+      "cv": 0.9606599604603964,
+      "gpu_seconds": 377.3,
+      "submission_id": 57346852,
+      "public_lb": "0.96035",
+      "experiment_id": "6835cfb10267d0c2feba3a03eaca707b9de66788f06c756b2aa1aacecdf633fc",
+      "created_at": "2026-10-19T07:08:00.601120+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2_6",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "source_version": "v2_6"
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-18T09:27:24.596734+00:00",
+      "timestamp_provenance": "status_updated_at_proxy",
+      "cv": 0.960614633696302,
+      "gpu_seconds": 376.3,
+      "experiment_id": "f553abe311ea81583a837e4a5ed6139784a1ca5a673a2218f020153e32884add",
+      "created_at": "2026-10-19T07:08:00.601306+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2_7",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "source_version": "v2_7"
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-18T09:28:12.219519+00:00",
+      "timestamp_provenance": "status_updated_at_proxy",
+      "cv": 0.9606946829000839,
+      "gpu_seconds": null,
+      "experiment_id": "1b4e2f3061d99daf2a40618896b3fd19a001f7087d2294314fc821f5f7f08e7e",
+      "created_at": "2026-10-19T07:08:00.601476+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2_8",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "source_version": "v2_8"
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-18T09:39:53.667727+00:00",
+      "timestamp_provenance": "status_updated_at_proxy",
+      "cv": 0.9607259172925492,
+      "gpu_seconds": 377.4,
+      "experiment_id": "4f0e4820acddfe6c0fc45683935bda01d2e3186a6eac8ef24b4659f9d32e5deb",
+      "created_at": "2026-10-19T07:08:00.608232+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v293_v293_no_cv_gain",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "sources": [
+          "v25",
+          "v28"
+        ],
+        "candidate": "v293_no_cv_gain",
+        "weights": {},
+        "min_gain": 3e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "cv": 0.9607535043719558,
+      "gpu_seconds": 0,
+      "cpu_seconds": 9.569,
+      "completed_at": "2026-10-19T07:24:11.652799+00:00",
+      "kernel_sources": [
+        "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+        "mjw3177109/kas-v28-catboost-playground-series-s6e10"
+      ],
+      "experiment_id": "b129c99ee40e41f178b502b9e0e698d571001435458c3fd3098fefb404c70091",
+      "created_at": "2026-10-19T07:24:11.653024+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v293_v25_35_v28_65",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "sources": [
+          "v25",
+          "v28"
+        ],
+        "candidate": "v25_35_v28_65",
+        "weights": {
+          "v25": 0.35,
+          "v28": 0.65
+        },
+        "min_gain": 2e-05
+      },
+      "status": "completed",
+      "cv": 0.9607535043719558,
+      "gpu_seconds": 0,
+      "cpu_seconds": 9.212,
+      "completed_at": "2026-10-19T07:47:59.079011+00:00",
+      "kernel_sources": [
+        "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+        "mjw3177109/kas-v28-catboost-playground-series-s6e10"
+      ],
+      "experiment_id": "a58cd7becbc42056868987bfed52ef6d4648f3b3e6cada27670a78026991526f",
+      "created_at": "2026-10-19T07:47:35.497049+00:00",
+      "submission_id": 57388384,
+      "public_lb": "0.96035"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v294_external_teacher_route_xgb",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "algorithms": [
+          "lightgbm",
+          "xgboost_cuda"
+        ],
+        "original_teacher": "teejmahal20/airline-passenger-satisfaction",
+        "route_category_profile": "outer_fold_only",
+        "frequency_encoding": "outer_fold_only",
+        "outer_early_stopping": false
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-19T13:36:34.548511+00:00",
+      "cv": 0.9607525307822926,
+      "gpu_seconds": 506.0,
+      "kernel_sources": [
+        "mjw3177109/kas-v294-original-route-playground-series-s6e10"
+      ],
+      "gpu_evidence": {
+        "devices": [
+          "Tesla T4, 15360 MiB",
+          "Tesla T4, 15360 MiB"
+        ],
+        "ok": true
+      },
+      "submission_id": null,
+      "experiment_id": "9ebb81f115e7dc378e7a85781b8b3b79ff07064b0f2215d207b73b85a5655959",
+      "created_at": "2026-10-19T13:36:36.290571+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v297_conditioned_te_cpu",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "tree": "LGBM47",
+        "conditional_te": 24,
+        "oof_frequency": 6,
+        "pre_registered_weight": 0.15,
+        "external_teacher": false
+      },
+      "status": "completed",
+      "completed_at": "2026-10-19T16:58:19.724704+00:00",
+      "cv": 0.9608357783021575,
+      "cpu_seconds": 404.30124283000004,
+      "gpu_seconds": 0,
+      "kernel_sources": [
+        "mjw3177109/kas-v297-conditional-cpu-s6e10"
+      ],
+      "experiment_id": "68482f8280640215d14f818fab06f831c12b83e31df322c21e4cd9fa297e25ac",
+      "created_at": "2026-10-19T16:58:19.724970+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v296_realmlp_full_threefold",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model": "realmlp_td",
+        "n_ens": 4,
+        "epochs": 3,
+        "weight_old": 0.8,
+        "weight_nn": 0.2
+      },
+      "status": "completed",
+      "completed_at": "2026-10-19T20:35:20.882570+00:00",
+      "cv": 0.9609541991872741,
+      "gpu_seconds": 639.9,
+      "kernel_sources": [
+        "mjw3177109/kas-v296-realmlp-full-s6e10"
+      ],
+      "submission_id": 57408736,
+      "notes": "Kaggle GPU time is wall clock runtime, not metered utilization",
+      "experiment_id": "837f13e7a7162976fbda085056e5418f3d78e39d2f66f73882f66fae13352791",
+      "created_at": "2026-10-19T20:35:20.882809+00:00",
+      "public_lb": "0.96059"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v298_precommitted_v293_65_realmlp_20_conditional_15",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "weights": {
+          "v293": 0.65,
+          "realmlp": 0.2,
+          "conditional": 0.15
+        },
+        "benchmark": 0.9609541991872741,
+        "min_gain": 6e-05
+      },
+      "status": "completed",
+      "cv": 0.9610183558267038,
+      "completed_at": "2026-10-20T01:08:57.859441+00:00",
+      "gpu_seconds": 0,
+      "kernel_sources": [
+        "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+        "mjw3177109/kas-v28-catboost-playground-series-s6e10",
+        "mjw3177109/kas-v296-realmlp-full-s6e10",
+        "mjw3177109/kas-v297-conditional-cpu-s6e10"
+      ],
+      "experiment_id": "16bd9d86b5d43f9a6d20422f8908d33cfd439da80fa08f48a4e6d2b8e7c0436f",
+      "created_at": "2026-10-20T01:08:57.860048+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v299_archived_teacher_fixed_four_model",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "weights": {
+          "v293": 0.6,
+          "realmlp": 0.2,
+          "conditional": 0.15,
+          "teacher_v294": 0.05
+        },
+        "min_gain": 0.0001
+      },
+      "status": "completed",
+      "completed_at": "2026-10-20T01:12:06.633341+00:00",
+      "cv": 0.9610561936366048,
+      "gpu_seconds": 0,
+      "kernel_sources": [
+        "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+        "mjw3177109/kas-v28-catboost-playground-series-s6e10",
+        "mjw3177109/kas-v296-realmlp-full-s6e10",
+        "mjw3177109/kas-v297-conditional-cpu-s6e10",
+        "mjw3177109/kas-v294-original-route-playground-series-s6e10"
+      ],
+      "experiment_id": "f334317fef64b870116121acffdfe3bbfc18d5dc610897e3516127a98a5a4e3c",
+      "created_at": "2026-10-20T01:12:06.633979+00:00",
+      "submission_id": 57421208,
+      "public_lb": "0.96070"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2911_segment_contrast_cpu",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "algorithm": "LGBM39",
+        "new_features": "segment_gap_context",
+        "weights": {
+          "v293": 0.5,
+          "realmlp": 0.2,
+          "conditional": 0.15,
+          "teacher": 0.05,
+          "new_segment": 0.1
+        }
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-20T03:24:24.438625+00:00",
+      "cv": 0.9610656177185143,
+      "cpu_seconds": 567.2871587980001,
+      "gpu_seconds": 0,
+      "kernel_sources": [
+        "mjw3177109/kas-v2911-segment-contrast-cpu-s6e10"
+      ],
+      "experiment_id": "0bed33ba189f37603147afbc0d0017c510b9ac4a687326e87447a15dfa9d0ae8",
+      "created_at": "2026-10-20T03:24:24.438854+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2912_segment_contrast_cpu",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "algorithm": "CatBoostCPU750D6",
+        "new_features": "native_catboost_ordered_ctr",
+        "weights": {
+          "v293": 0.5,
+          "realmlp": 0.2,
+          "conditional": 0.15,
+          "teacher": 0.05,
+          "native_cat": 0.1
+        }
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-20T04:04:15.726664+00:00",
+      "cv": 0.9610139234538764,
+      "cpu_seconds": 544.953505284,
+      "gpu_seconds": 0,
+      "kernel_sources": [
+        "mjw3177109/kas-v2912-native-cat-cpu-s6e10"
+      ],
+      "experiment_id": "4ad3ebd806449ed15594ed26f14b05398899e1f807379e2165ea1835de36e30d",
+      "created_at": "2026-10-20T04:04:15.726983+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2913_realmlp_ens8_threefold",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "n_ens": 8,
+        "n_epochs": 3,
+        "batch_size": 256,
+        "scheduler": "flat_anneal/cos_log_15",
+        "blend": {
+          "v299": 0.85,
+          "realmlp": 0.15
+        }
+      },
+      "status": "completed",
+      "completed_at": "2026-10-20T05:24:36.790157+00:00",
+      "cv": 0.96117635576833,
+      "gpu_seconds": 784.7,
+      "kernel_sources": [
+        "mjw3177109/kas-v2913-realmlp-ens8-t4-s6e10"
+      ],
+      "experiment_id": "33e0f5a240889a8aa8b88181ec938337f556e01b86c0d2073f4f6ebbfedf61a8",
+      "created_at": "2026-10-20T05:24:36.790419+00:00"
+    }
+  ]
+}

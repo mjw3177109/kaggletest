@@ -55,6 +55,54 @@ def candidates_for(slug):
             "submission_id": submission.get("ref"),
             "submitted_at": submission.get("date"),
         })
+    # Current V2.9 submissions have dedicated, durable one-shot status files.
+    # Only an authenticated, fully scored Kaggle submission is eligible; a
+    # successful CV candidate or a reserved/pending Kaggle request is NOT.
+    if slug == "playground-series-s6e10":
+        recent = read(ROOT / "state" / "v2_9_9_submission.json")
+        candidate = read(ROOT / "state" / "v2_9_9_status.json")
+        entry = recent.get("submission") or {}
+        if (recent.get("competition") == slug
+            and recent.get("stage") == "complete"
+            and recent.get("submitted") is True
+            and candidate.get("stage") == "candidate_ready_unsubmitted"
+            and float(candidate.get("candidate_cv", 0)) >= .9610561936366048 - .000002
+            and entry.get("status") == "SubmissionStatus.COMPLETE"
+            and str(entry.get("ref")) == "57421208"
+            and entry.get("description") == recent.get("submission_note")
+            and entry.get("publicScore") not in (None, "")):
+            try:
+                official = float(entry["publicScore"])
+                if 0 <= official <= 1 and abs(official-float(recent.get("official_lb"))) < 1e-9:
+                    found.append({
+                        "source":"v2_9_9_submission.json",
+                        "model":"V2.9.9 Four-model fusion",
+                        "public_score":official,
+                        "submission_id":entry.get("ref"),
+                        "submitted_at":entry.get("date"),
+                    })
+            except (ValueError, TypeError):
+                pass
+        v296 = read(ROOT / "state" / "v2_9_6_status.json")
+        old = v296.get("latest_submission") or {}
+        if (v296.get("competition") == slug
+            and v296.get("stage") == "complete"
+            and v296.get("submitted") is True
+            and old.get("status") == "SubmissionStatus.COMPLETE"
+            and str(old.get("ref")) == "57408736"
+            and old.get("publicScore") not in (None,"")):
+            try:
+                score = float(old["publicScore"])
+                if 0 <= score <= 1:
+                    found.append({
+                        "source":"v2_9_6_status.json",
+                        "model":"V2.9.6 RealMLP",
+                        "public_score":score,
+                        "submission_id":old.get("ref"),
+                        "submitted_at":old.get("date"),
+                    })
+            except (ValueError, TypeError):
+                pass
     # ROC-AUC for the existing S6E10 contest: higher is better.
     return max(found, key=lambda x: x["public_score"]) if found else None
 

@@ -1,0 +1,50 @@
+name: Kaggle V2912 Read-only Canonical ID Diagnostic
+
+on:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2912_preflight_diagnostic.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install exact Kaggle CLI
+        run: python -m pip install -r requirements.txt
+      - name: Inspect existing notebook without push, execute or submit
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          python - <<'PY'
+          import os,subprocess,re
+          token=os.getenv("KAGGLE_API_TOKEN","")
+          def safe(x):
+              if token:x=x.replace(token,"[REDACTED]")
+              x=re.sub(r"(api[_-]?key|token|authorization|password)[=: ]+\S+",r"\1=[REDACTED]",x,flags=re.I)
+              return x.strip()[:450]
+          cmds=[
+             ["kaggle","kernels","status","mjw3177109/kas-v2912-native-cat-cpu-s6e10"],
+             ["kaggle","kernels","list","--mine","--search","kas-v2912-native-cat-cpu-s6e10","--page-size","50","-v"],
+             ["kaggle","kernels","status","mjw3177109/kas-v2911-segment-contrast-cpu-s6e10"],
+          ]
+          for command in cmds:
+              p=subprocess.run(command,capture_output=True,text=True,timeout=120)
+              print("CHECK",command[1:3],"target",command[3],"returncode",p.returncode)
+              print("stdout:",safe(p.stdout))
+              print("stderr:",safe(p.stderr))
+          PY

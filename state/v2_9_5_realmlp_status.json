@@ -1,0 +1,61 @@
+{
+  "competition": "playground-series-s6e10",
+  "kernel": "mjw3177109/v2-9-5-realmlp-strict-pilot",
+  "stage": "pilot_evaluated",
+  "submitted": false,
+  "pilot_only": true,
+  "updated_at": "2026-10-19T13:42:04.246658+00:00",
+  "kernel_url": "https://www.kaggle.com/code/mjw3177109/v2-9-5-realmlp-strict-pilot",
+  "recovery_note": "Kaggle authenticated push returned a canonical title-based Notebook slug different from requested ID; reattach without creating a second kernel.",
+  "requested_kernel": "mjw3177109/kas-v295-realmlp-pilot-s6e10",
+  "hardware": {
+    "ok": true,
+    "device": "Tesla T4",
+    "devices": [
+      "Tesla T4, 15360 MiB",
+      "Tesla T4, 15360 MiB"
+    ],
+    "torch_version": "2.11.0+cu128",
+    "cuda_available": true
+  },
+  "metrics": {
+    "competition": "playground-series-s6e10",
+    "model": "RealMLP-TD n_ens=4 3 epochs",
+    "stage": "pilot_one_fold_complete",
+    "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+    "pilot_fold": 0,
+    "folds_total": 3,
+    "train_rows": 699635,
+    "test_rows": 299844,
+    "fold_validation_rows": 233212,
+    "fold_cv_auc": 0.9599579808498493,
+    "leakage_safe_inner_cross_fit": true,
+    "outer_validation_used_in_training": false,
+    "gpu_verified": true,
+    "hardware": {
+      "ok": true,
+      "device": "Tesla T4",
+      "devices": [
+        "Tesla T4, 15360 MiB",
+        "Tesla T4, 15360 MiB"
+      ],
+      "torch_version": "2.11.0+cu128",
+      "cuda_available": true
+    },
+    "feature_count": 37,
+    "elapsed_seconds": 147.6,
+    "runtime_seconds": 166.2,
+    "ready_for_submission": false,
+    "source_inspiration": "public RealMLP S6E10 independent reproduction"
+  },
+  "comparison": {
+    "baseline_fold_auc": 0.9603317085463999,
+    "realmlp_fold_auc": 0.9599579808498494,
+    "pilot_blend_auc": 0.9605299179748474,
+    "paired_delta": 0.00019820942844750444,
+    "out_of_fold_validation_rows": 233212,
+    "single_fold_only": true,
+    "next_step": "more_folds_needed",
+    "automatic_submission": false
+  }
+}

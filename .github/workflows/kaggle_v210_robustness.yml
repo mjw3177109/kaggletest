@@ -1,0 +1,95 @@
+name: Kaggle V2.9.10 Paired OOF Robustness
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v210_robustness.yml"
+      - "kaggle_agent/v210_*.py"
+      - "tests/test_v210_*.py"
+      - "state/v2_9_9_status.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v210-bootstrap-s6e10
+  cancel-in-progress: false
+
+jobs:
+  paired-bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Gate original archived audit and duplicate checks
+        id: gate
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          def read(name):
+              f=Path(name)
+              return json.loads(f.read_text()) if f.exists() else {}
+          before=read("state/v2_9_9_status.json")
+          status=read("state/v2_9_10_robustness_status.json")
+          valid=(before.get("stage") in ("candidate_ready_unsubmitted","skipped_no_cv_gain")
+                 and status.get("stage") not in ("robustness_complete","audit_failed"))
+          print("allowed="+str(valid).lower())
+          PY
+
+      - name: Install CPU-only Kaggle scientific tools
+        if: steps.gate.outputs.allowed == 'true'
+        run: python -m pip install -r requirements.txt numpy pandas scipy scikit-learn
+
+      - name: Test reproducibility and Kaggle no-submit guard
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          python -m py_compile kaggle_agent/v210_robustness_audit.py
+          python -m unittest discover -s tests -p 'test_v210_*.py' -v
+
+      - name: Full-size stratified paired bootstrap using past OOF only
+        if: steps.gate.outputs.allowed == 'true'
+        run: python kaggle_agent/v210_robustness_audit.py
+
+      - name: Commit aggregated metrics only
+        if: success() && steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/v2_9_10_robustness_status.json reports/v2_9_10_robustness.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: V210 paired OOF bootstrap uncertainty"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+
+      - name: Archive public-safe bootstrap aggregates
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v210-paired-bootstrap
+          path: |
+            state/v2_9_10_robustness_status.json
+            reports/v2_9_10_robustness.md
+          if-no-files-found: ignore

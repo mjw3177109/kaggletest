@@ -1,0 +1,92 @@
+name: Kaggle V2.9 Evolution Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v29_evolution.yml"
+      - "kaggle_agent/v29*.py"
+      - "tests/test_v29*.py"
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v29-evolution-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out current branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile V2.9 Python modules
+        run: |
+          python -m py_compile \
+            kaggle_agent/v29_evolution.py \
+            kaggle_agent/v291_ledger.py \
+            kaggle_agent/v292_dispatch.py \
+            kaggle_agent/v292_ingest.py
+
+      - name: Run complete V2.9 test suite
+        run: |
+          python -m unittest discover -s tests -p 'test_v29_evolution.py' -v
+          python -m unittest discover -s tests -p 'test_v291_ledger.py' -v
+          python -m unittest discover -s tests -p 'test_v292*.py' -v
+          # Scientific V2911/other numpy tests run inside their dependency-pinned isolated workflows.
+
+      - name: Import previously verified model outcomes
+        run: python kaggle_agent/v292_ingest.py
+
+      - name: Audit fallback in dry-run mode only
+        run: python kaggle_agent/v292_dispatch.py
+
+      - name: Generate V2.9 evolution and efficiency report
+        run: python kaggle_agent/v29_evolution.py
+
+      - name: Commit V2.9 diagnostics only
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- \
+            state/v2_9_evolution.json \
+            state/v2_9_experiments.json \
+            state/v2_9_dispatch_latest.json \
+            state/v2_9_queue_memory.json \
+            reports/v2_9_evolution_latest.md \
+            reports/v2_9_efficiency_daily.md
+          if git diff --cached --quiet; then
+            echo "No V2.9 diagnostic changes."
+            exit 0
+          fi
+          git commit -m "bot: V2.9 audited experiment reports"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin "${GITHUB_REF_NAME}"
+            if ! git rebase "origin/${GITHUB_REF_NAME}"; then
+              git rebase --abort || true
+              exit 1
+            fi
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then exit 0; fi
+            sleep $((attempt*2))
+          done
+          exit 1

@@ -1,0 +1,43 @@
+name: Kaggle V2.9.4 Verified Leaderboard Top Three
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v294_top3_research.yml"
+      - "kaggle_agent/v294_top3_research.py"
+permissions:
+  contents: write
+concurrency:
+  group: kaggle-v294-research
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Kaggle official CLI
+        run: python -m pip install -r requirements.txt
+      - name: Verify current top3 from Kaggle authenticated leaderboard
+        run: python kaggle_agent/v294_top3_research.py
+      - name: Store verified public top three, NOT inferred recipes
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/v2_9_4_top3.json reports/v2_9_4_top3_research.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: verify Kaggle S6E10 official public top three"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"

@@ -1,0 +1,250 @@
+{
+  "competition": "playground-series-s6e10",
+  "stage": "candidate_ready_unsubmitted",
+  "kernel": "mjw3177109/kas-v297-conditional-cpu-s6e10",
+  "submitted": false,
+  "updated_at": "2026-10-19T16:58:19.728083+00:00",
+  "kernel_state": "kernel_complete",
+  "kernel_message": "mjw3177109/kas-v297-conditional-cpu-s6e10 has status \"KernelWorkerStatus.QUEUED\"",
+  "metrics": {
+    "competition": "playground-series-s6e10",
+    "model": "LightGBM conditional-target-encoding standalone",
+    "train_rows": 699635,
+    "test_rows": 299844,
+    "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+    "folds": 3,
+    "fold_results": [
+      {
+        "fold": 0,
+        "validation_rows": 233212,
+        "auc": 0.9597994102379096,
+        "features": 51,
+        "top_importances": [
+          [
+            "Flight Distance",
+            2908.0
+          ],
+          [
+            "conditional_te_22",
+            2498.0
+          ],
+          [
+            "conditional_te_23",
+            2435.0
+          ],
+          [
+            "conditional_te_21",
+            2185.0
+          ],
+          [
+            "conditional_te_19",
+            2111.0
+          ],
+          [
+            "conditional_te_18",
+            1801.0
+          ],
+          [
+            "conditional_te_20",
+            1678.0
+          ],
+          [
+            "conditional_te_11",
+            1580.0
+          ],
+          [
+            "Age",
+            1552.0
+          ],
+          [
+            "freq_pair_1",
+            1467.0
+          ],
+          [
+            "freq_pair_2",
+            1425.0
+          ],
+          [
+            "conditional_te_10",
+            1374.0
+          ],
+          [
+            "conditional_te_15",
+            1358.0
+          ],
+          [
+            "conditional_te_17",
+            1326.0
+          ],
+          [
+            "conditional_te_8",
+            1294.0
+          ]
+        ]
+      },
+      {
+        "fold": 1,
+        "validation_rows": 233212,
+        "auc": 0.9607665658930031,
+        "features": 51,
+        "top_importances": [
+          [
+            "Flight Distance",
+            2924.0
+          ],
+          [
+            "conditional_te_23",
+            2598.0
+          ],
+          [
+            "conditional_te_19",
+            2214.0
+          ],
+          [
+            "conditional_te_22",
+            2191.0
+          ],
+          [
+            "conditional_te_21",
+            2150.0
+          ],
+          [
+            "conditional_te_18",
+            1876.0
+          ],
+          [
+            "conditional_te_20",
+            1742.0
+          ],
+          [
+            "Age",
+            1581.0
+          ],
+          [
+            "conditional_te_10",
+            1547.0
+          ],
+          [
+            "conditional_te_11",
+            1487.0
+          ],
+          [
+            "freq_pair_2",
+            1437.0
+          ],
+          [
+            "freq_pair_1",
+            1415.0
+          ],
+          [
+            "conditional_te_14",
+            1328.0
+          ],
+          [
+            "conditional_te_17",
+            1320.0
+          ],
+          [
+            "conditional_te_8",
+            1312.0
+          ]
+        ]
+      },
+      {
+        "fold": 2,
+        "validation_rows": 233211,
+        "auc": 0.9606890583178131,
+        "features": 51,
+        "top_importances": [
+          [
+            "Flight Distance",
+            2916.0
+          ],
+          [
+            "conditional_te_23",
+            2571.0
+          ],
+          [
+            "conditional_te_22",
+            2393.0
+          ],
+          [
+            "conditional_te_19",
+            2163.0
+          ],
+          [
+            "conditional_te_21",
+            2114.0
+          ],
+          [
+            "conditional_te_18",
+            1751.0
+          ],
+          [
+            "conditional_te_20",
+            1741.0
+          ],
+          [
+            "conditional_te_11",
+            1576.0
+          ],
+          [
+            "Age",
+            1570.0
+          ],
+          [
+            "freq_pair_2",
+            1514.0
+          ],
+          [
+            "conditional_te_10",
+            1436.0
+          ],
+          [
+            "conditional_te_15",
+            1373.0
+          ],
+          [
+            "conditional_te_17",
+            1368.0
+          ],
+          [
+            "conditional_te_9",
+            1347.0
+          ],
+          [
+            "conditional_te_8",
+            1339.0
+          ]
+        ]
+      }
+    ],
+    "full_cv_auc": 0.9604129916128319,
+    "inner_target_folds": 5,
+    "inner_frequency_folds": 5,
+    "conditional_keys": 24,
+    "data_source": "competition_train_only",
+    "external_teacher": false,
+    "outer_validation_used_for_early_stopping": false,
+    "stage": "full_threefold_complete",
+    "elapsed_seconds": 404.30124283000004,
+    "submitted": false
+  },
+  "comparison": {
+    "baseline_auc": 0.960753504421619,
+    "standalone_auc": 0.9604129916128319,
+    "ensemble_auc": 0.9608357783021575,
+    "gain": 8.227388053849705e-05,
+    "fold_gain": [
+      5.46178012145182e-05,
+      0.00010318054534819154,
+      8.921177912213363e-05
+    ],
+    "positive_folds": 3,
+    "pre_registered_weights": {
+      "baseline": 0.85,
+      "conditional": 0.15
+    }
+  },
+  "candidate_sha256": "cdd952df55b306fb853f6af8cf59f8a73e183425d5e33da8f5f57dc35954fd14"
+}

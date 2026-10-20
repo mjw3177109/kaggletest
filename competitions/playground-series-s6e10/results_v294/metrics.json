@@ -1,0 +1,694 @@
+{
+  "competition": "playground-series-s6e10",
+  "target": "satisfaction",
+  "gpu_verified": true,
+  "hardware": {
+    "devices": [
+      "Tesla T4, 15360 MiB",
+      "Tesla T4, 15360 MiB"
+    ],
+    "ok": true
+  },
+  "actual_xgboost_device": "cuda:0",
+  "train_rows": 699635,
+  "test_rows": 299844,
+  "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+  "folds": 3,
+  "inner_encoding_folds": 5,
+  "leakage_safe_target_encoding": true,
+  "outer_valid_used_for_early_stopping": false,
+  "features_per_fold": 101,
+  "fold_results": [
+    {
+      "fold": 1,
+      "lgb_auc": 0.9601557629394459,
+      "xgb_auc": 0.9603415122725033,
+      "xgb_device": "cuda:0",
+      "features": 101
+    },
+    {
+      "fold": 2,
+      "lgb_auc": 0.9606555827879959,
+      "xgb_auc": 0.9609111154621642,
+      "xgb_device": "cuda:0",
+      "features": 101
+    },
+    {
+      "fold": 3,
+      "lgb_auc": 0.960635206726574,
+      "xgb_auc": 0.9608276930185813,
+      "xgb_device": "cuda:0",
+      "features": 101
+    }
+  ],
+  "models": {
+    "lightgbm": 0.960478403879402,
+    "xgboost": 0.9606849820698308,
+    "blend_mean": 0.9607439566244673,
+    "blend_rank": 0.9607525307822926
+  },
+  "best_model": "blend_rank",
+  "best_cv_auc": 0.9607525307822926,
+  "elapsed_seconds": 506.0,
+  "original_teacher": {
+    "source": "teejmahal20/airline-passenger-satisfaction",
+    "total_original": 129880,
+    "excluded_overlap": 21,
+    "excluded_duplicate": 0,
+    "train_kept": 129859,
+    "no_competition_target_used": true
+  },
+  "feature_importance": [
+    {
+      "fold": 1,
+      "lgbm_top": [
+        [
+          "v294_original_teacher",
+          3131.0
+        ],
+        [
+          "__rating_std",
+          2738.0
+        ],
+        [
+          "te_44",
+          2455.0
+        ],
+        [
+          "Flight Distance",
+          2292.0
+        ],
+        [
+          "te_40",
+          2271.0
+        ],
+        [
+          "route_inflight_wifi_service_mean",
+          2248.0
+        ],
+        [
+          "route_on_board_service_residual",
+          2247.0
+        ],
+        [
+          "route_count",
+          2132.0
+        ],
+        [
+          "route_inflight_wifi_service_std",
+          2021.0
+        ],
+        [
+          "te_39",
+          1969.0
+        ],
+        [
+          "route_inflight_wifi_service_residual",
+          1966.0
+        ],
+        [
+          "te_41",
+          1947.0
+        ],
+        [
+          "te_43",
+          1932.0
+        ],
+        [
+          "route_on_board_service_std",
+          1914.0
+        ],
+        [
+          "te_0",
+          1893.0
+        ],
+        [
+          "route_cleanliness_residual",
+          1887.0
+        ],
+        [
+          "route_online_boarding_residual",
+          1851.0
+        ],
+        [
+          "route_online_boarding_std",
+          1790.0
+        ],
+        [
+          "route_seat_comfort_residual",
+          1788.0
+        ],
+        [
+          "te_42",
+          1779.0
+        ],
+        [
+          "route_inflight_entertainment_std",
+          1703.0
+        ],
+        [
+          "v294_freq_2",
+          1685.0
+        ],
+        [
+          "route_on_board_service_mean",
+          1642.0
+        ],
+        [
+          "route_inflight_entertainment_residual",
+          1623.0
+        ],
+        [
+          "route_cleanliness_std",
+          1571.0
+        ]
+      ],
+      "xgb_top": [
+        [
+          "v294_original_teacher",
+          0.4777680039405823
+        ],
+        [
+          "te_22",
+          0.19349314272403717
+        ],
+        [
+          "On-board service",
+          0.04046666994690895
+        ],
+        [
+          "te_27",
+          0.027669712901115417
+        ],
+        [
+          "Inflight wifi service",
+          0.02313583344221115
+        ],
+        [
+          "__rating_max",
+          0.016379335895180702
+        ],
+        [
+          "te_36",
+          0.01535101979970932
+        ],
+        [
+          "te_37",
+          0.01259193941950798
+        ],
+        [
+          "te_35",
+          0.00901833176612854
+        ],
+        [
+          "te_2",
+          0.00782758742570877
+        ],
+        [
+          "te_29",
+          0.007490131538361311
+        ],
+        [
+          "te_24",
+          0.007260087411850691
+        ],
+        [
+          "Checkin service",
+          0.006487282458692789
+        ],
+        [
+          "Baggage handling",
+          0.003531506983563304
+        ],
+        [
+          "Inflight entertainment",
+          0.003391440724954009
+        ],
+        [
+          "te_32",
+          0.0033794078044593334
+        ],
+        [
+          "te_33",
+          0.003042600117623806
+        ],
+        [
+          "Online boarding",
+          0.0029454478062689304
+        ],
+        [
+          "Ease of Online booking",
+          0.0029246455524116755
+        ],
+        [
+          "te_44",
+          0.0027492051012814045
+        ],
+        [
+          "Gate location",
+          0.0025714451912790537
+        ],
+        [
+          "te_38",
+          0.0025645806454122066
+        ],
+        [
+          "te_4",
+          0.0024127105716615915
+        ],
+        [
+          "te_42",
+          0.0024119187146425247
+        ],
+        [
+          "te_30",
+          0.002373006660491228
+        ]
+      ]
+    },
+    {
+      "fold": 2,
+      "lgbm_top": [
+        [
+          "v294_original_teacher",
+          3209.0
+        ],
+        [
+          "__rating_std",
+          2638.0
+        ],
+        [
+          "te_44",
+          2549.0
+        ],
+        [
+          "route_on_board_service_residual",
+          2389.0
+        ],
+        [
+          "te_40",
+          2242.0
+        ],
+        [
+          "Flight Distance",
+          2196.0
+        ],
+        [
+          "route_inflight_wifi_service_std",
+          2098.0
+        ],
+        [
+          "route_count",
+          2075.0
+        ],
+        [
+          "route_inflight_wifi_service_mean",
+          2044.0
+        ],
+        [
+          "route_on_board_service_std",
+          2035.0
+        ],
+        [
+          "te_0",
+          2031.0
+        ],
+        [
+          "route_inflight_wifi_service_residual",
+          2027.0
+        ],
+        [
+          "te_39",
+          2009.0
+        ],
+        [
+          "te_41",
+          1950.0
+        ],
+        [
+          "te_43",
+          1869.0
+        ],
+        [
+          "route_cleanliness_residual",
+          1860.0
+        ],
+        [
+          "route_online_boarding_std",
+          1836.0
+        ],
+        [
+          "route_on_board_service_mean",
+          1821.0
+        ],
+        [
+          "te_42",
+          1818.0
+        ],
+        [
+          "route_online_boarding_residual",
+          1794.0
+        ],
+        [
+          "route_seat_comfort_residual",
+          1755.0
+        ],
+        [
+          "v294_freq_2",
+          1745.0
+        ],
+        [
+          "route_cleanliness_std",
+          1677.0
+        ],
+        [
+          "te_1",
+          1577.0
+        ],
+        [
+          "route_inflight_entertainment_residual",
+          1562.0
+        ]
+      ],
+      "xgb_top": [
+        [
+          "v294_original_teacher",
+          0.3635304868221283
+        ],
+        [
+          "te_22",
+          0.2138913869857788
+        ],
+        [
+          "te_27",
+          0.0633176937699318
+        ],
+        [
+          "On-board service",
+          0.06046542897820473
+        ],
+        [
+          "__rating_max",
+          0.021065598353743553
+        ],
+        [
+          "te_2",
+          0.020941725000739098
+        ],
+        [
+          "te_37",
+          0.020175553858280182
+        ],
+        [
+          "Inflight wifi service",
+          0.018441440537571907
+        ],
+        [
+          "te_29",
+          0.01807498186826706
+        ],
+        [
+          "te_36",
+          0.017011022195219994
+        ],
+        [
+          "te_35",
+          0.012037618085741997
+        ],
+        [
+          "Cleanliness",
+          0.008373183198273182
+        ],
+        [
+          "Checkin service",
+          0.007526115048676729
+        ],
+        [
+          "Baggage handling",
+          0.006632114294916391
+        ],
+        [
+          "te_24",
+          0.006446485873311758
+        ],
+        [
+          "Inflight entertainment",
+          0.005081376992166042
+        ],
+        [
+          "te_32",
+          0.004678132478147745
+        ],
+        [
+          "Customer Type",
+          0.003929889760911465
+        ],
+        [
+          "te_33",
+          0.0034628952853381634
+        ],
+        [
+          "Gate location",
+          0.003339190734550357
+        ],
+        [
+          "te_38",
+          0.0030766092240810394
+        ],
+        [
+          "te_44",
+          0.002601889194920659
+        ],
+        [
+          "te_4",
+          0.0024733487516641617
+        ],
+        [
+          "Ease of Online booking",
+          0.0024414730723947287
+        ],
+        [
+          "te_30",
+          0.0023059705272316933
+        ]
+      ]
+    },
+    {
+      "fold": 3,
+      "lgbm_top": [
+        [
+          "v294_original_teacher",
+          3082.0
+        ],
+        [
+          "__rating_std",
+          2716.0
+        ],
+        [
+          "te_44",
+          2497.0
+        ],
+        [
+          "route_on_board_service_residual",
+          2447.0
+        ],
+        [
+          "Flight Distance",
+          2226.0
+        ],
+        [
+          "route_inflight_wifi_service_mean",
+          2164.0
+        ],
+        [
+          "route_on_board_service_std",
+          2153.0
+        ],
+        [
+          "route_count",
+          2118.0
+        ],
+        [
+          "te_40",
+          2040.0
+        ],
+        [
+          "route_inflight_wifi_service_std",
+          2022.0
+        ],
+        [
+          "te_39",
+          2021.0
+        ],
+        [
+          "te_0",
+          2012.0
+        ],
+        [
+          "te_41",
+          1888.0
+        ],
+        [
+          "te_42",
+          1863.0
+        ],
+        [
+          "te_43",
+          1861.0
+        ],
+        [
+          "route_inflight_wifi_service_residual",
+          1850.0
+        ],
+        [
+          "route_cleanliness_residual",
+          1785.0
+        ],
+        [
+          "route_online_boarding_residual",
+          1772.0
+        ],
+        [
+          "route_seat_comfort_residual",
+          1757.0
+        ],
+        [
+          "route_online_boarding_std",
+          1739.0
+        ],
+        [
+          "route_inflight_entertainment_std",
+          1739.0
+        ],
+        [
+          "v294_freq_2",
+          1722.0
+        ],
+        [
+          "route_on_board_service_mean",
+          1708.0
+        ],
+        [
+          "te_1",
+          1655.0
+        ],
+        [
+          "route_inflight_entertainment_residual",
+          1619.0
+        ]
+      ],
+      "xgb_top": [
+        [
+          "v294_original_teacher",
+          0.48485392332077026
+        ],
+        [
+          "te_22",
+          0.1832776516675949
+        ],
+        [
+          "On-board service",
+          0.04088745266199112
+        ],
+        [
+          "te_27",
+          0.023566491901874542
+        ],
+        [
+          "te_37",
+          0.021110761910676956
+        ],
+        [
+          "__rating_max",
+          0.0164482444524765
+        ],
+        [
+          "Inflight wifi service",
+          0.014423965476453304
+        ],
+        [
+          "te_36",
+          0.012675506062805653
+        ],
+        [
+          "te_2",
+          0.010717660188674927
+        ],
+        [
+          "te_35",
+          0.009981676936149597
+        ],
+        [
+          "te_24",
+          0.008177309297025204
+        ],
+        [
+          "Checkin service",
+          0.006452246103435755
+        ],
+        [
+          "Baggage handling",
+          0.005412946920841932
+        ],
+        [
+          "Inflight entertainment",
+          0.00520365871489048
+        ],
+        [
+          "te_29",
+          0.004695959389209747
+        ],
+        [
+          "Cleanliness",
+          0.0038154534995555878
+        ],
+        [
+          "te_32",
+          0.003621811745688319
+        ],
+        [
+          "Departure/Arrival time convenient",
+          0.003317129798233509
+        ],
+        [
+          "Ease of Online booking",
+          0.002979565877467394
+        ],
+        [
+          "te_44",
+          0.002973649650812149
+        ],
+        [
+          "te_33",
+          0.002921491861343384
+        ],
+        [
+          "te_38",
+          0.002533114980906248
+        ],
+        [
+          "Online boarding",
+          0.0023601020220667124
+        ],
+        [
+          "te_4",
+          0.002241269452497363
+        ],
+        [
+          "te_42",
+          0.0022106554824858904
+        ]
+      ]
+    }
+  ],
+  "new_methods": [
+    "all-original-columns exact-value 5-fold target encoding",
+    "flight distance training-fold-only profile",
+    "service ratings by traveler segment",
+    "numeric class-group target encoding",
+    "fixed rank and raw blending candidates",
+    "independent-original-data LightGBM teacher with overlap exclusion",
+    "training-fold-only route categorical proportions",
+    "training-fold-only contextual frequencies"
+  ]
+}

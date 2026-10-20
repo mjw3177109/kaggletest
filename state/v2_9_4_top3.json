@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-19T08:09:07.496548+00:00",
+  "competition": "playground-series-s6e10",
+  "official_source": "kaggle_authenticated_competitions_leaderboard",
+  "top3_verified": true,
+  "top3": [
+    {
+      "rank": 1,
+      "team": "Masaya Kawamata",
+      "team_id": 17014484,
+      "public_score": "0.96321",
+      "rank_basis": "official_api_row_order"
+    },
+    {
+      "rank": 2,
+      "team": "Ahmet Bugrahan ALTUNOK",
+      "team_id": 17003896,
+      "public_score": "0.96319",
+      "rank_basis": "official_api_row_order"
+    },
+    {
+      "rank": 3,
+      "team": "Prior",
+      "team_id": 17059754,
+      "public_score": "0.96241",
+      "rank_basis": "official_api_row_order"
+    }
+  ],
+  "method_verified": false,
+  "method_note": "Official public rank proves team/score, not private code or technique.",
+  "attempts": [
+    {
+      "mode": "json",
+      "parsed": true,
+      "public_output_preview": ""
+    }
+  ],
+  "leaderboard_url": "https://www.kaggle.com/competitions/playground-series-s6e10/leaderboard"
+}
