@@ -70,6 +70,8 @@ class SubgroupAuditTests(unittest.TestCase):
         self.assertIn('"submission_performed":False',code)
         self.assertIn('"blend_weight_search":False',code)
         self.assertIn('["kaggle","kernels","output"',code)
+        self.assertIn('"name":"V2915 RealMLP champion"',code)
+        self.assertIn('"oof_realmlp_5epoch"',code)
         self.assertNotIn("kaggle competitions submit",code)
         self.assertNotIn("CatBoostClassifier(",code)
 
