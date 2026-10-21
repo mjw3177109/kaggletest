@@ -32,6 +32,7 @@ PROFILE_COLUMNS = (
     "rating_mean", "Inflight wifi service", "Online boarding",
     "Seat comfort", "Inflight entertainment", "business",
 )
+ROUTE_FEATURE_COUNT = 12
 
 def competition_csv(name):
     found = [
