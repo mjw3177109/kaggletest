@@ -109,6 +109,20 @@ class NativeCatBoostTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError,"provenance"):
                     pipeline.validate_metrics({**m,key:value})
 
+    def test_only_exact_missing_auc_metadata_error_is_recoverable(self):
+        recoverable={"stage":"validation_mismatch","kernel":pipeline.KERNEL,
+                     "error":"'full_oof_auc'"}
+        self.assertTrue(pipeline.recoverable_missing_full_auc(recoverable))
+        for bad in [
+            {**recoverable,"error":"CatBoost recorded full OOF AUC mismatch"},
+            {**recoverable,"kernel":"someone-else/kernel"},
+            {**recoverable,"stage":"kernel_failed"},
+        ]:
+            self.assertFalse(pipeline.recoverable_missing_full_auc(bad))
+        source=(ROOT/"kaggle_agent/v2921_pipeline.py").read_text()
+        self.assertIn("full_oof_auc_recomputed_by_auditor",source)
+        self.assertIn("recompute_missing_full_oof_auc_from_aligned_oof",source)
+
     def test_recovery_never_pushes_an_unrecorded_notebook(self):
         with tempfile.TemporaryDirectory() as folder:
             with (patch.object(pipeline,"STATE",Path(folder)/"empty.json"),
