@@ -247,6 +247,14 @@ def validate(raw,s):
         new_oof,new_test=v14.align_new(
             new,"oof_catboost_route","pred_catboost_route",
             train_id,test_id,y,"V2921")
+        # Older kernel outputs omitted this summary scalar. Recompute it from the
+        # ID/target-aligned OOF vector, then independently verify every fold below.
+        computed_new_auc=float(roc_auc_score(y,new_oof))
+        recorded_new_auc=metrics.get("full_oof_auc")
+        if recorded_new_auc is not None and abs(float(recorded_new_auc)-computed_new_auc)>.000002:
+            raise ValueError("CatBoost recorded full OOF AUC does not match aligned predictions")
+        metrics["full_oof_auc"]=computed_new_auc
+        metrics["full_oof_auc_recomputed_by_auditor"]=recorded_new_auc is None
         v2913_oof,v2913_test=outputs["v2913"]
         v2914_oof,v2914_test=outputs["v2914"]
         v2915_oof,v2915_test=outputs["v2915"]
@@ -318,11 +326,20 @@ def validate(raw,s):
         "completed_at":now(),"cv":result["candidate_auc"],
         "cpu_seconds":metrics.get("runtime_seconds"),"kernel_sources":[KERNEL]})
 
+def recoverable_missing_full_auc(state):
+    return (state.get("stage")=="validation_mismatch"
+            and state.get("kernel")==KERNEL
+            and state.get("error")=="'full_oof_auc'")
+
 def run(recover_only=False):
     previous=read(STATE)
     if previous.get("stage") in TERMINAL:
-        print("V2921 terminal; never create another Notebook or submission")
-        return previous
+        if recoverable_missing_full_auc(previous):
+            previous["stage"]="kernel_complete"
+            previous["validation_recovery"]="recompute_missing_full_oof_auc_from_aligned_oof"
+        else:
+            print("V2921 terminal; never create another Notebook or submission")
+            return previous
     preflight()
     s=previous or {"competition":SLUG,"stage":"preflight",
                    "kernel":None,"submitted":False}
