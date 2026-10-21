@@ -211,7 +211,11 @@ def main():
             verbosity=-1, random_state=MODEL_SEED + fold,
         )
         # No outer validation labels in fitting, evaluation, or early stopping.
-        # Pre-registered cost-sensitive experiment: double the loss weight for Personal Travel rows.\n        # This is fixed a priori, not selected by searching validation scores.\n        fit_rows=train.iloc[itr]\n        sample_weight=np.where(fit_rows["Type of Travel"].astype("string").fillna("__NA__").to_numpy()=="Personal Travel",2.0,1.0)\n        model.fit(xtr, y[itr], sample_weight=sample_weight)
+        # Pre-registered cost-sensitive experiment: double the loss weight for Personal Travel rows.
+        # This is fixed a priori, not selected by searching validation scores.
+        fit_rows=train.iloc[itr]
+        sample_weight=np.where(fit_rows["Type of Travel"].astype("string").fillna("__NA__").to_numpy()=="Personal Travel",2.0,1.0)
+        model.fit(xtr, y[itr], sample_weight=sample_weight)
         pv = np.asarray(model.predict_proba(xval)[:, 1], dtype=np.float32)
         pt = np.asarray(model.predict_proba(xtest)[:, 1], dtype=np.float32)
         if not (np.isfinite(pv).all() and np.isfinite(pt).all()
@@ -252,7 +256,9 @@ def main():
         "folds":FOLDS,"fold_results":fold_results,
         "full_oof_auc":float(roc_auc_score(y, oof)),
         "model_seed":MODEL_SEED,
-        "feature_family":FEATURE_FAMILY,\n        "sample_weight_policy":{"Personal Travel":2.0,"all_other_rows":1.0},\n        "weighting_source":"Type of Travel feature only; no validation labels",
+        "feature_family":FEATURE_FAMILY,
+        "sample_weight_policy":{"Personal Travel":2.0,"all_other_rows":1.0},
+        "weighting_source":"Type of Travel feature only; no validation labels",
         "route_profile_feature_count":ROUTE_FEATURE_COUNT,
         "target_encoding_columns":TE_COUNT,"inner_target_folds":INNER_FOLDS,
         "cpu_only":True,"gpu_verified":False,"data_source":"competition_train_only",
