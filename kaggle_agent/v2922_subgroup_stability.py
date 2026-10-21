@@ -15,6 +15,7 @@ STATE_DIR=ROOT/"state"
 REPORT_DIR=ROOT/"reports"
 OUTPUT_DIR=ROOT/"competitions"/SLUG/"results_v2922_subgroups"
 MODELS=[
+ {"name":"V2915 RealMLP champion","state":"v2_9_15_status.json","kernel":"mjw3177109/kas-v2915-realmlp-5epoch-t4-s6e10","file":"v2915_realmlp_oof.npz","key":"oof_realmlp_5epoch"},
  {"name":"V2918 LightGBM","state":"v2_9_18_status.json","kernel":"mjw3177109/kas-v2918-routeprofile-lightgbm-cpu-s6e10","file":"v2918_route_lgbm_oof.npz","key":"oof_route_lgbm"},
  {"name":"V2919R2 TabM","state":"v2_9_19r2_status.json","kernel":"mjw3177109/kas-v2919r2-tabm-fixed-te23-t4-s6e10","file":"v2919r2_tabm_oof.npz","key":"oof_tabm_route"},
  {"name":"V2920 XGBoost","state":"v2_9_20_status.json","kernel":"mjw3177109/kas-v2920-routeprofile-xgboost-hist-cpu-s6e10","file":"v2920_route_xgb_oof.npz","key":"oof_route_xgb"},
