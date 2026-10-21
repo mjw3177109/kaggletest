@@ -527,6 +527,39 @@
       ],
       "experiment_id": "fc71e6d96ed8674d92d01543c28296ab61e1dd6418c94606e3591d4cfbf4787e",
       "created_at": "2026-10-21T15:48:03.236598+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2921_catboost_native_categorical_route_profile",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261029,
+        "model": "CatBoost_native_categorical",
+        "feature_family": "exact_distance_profile_native_cat_v1",
+        "iterations": 1000,
+        "depth": 7,
+        "native_categorical_columns": [
+          "Gender",
+          "Customer Type",
+          "Type of Travel",
+          "Class"
+        ],
+        "blend": {
+          "v2915_rank": 0.85,
+          "v2921_rank": 0.15
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-21T16:12:50.961886+00:00",
+      "cv": 0.9612213583225888,
+      "cpu_seconds": 449.3,
+      "kernel_sources": [
+        "mjw3177109/kas-v2921-catboost-native-route-cpu-s6e10"
+      ],
+      "experiment_id": "f5b38d946255811d305ac3241a6ad85b6fc6d2f6db095d9b27d246b65124a975",
+      "created_at": "2026-10-21T16:12:50.962269+00:00"
     }
   ]
 }
