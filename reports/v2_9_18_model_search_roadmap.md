@@ -54,3 +54,35 @@ V2.9.19 TabM 应先做 GPU 显存、时间、pytabkit 版本与 CV pilot 验证�
 - V2.9.20 仍作为第三模型架构 XGBoost hist CPU 的候选；不因同族 RealMLP 多次失败就宣称它会提高 AUC。
 
 再次确认：CI SUCCESS 表示脚本任务无断言失败，不代表 Kaggle Notebook 训练完成；模型指标只以经 OOF 哈希及同折验证的状态文件为准。
+
+## 多架构实测更新（2026-10-21 UTC）
+
+### V2.9.18 LightGBM — 完整三折，不晋级
+- Standalone OOF ROC-AUC: 0.9602322592841711.
+- Frozen 85/15 rank blend: 0.9612515540913926; delta vs V2915: -0.00003348584184093.
+- All folds were negative. No leaderboard submission.
+
+### V2.9.19R2 TabM-D — 完整 T4 三折，不晋级
+- Independent OOF ROC-AUC: 0.9592979143322833.
+- Frozen 85/15 rank blend: 0.9612207697305537; delta vs V2915: -0.00006427020267985029.
+- Fold deltas: -0.00008382486404445721, -0.00003698494477444303, -0.0000616598879653596; 0/3 folds improved.
+- Original V2919 import error and V2919R missing-constant error remain archived; V2919R2 used a single-file script and completed correctly.
+
+### V2.9.20 XGBoost Hist — 完整 CPU 三折，不晋级
+- Independent OOF ROC-AUC: 0.9600177680486823.
+- Frozen 85/15 rank blend: 0.9612378193529525; delta vs V2915: -0.00004722058028105991.
+- Fold deltas: -0.00006602942093902886, -0.00004187696493418436, -0.00003495102258621596; 0/3 folds improved.
+
+### V2.9.21 CatBoost Native Categorical — 正在执行
+- New information path: 21 original predictors + 12 fold-fitted unlabelled exact-distance profile features = 33 total features.
+- Four original categorical columns ('Gender', 'Customer Type', 'Type of Travel', 'Class') remain native strings for CatBoost's categorical statistics; unlike V2918/V2920 this model does not consume the custom TE23 matrix.
+- Frozen parameters: 1,000 iterations, depth 7, learning rate 0.04, CPU only, seed 20261029, 3 outer folds.
+- Current stage is recorded in state/v2_9_21_status.json. No result should be claimed until full OOF, ID/label alignment and historical SHA replay complete.
+
+### V2.9.22 Subgroup Stability — Analysis-only
+- kaggle_agent/v2922_subgroup_stability.py and tests/test_v2922_subgroup_stability.py are added.
+- After V2921 reaches a terminal complete-OOF state, the diagnostic retrieves the exact OOF artifacts for LightGBM, TabM, XGBoost and CatBoost, aligns each by official id and target, reports subgroup AUCs (class, travel type, customer type, gender, distance quintile, delay bands and age bands) and pairwise Spearman rank correlations.
+- This is descriptive analysis only: it does not train, submit, or search fusion weights. It will inform whether a future subgroup-specialist or residual-correction model is worth testing.
+
+### Strategy change
+Three new model families tested so far (LightGBM, TabM and XGBoost) all failed the pre-registered blend gate. The next useful step is native categorical learning (CatBoost) and subgroup/OOF diversity analysis, rather than trying more epochs or hand-tuning blend weights against the same OOF.
