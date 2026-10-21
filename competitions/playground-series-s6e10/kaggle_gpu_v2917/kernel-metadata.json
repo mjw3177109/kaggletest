@@ -1,0 +1,17 @@
+{
+  "id": "mjw3177109/kas-v2917-interaction-realmlp-ens8-t4-s6e10",
+  "title": "kas-v2917-interaction-realmlp-ens8-t4-s6e10",
+  "code_file": "main.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "machine_shape": "NvidiaTeslaT4",
+  "enable_internet": true,
+  "dataset_sources": [],
+  "competition_sources": [
+    "playground-series-s6e10"
+  ],
+  "kernel_sources": [],
+  "model_sources": []
+}
