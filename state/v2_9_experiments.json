@@ -498,6 +498,35 @@
       ],
       "experiment_id": "53ce3fda565f122446cba2d87f592f001aca6e11fc9cac2cad84716d50a49bbb",
       "created_at": "2026-10-21T14:44:59.578293+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2919r2_tabm_k8_selfcontained_repair",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261027,
+        "model": "TabM-D",
+        "epochs": 8,
+        "tabm_k": 8,
+        "internal_val_fraction": 0.1,
+        "feature_family": "exact_distance_profile_te23_v1",
+        "inner_target_folds": 5,
+        "blend": {
+          "v2915_rank": 0.85,
+          "v2919r2_rank": 0.15
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-21T15:48:03.236263+00:00",
+      "cv": 0.9612207697305537,
+      "gpu_seconds": 165.6,
+      "kernel_sources": [
+        "mjw3177109/kas-v2919r2-tabm-fixed-te23-t4-s6e10"
+      ],
+      "experiment_id": "fc71e6d96ed8674d92d01543c28296ab61e1dd6418c94606e3591d4cfbf4787e",
+      "created_at": "2026-10-21T15:48:03.236598+00:00"
     }
   ]
 }
