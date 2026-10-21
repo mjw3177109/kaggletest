@@ -5,10 +5,10 @@
   "competition": "playground-series-s6e10",
   "metrics": {
     "date_utc": "2026-10-21",
-    "new_independent_experiments": 2,
+    "new_independent_experiments": 3,
     "best_cv_today": 0.9613243650285448,
     "measured_gpu_hours": 0.5112,
-    "gpu_usage_coverage": "reported_all",
+    "gpu_usage_coverage": "partial",
     "new_submission_count": 0
   }
 }
