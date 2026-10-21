@@ -417,6 +417,32 @@
       ],
       "experiment_id": "44033804719cc6a41148f19c8078a397b20d7e8af3991e5903ed00b1e39393eb",
       "created_at": "2026-10-21T05:12:17.806388+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2917_realmlp_interaction_7epoch",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261025,
+        "epochs": 7,
+        "n_ens": 8,
+        "feature_family": "service_and_delay_interactions_v1",
+        "blend": {
+          "v2915_rank": 0.85,
+          "v2917_rank": 0.15
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-21T14:02:57.815521+00:00",
+      "cv": 0.9613002570031772,
+      "gpu_seconds": 993.9,
+      "kernel_sources": [
+        "mjw3177109/kas-v2917-interaction-realmlp-ens8-t4-s6e10"
+      ],
+      "experiment_id": "8f28beeceabe01c1b318e8db85c982293c141ef202bf35029d1eefa09adcfba8",
+      "created_at": "2026-10-21T14:02:57.815913+00:00"
     }
   ]
 }
