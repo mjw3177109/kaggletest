@@ -3,10 +3,9 @@
   "stage": "skipped_no_cv_gain",
   "kernel": "mjw3177109/kas-v2921-catboost-native-route-cpu-s6e10",
   "submitted": false,
-  "updated_at": "2026-10-21T16:12:50.972437+00:00",
+  "updated_at": "2026-10-21T16:14:23.290Z",
   "kernel_state": "kernel_complete",
   "kernel_message": "mjw3177109/kas-v2921-catboost-native-route-cpu-s6e10 has status \"KernelWorkerStatus.QUEUED\"",
-  "error": "'full_oof_auc'",
   "validation_recovery": "recompute_missing_full_oof_auc_from_aligned_oof",
   "metrics": {
     "competition": "playground-series-s6e10",
@@ -89,11 +88,11 @@
     "baseline_auc": 0.9612850399332336,
     "standalone_auc": 0.959486551014939,
     "candidate_auc": 0.9612213583225888,
-    "gain": -6.36816106447391e-05,
+    "gain": -0.0000636816106447391,
     "fold_gain": [
-      -8.578299450123783e-05,
-      -3.618550646067309e-05,
-      -7.158977287113899e-05
+      -0.00008578299450123783,
+      -0.00003618550646067309,
+      -0.00007158977287113899
     ],
     "positive_folds": 0,
     "fixed_weights": {
@@ -141,5 +140,6 @@
       "notebook": "mjw3177109/kas-v2921-catboost-native-route-cpu-s6e10",
       "sha256": "2d524fd3fc96ba8bef0024c2c28a0c4cf1ff50e925ff5e519ea4e11e0225fa22"
     }
-  }
+  },
+  "recovered_validation_error": "'full_oof_auc'"
 }
