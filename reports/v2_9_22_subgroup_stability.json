@@ -8,6 +8,155 @@
   "submission_performed": false,
   "blend_weight_search": false,
   "models": {
+    "V2915 RealMLP champion": {
+      "kernel": "mjw3177109/kas-v2915-realmlp-5epoch-t4-s6e10",
+      "state_stage": "candidate_ready_unsubmitted",
+      "standalone_auc": 0.96060130231433,
+      "oof_sha256": "46ad63f08537cd8d61c4c8e8698efc20bb3c8fbad4eb0d94ecd7c993b2d894b9",
+      "subgroups": {
+        "Class": {
+          "Business": {
+            "rows": 342212,
+            "positive_rate": 0.7253106261615607,
+            "auc": 0.9403146922381477
+          },
+          "Eco": {
+            "rows": 327404,
+            "positive_rate": 0.16755751304199093,
+            "auc": 0.9039844289936582
+          },
+          "Eco Plus": {
+            "rows": 30019,
+            "positive_rate": 0.24217995269662548,
+            "auc": 0.9299259734378941
+          }
+        },
+        "Type of Travel": {
+          "Business travel": {
+            "rows": 497441,
+            "positive_rate": 0.584336634897405,
+            "auc": 0.9574276008312578
+          },
+          "Personal Travel": {
+            "rows": 202194,
+            "positive_rate": 0.09726302461991948,
+            "auc": 0.8301266967660419
+          }
+        },
+        "Customer Type": {
+          "Loyal Customer": {
+            "rows": 576990,
+            "positive_rate": 0.49514549645574446,
+            "auc": 0.9610692679258429
+          },
+          "disloyal Customer": {
+            "rows": 122645,
+            "positive_rate": 0.20094581923437563,
+            "auc": 0.9239657437655525
+          }
+        },
+        "Gender": {
+          "Female": {
+            "rows": 347952,
+            "positive_rate": 0.4379943210557778,
+            "auc": 0.9611146142151342
+          },
+          "Male": {
+            "rows": 351683,
+            "positive_rate": 0.4490919379099928,
+            "auc": 0.9600579734287251
+          }
+        },
+        "Flight Distance quintile": {
+          "(1189.0, 2240.0]": {
+            "rows": 139817,
+            "positive_rate": 0.579686304240543,
+            "auc": 0.957786256491316
+          },
+          "(2240.0, 4983.0]": {
+            "rows": 139864,
+            "positive_rate": 0.7503002917119488,
+            "auc": 0.9424444620764583
+          },
+          "(591.0, 842.0]": {
+            "rows": 138813,
+            "positive_rate": 0.2947706626900939,
+            "auc": 0.9459963321819405
+          },
+          "(66.999, 591.0]": {
+            "rows": 141090,
+            "positive_rate": 0.3099581827202495,
+            "auc": 0.9467230947242162
+          },
+          "(842.0, 1189.0]": {
+            "rows": 140051,
+            "positive_rate": 0.28346102491235337,
+            "auc": 0.9450779337238726
+          }
+        },
+        "Departure Delay in Minutes band": {
+          "0": {
+            "rows": 635152,
+            "positive_rate": 0.4479573393455425,
+            "auc": 0.9602341992291616
+          },
+          "1-15": {
+            "rows": 45856,
+            "positive_rate": 0.42818824145150036,
+            "auc": 0.9630986927466848
+          },
+          "16-60": {
+            "rows": 18274,
+            "positive_rate": 0.3322753639050016,
+            "auc": 0.9629837108497947
+          }
+        },
+        "Arrival Delay in Minutes band": {
+          "0": {
+            "rows": 640707,
+            "positive_rate": 0.45206311153148004,
+            "auc": 0.9601421062338853
+          },
+          "1-15": {
+            "rows": 40284,
+            "positive_rate": 0.37220732797140305,
+            "auc": 0.9634912749863357
+          },
+          "16-60": {
+            "rows": 18334,
+            "positive_rate": 0.30593432966073963,
+            "auc": 0.9612292270946812
+          }
+        },
+        "Age band": {
+          "25-34": {
+            "rows": 147648,
+            "positive_rate": 0.34233447117468574,
+            "auc": 0.9543876645544992
+          },
+          "35-44": {
+            "rows": 172082,
+            "positive_rate": 0.5116339884473681,
+            "auc": 0.9593477940087597
+          },
+          "45-54": {
+            "rows": 156236,
+            "positive_rate": 0.6014042858240098,
+            "auc": 0.9566555299848924
+          },
+          "55+": {
+            "rows": 104682,
+            "positive_rate": 0.46589671576775377,
+            "auc": 0.9644299382075533
+          },
+          "<=24": {
+            "rows": 118987,
+            "positive_rate": 0.24388378562363955,
+            "auc": 0.9362260224045599
+          }
+        }
+      }
+    },
     "V2918 LightGBM": {
       "kernel": "mjw3177109/kas-v2918-routeprofile-lightgbm-cpu-s6e10",
       "state_stage": "skipped_no_cv_gain",
@@ -606,12 +755,16 @@
     }
   },
   "pairwise_spearman_rank_correlation": {
-    "V2918 LightGBM <> V2919R2 TabM": 0.9648424343484641,
-    "V2918 LightGBM <> V2920 XGBoost": 0.9881691311815534,
-    "V2918 LightGBM <> V2921 CatBoost": 0.9702344896344933,
-    "V2919R2 TabM <> V2920 XGBoost": 0.9620785475312846,
-    "V2919R2 TabM <> V2921 CatBoost": 0.9637320231580123,
-    "V2920 XGBoost <> V2921 CatBoost": 0.9735680929865241
+    "V2915 RealMLP champion <> V2918 LightGBM": 0.9562890953077279,
+    "V2915 RealMLP champion <> V2919R2 TabM": 0.9417081442261587,
+    "V2915 RealMLP champion <> V2920 XGBoost": 0.9544262685146165,
+    "V2915 RealMLP champion <> V2921 CatBoost": 0.9424269262131351,
+    "V2918 LightGBM <> V2919R2 TabM": 0.9648424343484685,
+    "V2918 LightGBM <> V2920 XGBoost": 0.9881691311815506,
+    "V2918 LightGBM <> V2921 CatBoost": 0.9702344896344938,
+    "V2919R2 TabM <> V2920 XGBoost": 0.9620785475312847,
+    "V2919R2 TabM <> V2921 CatBoost": 0.9637320231580155,
+    "V2920 XGBoost <> V2921 CatBoost": 0.973568092986526
   },
   "notes": [
     "Subgroup AUC is descriptive and does not prove a blend gain.",
