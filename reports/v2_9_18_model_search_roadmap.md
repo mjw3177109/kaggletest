@@ -86,3 +86,25 @@ V2.9.19 TabM 应先做 GPU 显存、时间、pytabkit 版本与 CV pilot 验证�
 
 ### Strategy change
 Three new model families tested so far (LightGBM, TabM and XGBoost) all failed the pre-registered blend gate. The next useful step is native categorical learning (CatBoost) and subgroup/OOF diversity analysis, rather than trying more epochs or hand-tuning blend weights against the same OOF.
+
+## V2.9.21 / V2.9.22 最终结果（2026-10-21 UTC）
+
+### V2.9.21 CatBoost Native Categorical — 完整 CPU 三折，不晋级
+- Independent OOF ROC-AUC: 0.959486551014939.
+- Frozen 85/15 rank blend: 0.9612213583225888; delta vs V2915: -0.0000636816106447391.
+- Fold deltas: -0.00008578299450123783, -0.00003618550646067309, -0.00007158977287113899; 0/3 folds improved.
+- Initial controller rejected the otherwise completed run because the Notebook metrics JSON omitted full_oof_auc. A narrow one-time recovery recomputed AUC from the ID/target-aligned OOF vector and independently verified all three fold AUCs. The original warning was preserved as recovered history; the model was not retrained or submitted.
+
+### V2.9.22 Common-OOF subgroup and diversity diagnostic — completed
+- Artifacts for V2918 LightGBM, V2919R2 TabM, V2920 XGBoost and V2921 CatBoost were downloaded from their owner-verified completed Notebooks, then aligned to official train IDs and labels.
+- Spearman rank correlation: LightGBM vs XGBoost = 0.988169; LightGBM vs CatBoost = 0.970234; TabM vs XGBoost = 0.962079; TabM vs CatBoost = 0.963732.
+- Personal Travel subgroup AUC: LightGBM 0.830472; TabM 0.828674; XGBoost 0.830554; CatBoost 0.828487. Business Travel subgroup AUC is around 0.956–0.957.
+- Young passengers (Age <=24) subgroup AUC is around 0.936–0.937 across these models; long-distance quintile (Flight Distance >2240 in this split) is also materially weaker than the best subgroups.
+- Full subgroup table, sample counts, positive rates, OOF SHA-256 and pairwise rank correlations are in reports/v2_9_22_subgroup_stability.md and reports/v2_9_22_subgroup_stability.json.
+- Diagnostic only: no model trained, no weights searched, no leaderboard submission.
+
+### V2.9.23 next method: Personal Travel specialist + conservative residual correction
+- Research motivation: all four models struggle most on Personal Travel; XGBoost adds little ranking diversity over LightGBM.
+- Train a separate fold-safe LightGBM specialist only on Personal Travel rows, using the existing leakage-safe TE23 and fold-local route profile plus 10 fixed non-label-derived interaction features.
+- Store OOF probabilities only for Personal Travel rows. The controller must verify masks, IDs, labels, and all three subgroup-fold AUCs.
+- Compare exactly one preregistered residual correction, alpha=0.10, against the frozen V2915 OOF baseline. No post-hoc alpha/weight sweep and no submission unless the full global 3fold blend clears the existing promotion threshold.
