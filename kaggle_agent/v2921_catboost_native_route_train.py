@@ -227,7 +227,7 @@ def main():
         "target_encoding_columns":0,"inner_target_folds":0,
         "leakage_safe_inner_cross_fit":False,"outer_validation_used_in_training":False,
         "cpu_only":True,"gpu_verified":False,"data_source":"competition_train_only",
-        "external_labels":False,"submitted":False,"runtime_seconds":round(time.monotonic()-started,1),
+        "external_labels":False,"submitted":False,"full_oof_auc":float(roc_auc_score(y,oof)),"runtime_seconds":round(time.monotonic()-started,1),
     })
     print("V2921 full 3fold CatBoost ROC-AUC",roc_auc_score(y,oof),flush=True)
 
