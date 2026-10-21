@@ -29,7 +29,7 @@ class SubgroupAuditTests(unittest.TestCase):
         order=np.random.default_rng(22).permutation(len(train))
         ids=train["id"].to_numpy()[order]
         target=train["satisfaction"].to_numpy()[order]
-        pred=(.15+.7*target+.001*np.arange(len(train)))[order]
+        pred=(.15+.7*target+.0005*np.arange(len(train)))[order]
         y,aligned=audit.align_predictions(train,ids,target,pred)
         self.assertTrue(np.array_equal(y,train["satisfaction"].to_numpy()))
         self.assertEqual(len(aligned),len(train))
