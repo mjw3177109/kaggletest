@@ -1,9 +1,10 @@
 {
   "competition": "playground-series-s6e10",
-  "stage": "kernel_queued",
+  "stage": "kernel_failed",
   "kernel": "mjw3177109/kas-v2919r-tabm-selfcontained-t4-s6e10",
   "submitted": false,
-  "updated_at": "2026-10-21T14:32:25.373372+00:00",
-  "kernel_state": "kernel_queued",
-  "kernel_message": "mjw3177109/kas-v2919r-tabm-selfcontained-t4-s6e10 has status \"KernelWorkerStatus.QUEUED\""
+  "updated_at": "2026-10-21T14:36:11.520214+00:00",
+  "kernel_state": "kernel_failed",
+  "kernel_message": "mjw3177109/kas-v2919r-tabm-selfcontained-t4-s6e10 has status \"KernelWorkerStatus.QUEUED\"",
+  "error": "{\n  \"traceback\": \"Traceback (most recent call last):\\n  File \\\"/kaggle/src/script.py\\\", line 325, in <module>\\n    main()\\n    ~~~~^^\\n  File \\\"/kaggle/src/script.py\\\", line 281, in main\\n    pv,pt,elapsed,features=fit_one_fold(train,test,y,itr,iva,fold)\\n                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/kaggle/src/script.py\\\", line 224, in fit_one_fold\\n    xtr, xval, xtest = matrices(\\n                       ~~~~~~~~^\\n        train.iloc[itr], train.iloc[iva], test, targets[itr], fold,\\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n    )\\n    ^\\n  File \\\"/kaggle/src/script.py\\\", line 195, in matrices\\n    key_train, key_val, key_test = (target_keys(frame, names) for frame in (fit, holdout, test))\\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/kaggle/src/script.py\\\", line 195, in <genexpr>\\n    key_train, key_val, key_test = (target_keys(frame, names) for frame in (fit, holdout, test))\\n                                    ~~~~~~~~~~~^^^^^^^^^^^^^^\\n  File \\\"/kaggle/src/script.py\\\", line 118, in target_keys\\n    if len(z.columns) != TE_COUNT or z.isna().any().any():\\n                         ^^^^^^^^\\nNameError: name 'TE_COUNT' is not defined\\n\"\n}"
 }
