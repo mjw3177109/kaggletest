@@ -4,12 +4,12 @@
   "ingested_versions": [],
   "competition": "playground-series-s6e10",
   "metrics": {
-    "date_utc": "2026-10-20",
-    "new_independent_experiments": 7,
-    "best_cv_today": 0.9612850399332336,
-    "measured_gpu_hours": 0.6724,
+    "date_utc": "2026-10-21",
+    "new_independent_experiments": 0,
+    "best_cv_today": null,
+    "measured_gpu_hours": 0.0,
     "gpu_usage_coverage": "reported_all",
-    "new_submission_count": 3
+    "new_submission_count": 0
   }
 }
 
