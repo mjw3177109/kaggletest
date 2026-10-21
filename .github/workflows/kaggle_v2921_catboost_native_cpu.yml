@@ -76,6 +76,9 @@ jobs:
           except ValueError:
               active=False
           existing=trial.get("kernel")
+          recoverable_auc_mismatch=(trial.get("stage")=="validation_mismatch"
+            and trial.get("kernel")=="mjw3177109/kas-v2921-catboost-native-route-cpu-s6e10"
+            and trial.get("error")=="'full_oof_auc'")
           passed=(active and ladder.get("active_competition")=="playground-series-s6e10"
             and official.get("stage")=="complete" and official.get("submitted") is True
             and official.get("submission_attempted") is True
@@ -101,7 +104,7 @@ jobs:
             and float(xgb_comparison.get("gain",1))<0
             and len(xgb_comparison.get("fold_gain") or [])==3
             and all(float(v)<0 for v in xgb_comparison["fold_gain"])
-            and trial.get("stage") not in terminal
+            and (trial.get("stage") not in terminal or recoverable_auc_mismatch)
             and (not existing or (isinstance(existing,str) and existing.startswith("mjw3177109/"))))
           mode=os.getenv("REQUESTED_MODE") or "run"
           if existing:mode="recover_existing"
