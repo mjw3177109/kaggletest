@@ -46,3 +46,11 @@
 V2.9.19 TabM 应先做 GPU 显存、时间、pytabkit 版本与 CV pilot 验证；不直接尝试高成本 10 折/128 Epoch，避免免费 T4 作业被抢占或超时。
 
 后续定期报告严格区分：研究、Kaggle 排队、Kaggle 训练、完整 OOF、晋级未提交、官方提交、Public LB 与认证排名。
+
+## 新增真实实验记录（2026-10-21 UTC）
+- V2.9.18 **完整三折已完成，不晋级**：独立 LightGBM OOF=0.9602322592841711；固定 85/15 融合 CV=0.9612515540913926；相对官方冠军 OOF=-0.00003348584184093，三折均负，skipped_no_cv_gain，无 Kaggle 提交。
+- V2.9.19 **首轮 Kaggle ERROR，非模型分数**：原始 Notebook mjw3177109/kas-v2919-tabm-route-t4-s6e10 的日志显示 /kaggle/src/script.py 导入 feature_engineering 模块失败、其次导入 v2918_route_profile_lgbm_train 失败；故障唯一原因为 Kaggle 单脚本入口未发现随附辅助文件，尚无 TabM OOF。详情 reports/v2_9_19_failure_diagnostic.md。
+- V2.9.19R **一次性兼容修复**：新的唯一 Notebook slug mjw3177109/kas-v2919r-tabm-selfcontained-t4-s6e10；把 V2918 自研航程画像/TE23 特征代码完整内嵌 main.py，保留 TabM-D k8 8epochs、seed 20261027、三折和固定85/15融合。必须首先验证前版本 kernel_failed 再开始，绝不覆盖旧 Kernel、绝不提交比赛。实际 CV 待 Kaggle 完成后才有结论。
+- V2.9.20 仍作为第三模型架构 XGBoost hist CPU 的候选；不因同族 RealMLP 多次失败就宣称它会提高 AUC。
+
+再次确认：CI SUCCESS 表示脚本任务无断言失败，不代表 Kaggle Notebook 训练完成；模型指标只以经 OOF 哈希及同折验证的状态文件为准。
