@@ -335,6 +335,8 @@ def run(recover_only=False):
     previous=read(STATE)
     if previous.get("stage") in TERMINAL:
         if recoverable_missing_full_auc(previous):
+            previous["recovered_validation_error"]=previous.get("error")
+            previous.pop("error",None)
             previous["stage"]="kernel_complete"
             previous["validation_recovery"]="recompute_missing_full_oof_auc_from_aligned_oof"
         else:
