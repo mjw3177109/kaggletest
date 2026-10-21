@@ -93,7 +93,7 @@ class RouteProfileOOFTests(unittest.TestCase):
         self.assertEqual(pipeline.MIN_GAIN, .00005)
         for term in ('n_estimators=1000','encoder.fit_transform(key_train',
                      'model.fit(xtr, y[itr])','random_state=SEED',
-                     'v2920_route_lgbm_oof.npz','route_profile_feature_count',
+                     'v2920_route_xgb_oof.npz','route_profile_feature_count',
                      '"external_labels":False'):
             self.assertIn(term, training)
         self.assertIn('xgb.XGBClassifier(',training)
