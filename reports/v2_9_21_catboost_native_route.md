@@ -10,4 +10,4 @@
 - Paired fold deltas: [-8.578299450123783e-05, -3.618550646067309e-05, -7.158977287113899e-05]
 - Promotion rule: gain >= 5e-05, >=2 positive folds, worst fold > -0.00005
 - Kaggle competition submission: NEVER performed by this evaluator
-- Error: 'full_oof_auc'
+- Audit note: the original Notebook omitted the summary AUC field. The controller recomputed full OOF ROC-AUC from the ID/target-aligned OOF vector and independently reproduced all three fold AUCs; no retraining or resubmission was performed.
