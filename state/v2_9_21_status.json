@@ -1,9 +1,10 @@
 {
   "competition": "playground-series-s6e10",
-  "stage": "kernel_queued",
+  "stage": "validation_mismatch",
   "kernel": "mjw3177109/kas-v2921-catboost-native-route-cpu-s6e10",
   "submitted": false,
-  "updated_at": "2026-10-21T15:59:32.304188+00:00",
-  "kernel_state": "kernel_queued",
-  "kernel_message": "mjw3177109/kas-v2921-catboost-native-route-cpu-s6e10 has status \"KernelWorkerStatus.QUEUED\""
+  "updated_at": "2026-10-21T16:09:43.540258+00:00",
+  "kernel_state": "kernel_complete",
+  "kernel_message": "mjw3177109/kas-v2921-catboost-native-route-cpu-s6e10 has status \"KernelWorkerStatus.QUEUED\"",
+  "error": "'full_oof_auc'"
 }
