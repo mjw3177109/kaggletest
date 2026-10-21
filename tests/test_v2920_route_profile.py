@@ -83,7 +83,7 @@ class RouteProfileOOFTests(unittest.TestCase):
         training = (ROOT/"kaggle_agent/v2920_route_profile_xgb_train.py").read_text()
         control = (ROOT/"kaggle_agent/v2920_pipeline.py").read_text()
         ast.parse(training); ast.parse(control)
-        self.assertEqual(trainer.MODEL_SEED, 20261026)
+        self.assertEqual(trainer.MODEL_SEED, 20261028)
         self.assertEqual(trainer.SEED, 20261018)
         self.assertEqual(trainer.FOLDS, 3)
         self.assertEqual(trainer.INNER_FOLDS, 5)
@@ -113,7 +113,7 @@ class RouteProfileOOFTests(unittest.TestCase):
                 "validation":pipeline.VALIDATION,"folds":3,
                 "fold_results":[{"fold":i} for i in range(3)],
                 "train_rows":pipeline.N_TRAIN,"test_rows":pipeline.N_TEST,
-                "model_seed":20261026,
+                "model_seed":20261028,
                 "feature_family":trainer.FEATURE_FAMILY,
                 "route_profile_feature_count":12,
                 "target_encoding_columns":23,"inner_target_folds":5,
