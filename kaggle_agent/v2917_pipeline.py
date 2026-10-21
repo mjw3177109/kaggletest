@@ -138,7 +138,7 @@ def validate_metrics(m):
         or len(m.get("fold_results") or [])!=3
         or m.get("train_rows")!=N_TRAIN or m.get("test_rows")!=N_TEST
         or m.get("model")!="RealMLP-TD n_ens=8 7 epochs feature-interaction independent seeded"
-        or m.get("model_seed")!=MODEL_SEED or m.get("epochs")!=5
+        or m.get("model_seed")!=MODEL_SEED or m.get("epochs")!=7
         or m.get("feature_family")!="service_and_delay_interactions_v1"
         or m.get("derived_feature_count")!=9
         or m.get("gpu_verified") is not True or hw.get("ok") is not True
