@@ -1,0 +1,97 @@
+name: Kaggle V2.9.19 TabM Read-Only Failure Diagnostic
+
+on:
+  push:
+    branches: [feature/v29-autonomous-evolution]
+    paths: [".github/workflows/kaggle_v2919_diagnose_failure.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-v2919-readonly-error
+  cancel-in-progress: false
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install authenticated Kaggle CLI
+        run: python -m pip install -r requirements.txt
+      - name: Read terminal error and logs without creating a kernel
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          python - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          state=json.loads(Path("state/v2_9_19_status.json").read_text())
+          kernel="mjw3177109/kas-v2919-tabm-route-t4-s6e10"
+          if state.get("stage")!="kernel_failed" or state.get("kernel")!=kernel:
+              raise RuntimeError("Only the original terminal TabM ERROR may be examined")
+          folder=Path("/tmp/kas_v2919_diagnostic")
+          folder.mkdir(parents=True,exist_ok=True)
+          commands=[
+              ["kaggle","kernels","status",kernel],
+              ["kaggle","kernels","output",kernel,"-p",str(folder),"-o","-q"],
+          ]
+          token=os.getenv("KAGGLE_API_TOKEN","")
+          def clean(raw):
+              data=str(raw).replace("\x1b","")
+              return data.replace(token,"[redacted]") if token else data
+          lines=["# V2.9.19 Kaggle ERROR — authenticated read-only diagnostic","",
+                 "- Original Notebook: "+kernel,
+                 "- Stage: "+state.get("stage","unknown"),
+                 "- Action: ONLY status and output reads. No kernel creation and NO Kaggle submission.","",
+                 "## Kaggle API command output"]
+          for argv in commands:
+              try:
+                  proc=subprocess.run(argv,capture_output=True,text=True,timeout=150)
+                  data=(proc.stdout+"\n"+proc.stderr)[-2300:]
+                  lines.extend(["- Return code: "+str(proc.returncode),
+                                "- Command: "+clean(" ".join(argv)),
+                                "- Output: "+clean(data).replace("\n"," | ")])
+              except Exception as exc:
+                  lines.append("- Command failed to inspect: "+clean(str(exc)[:1200]))
+          lines.extend(["","## Error and log files"])
+          discovered=0
+          for file in sorted(folder.rglob("*")):
+              if not file.is_file() or file.stat().st_size>4000000: continue
+              if file.suffix.lower() not in (".json",".log",".txt",".out",".err"): continue
+              if not any(k in file.name.lower() for k in ("error","traceback","log","stdout","stderr")): continue
+              discovered+=1
+              lines.extend(["### "+clean(file.name),"~~~",clean(file.read_text(errors="replace")[-4300:]),"~~~"])
+          if not discovered: lines.append("Kaggle output exposed no text error/log artifact.")
+          target=Path("reports/v2_9_19_failure_diagnostic.md")
+          target.parent.mkdir(parents=True,exist_ok=True)
+          target.write_text("\n".join(lines)+"\n",encoding="utf-8")
+          print("Read-only diagnostic complete; text log files:",discovered)
+          PY
+      - name: Save text-only error report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- reports/v2_9_19_failure_diagnostic.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: read-only authentic V2919 Kaggle ERROR evidence"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
