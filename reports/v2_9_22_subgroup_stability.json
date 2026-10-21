@@ -1,0 +1,621 @@
+{
+  "competition": "playground-series-s6e10",
+  "analysis": "V2922 subgroup stability and model rank diversity",
+  "train_rows": 699635,
+  "validation": "OOF vectors from fixed common StratifiedKFold seed 20261018",
+  "label_source": "official competition train.csv only",
+  "training_performed": false,
+  "submission_performed": false,
+  "blend_weight_search": false,
+  "models": {
+    "V2918 LightGBM": {
+      "kernel": "mjw3177109/kas-v2918-routeprofile-lightgbm-cpu-s6e10",
+      "state_stage": "skipped_no_cv_gain",
+      "standalone_auc": 0.9602322592841711,
+      "oof_sha256": "409b840fd91375b280d408b80db3841ef884e1d7838adfd205f6160e66a71b52",
+      "subgroups": {
+        "Class": {
+          "Business": {
+            "rows": 342212,
+            "positive_rate": 0.7253106261615607,
+            "auc": 0.9394159699672715
+          },
+          "Eco": {
+            "rows": 327404,
+            "positive_rate": 0.16755751304199093,
+            "auc": 0.9040064541405284
+          },
+          "Eco Plus": {
+            "rows": 30019,
+            "positive_rate": 0.24217995269662548,
+            "auc": 0.9308830873228521
+          }
+        },
+        "Type of Travel": {
+          "Business travel": {
+            "rows": 497441,
+            "positive_rate": 0.584336634897405,
+            "auc": 0.956851245816071
+          },
+          "Personal Travel": {
+            "rows": 202194,
+            "positive_rate": 0.09726302461991948,
+            "auc": 0.8304721893010274
+          }
+        },
+        "Customer Type": {
+          "Loyal Customer": {
+            "rows": 576990,
+            "positive_rate": 0.49514549645574446,
+            "auc": 0.9606454780906646
+          },
+          "disloyal Customer": {
+            "rows": 122645,
+            "positive_rate": 0.20094581923437563,
+            "auc": 0.9238340189879969
+          }
+        },
+        "Gender": {
+          "Female": {
+            "rows": 347952,
+            "positive_rate": 0.4379943210557778,
+            "auc": 0.9607711556782643
+          },
+          "Male": {
+            "rows": 351683,
+            "positive_rate": 0.4490919379099928,
+            "auc": 0.9596647527644325
+          }
+        },
+        "Flight Distance quintile": {
+          "(1189.0, 2240.0]": {
+            "rows": 139817,
+            "positive_rate": 0.579686304240543,
+            "auc": 0.9574572011698307
+          },
+          "(2240.0, 4983.0]": {
+            "rows": 139864,
+            "positive_rate": 0.7503002917119488,
+            "auc": 0.9410170738957857
+          },
+          "(591.0, 842.0]": {
+            "rows": 138813,
+            "positive_rate": 0.2947706626900939,
+            "auc": 0.9457009906520926
+          },
+          "(66.999, 591.0]": {
+            "rows": 141090,
+            "positive_rate": 0.3099581827202495,
+            "auc": 0.9463849205907574
+          },
+          "(842.0, 1189.0]": {
+            "rows": 140051,
+            "positive_rate": 0.28346102491235337,
+            "auc": 0.945099413444107
+          }
+        },
+        "Departure Delay in Minutes band": {
+          "0": {
+            "rows": 635152,
+            "positive_rate": 0.4479573393455425,
+            "auc": 0.9598793605169817
+          },
+          "1-15": {
+            "rows": 45856,
+            "positive_rate": 0.42818824145150036,
+            "auc": 0.9625995243831867
+          },
+          "16-60": {
+            "rows": 18274,
+            "positive_rate": 0.3322753639050016,
+            "auc": 0.9619335498467927
+          }
+        },
+        "Arrival Delay in Minutes band": {
+          "0": {
+            "rows": 640707,
+            "positive_rate": 0.45206311153148004,
+            "auc": 0.9597867468896871
+          },
+          "1-15": {
+            "rows": 40284,
+            "positive_rate": 0.37220732797140305,
+            "auc": 0.962560540230327
+          },
+          "16-60": {
+            "rows": 18334,
+            "positive_rate": 0.30593432966073963,
+            "auc": 0.9612100395764455
+          }
+        },
+        "Age band": {
+          "25-34": {
+            "rows": 147648,
+            "positive_rate": 0.34233447117468574,
+            "auc": 0.9536753506120484
+          },
+          "35-44": {
+            "rows": 172082,
+            "positive_rate": 0.5116339884473681,
+            "auc": 0.9588709535277005
+          },
+          "45-54": {
+            "rows": 156236,
+            "positive_rate": 0.6014042858240098,
+            "auc": 0.9562811049696639
+          },
+          "55+": {
+            "rows": 104682,
+            "positive_rate": 0.46589671576775377,
+            "auc": 0.9639427342460465
+          },
+          "<=24": {
+            "rows": 118987,
+            "positive_rate": 0.24388378562363955,
+            "auc": 0.9366046739848987
+          }
+        }
+      }
+    },
+    "V2919R2 TabM": {
+      "kernel": "mjw3177109/kas-v2919r2-tabm-fixed-te23-t4-s6e10",
+      "state_stage": "skipped_no_cv_gain",
+      "standalone_auc": 0.9592979143322832,
+      "oof_sha256": "4401b44d0fd01a495cf01a4614b7575eef52c8b8144a48b37eb3287a0c139c5d",
+      "subgroups": {
+        "Class": {
+          "Business": {
+            "rows": 342212,
+            "positive_rate": 0.7253106261615607,
+            "auc": 0.9375104184076325
+          },
+          "Eco": {
+            "rows": 327404,
+            "positive_rate": 0.16755751304199093,
+            "auc": 0.9025342494754182
+          },
+          "Eco Plus": {
+            "rows": 30019,
+            "positive_rate": 0.24217995269662548,
+            "auc": 0.9284124344114647
+          }
+        },
+        "Type of Travel": {
+          "Business travel": {
+            "rows": 497441,
+            "positive_rate": 0.584336634897405,
+            "auc": 0.9555496808453107
+          },
+          "Personal Travel": {
+            "rows": 202194,
+            "positive_rate": 0.09726302461991948,
+            "auc": 0.8286737393826927
+          }
+        },
+        "Customer Type": {
+          "Loyal Customer": {
+            "rows": 576990,
+            "positive_rate": 0.49514549645574446,
+            "auc": 0.9598950418581582
+          },
+          "disloyal Customer": {
+            "rows": 122645,
+            "positive_rate": 0.20094581923437563,
+            "auc": 0.9196410512957466
+          }
+        },
+        "Gender": {
+          "Female": {
+            "rows": 347952,
+            "positive_rate": 0.4379943210557778,
+            "auc": 0.9599634997204973
+          },
+          "Male": {
+            "rows": 351683,
+            "positive_rate": 0.4490919379099928,
+            "auc": 0.958613958955956
+          }
+        },
+        "Flight Distance quintile": {
+          "(1189.0, 2240.0]": {
+            "rows": 139817,
+            "positive_rate": 0.579686304240543,
+            "auc": 0.95696980065579
+          },
+          "(2240.0, 4983.0]": {
+            "rows": 139864,
+            "positive_rate": 0.7503002917119488,
+            "auc": 0.9381398120784238
+          },
+          "(591.0, 842.0]": {
+            "rows": 138813,
+            "positive_rate": 0.2947706626900939,
+            "auc": 0.9444373819374394
+          },
+          "(66.999, 591.0]": {
+            "rows": 141090,
+            "positive_rate": 0.3099581827202495,
+            "auc": 0.9446579873919365
+          },
+          "(842.0, 1189.0]": {
+            "rows": 140051,
+            "positive_rate": 0.28346102491235337,
+            "auc": 0.944274785215298
+          }
+        },
+        "Departure Delay in Minutes band": {
+          "0": {
+            "rows": 635152,
+            "positive_rate": 0.4479573393455425,
+            "auc": 0.9589075515973167
+          },
+          "1-15": {
+            "rows": 45856,
+            "positive_rate": 0.42818824145150036,
+            "auc": 0.9619878454344318
+          },
+          "16-60": {
+            "rows": 18274,
+            "positive_rate": 0.3322753639050016,
+            "auc": 0.9616590141381606
+          }
+        },
+        "Arrival Delay in Minutes band": {
+          "0": {
+            "rows": 640707,
+            "positive_rate": 0.45206311153148004,
+            "auc": 0.9587879872378582
+          },
+          "1-15": {
+            "rows": 40284,
+            "positive_rate": 0.37220732797140305,
+            "auc": 0.9623952098303404
+          },
+          "16-60": {
+            "rows": 18334,
+            "positive_rate": 0.30593432966073963,
+            "auc": 0.9606193946649733
+          }
+        },
+        "Age band": {
+          "25-34": {
+            "rows": 147648,
+            "positive_rate": 0.34233447117468574,
+            "auc": 0.9525911272270098
+          },
+          "35-44": {
+            "rows": 172082,
+            "positive_rate": 0.5116339884473681,
+            "auc": 0.9574627475299474
+          },
+          "45-54": {
+            "rows": 156236,
+            "positive_rate": 0.6014042858240098,
+            "auc": 0.9555710619211912
+          },
+          "55+": {
+            "rows": 104682,
+            "positive_rate": 0.46589671576775377,
+            "auc": 0.963248991047179
+          },
+          "<=24": {
+            "rows": 118987,
+            "positive_rate": 0.24388378562363955,
+            "auc": 0.9356255606022796
+          }
+        }
+      }
+    },
+    "V2920 XGBoost": {
+      "kernel": "mjw3177109/kas-v2920-routeprofile-xgboost-hist-cpu-s6e10",
+      "state_stage": "skipped_no_cv_gain",
+      "standalone_auc": 0.9600177680486822,
+      "oof_sha256": "3cb1f62b3f2250e92a3c07799db193157d8c2be7bd2b3c49d4c7fec7a7e2b39d",
+      "subgroups": {
+        "Class": {
+          "Business": {
+            "rows": 342212,
+            "positive_rate": 0.7253106261615607,
+            "auc": 0.9388501478890808
+          },
+          "Eco": {
+            "rows": 327404,
+            "positive_rate": 0.16755751304199093,
+            "auc": 0.9039498766808309
+          },
+          "Eco Plus": {
+            "rows": 30019,
+            "positive_rate": 0.24217995269662548,
+            "auc": 0.9307910748740985
+          }
+        },
+        "Type of Travel": {
+          "Business travel": {
+            "rows": 497441,
+            "positive_rate": 0.584336634897405,
+            "auc": 0.9565089702789676
+          },
+          "Personal Travel": {
+            "rows": 202194,
+            "positive_rate": 0.09726302461991948,
+            "auc": 0.830554255229585
+          }
+        },
+        "Customer Type": {
+          "Loyal Customer": {
+            "rows": 576990,
+            "positive_rate": 0.49514549645574446,
+            "auc": 0.9603954458496766
+          },
+          "disloyal Customer": {
+            "rows": 122645,
+            "positive_rate": 0.20094581923437563,
+            "auc": 0.9237079703214214
+          }
+        },
+        "Gender": {
+          "Female": {
+            "rows": 347952,
+            "positive_rate": 0.4379943210557778,
+            "auc": 0.9605038273579521
+          },
+          "Male": {
+            "rows": 351683,
+            "positive_rate": 0.4490919379099928,
+            "auc": 0.9595049303854547
+          }
+        },
+        "Flight Distance quintile": {
+          "(1189.0, 2240.0]": {
+            "rows": 139817,
+            "positive_rate": 0.579686304240543,
+            "auc": 0.9569142374878397
+          },
+          "(2240.0, 4983.0]": {
+            "rows": 139864,
+            "positive_rate": 0.7503002917119488,
+            "auc": 0.940407892188646
+          },
+          "(591.0, 842.0]": {
+            "rows": 138813,
+            "positive_rate": 0.2947706626900939,
+            "auc": 0.9455049735142653
+          },
+          "(66.999, 591.0]": {
+            "rows": 141090,
+            "positive_rate": 0.3099581827202495,
+            "auc": 0.9461927138412198
+          },
+          "(842.0, 1189.0]": {
+            "rows": 140051,
+            "positive_rate": 0.28346102491235337,
+            "auc": 0.9452969691375143
+          }
+        },
+        "Departure Delay in Minutes band": {
+          "0": {
+            "rows": 635152,
+            "positive_rate": 0.4479573393455425,
+            "auc": 0.9596687935005952
+          },
+          "1-15": {
+            "rows": 45856,
+            "positive_rate": 0.42818824145150036,
+            "auc": 0.9623212594806984
+          },
+          "16-60": {
+            "rows": 18274,
+            "positive_rate": 0.3322753639050016,
+            "auc": 0.9618709440168235
+          }
+        },
+        "Arrival Delay in Minutes band": {
+          "0": {
+            "rows": 640707,
+            "positive_rate": 0.45206311153148004,
+            "auc": 0.9595471689660601
+          },
+          "1-15": {
+            "rows": 40284,
+            "positive_rate": 0.37220732797140305,
+            "auc": 0.9625787681620691
+          },
+          "16-60": {
+            "rows": 18334,
+            "positive_rate": 0.30593432966073963,
+            "auc": 0.9611459480816159
+          }
+        },
+        "Age band": {
+          "25-34": {
+            "rows": 147648,
+            "positive_rate": 0.34233447117468574,
+            "auc": 0.9535665744787539
+          },
+          "35-44": {
+            "rows": 172082,
+            "positive_rate": 0.5116339884473681,
+            "auc": 0.9584093773124575
+          },
+          "45-54": {
+            "rows": 156236,
+            "positive_rate": 0.6014042858240098,
+            "auc": 0.9558177361789765
+          },
+          "55+": {
+            "rows": 104682,
+            "positive_rate": 0.46589671576775377,
+            "auc": 0.9638967123993027
+          },
+          "<=24": {
+            "rows": 118987,
+            "positive_rate": 0.24388378562363955,
+            "auc": 0.9368044394656846
+          }
+        }
+      }
+    },
+    "V2921 CatBoost": {
+      "kernel": "mjw3177109/kas-v2921-catboost-native-route-cpu-s6e10",
+      "state_stage": "skipped_no_cv_gain",
+      "standalone_auc": 0.959486551014939,
+      "oof_sha256": "2d524fd3fc96ba8bef0024c2c28a0c4cf1ff50e925ff5e519ea4e11e0225fa22",
+      "subgroups": {
+        "Class": {
+          "Business": {
+            "rows": 342212,
+            "positive_rate": 0.7253106261615607,
+            "auc": 0.9376428543620939
+          },
+          "Eco": {
+            "rows": 327404,
+            "positive_rate": 0.16755751304199093,
+            "auc": 0.9029952294923708
+          },
+          "Eco Plus": {
+            "rows": 30019,
+            "positive_rate": 0.24217995269662548,
+            "auc": 0.9300655022216917
+          }
+        },
+        "Type of Travel": {
+          "Business travel": {
+            "rows": 497441,
+            "positive_rate": 0.584336634897405,
+            "auc": 0.9558252490956769
+          },
+          "Personal Travel": {
+            "rows": 202194,
+            "positive_rate": 0.09726302461991948,
+            "auc": 0.8284869175047541
+          }
+        },
+        "Customer Type": {
+          "Loyal Customer": {
+            "rows": 576990,
+            "positive_rate": 0.49514549645574446,
+            "auc": 0.9597539410277325
+          },
+          "disloyal Customer": {
+            "rows": 122645,
+            "positive_rate": 0.20094581923437563,
+            "auc": 0.9232274123161133
+          }
+        },
+        "Gender": {
+          "Female": {
+            "rows": 347952,
+            "positive_rate": 0.4379943210557778,
+            "auc": 0.9601045284874953
+          },
+          "Male": {
+            "rows": 351683,
+            "positive_rate": 0.4490919379099928,
+            "auc": 0.9588446439301618
+          }
+        },
+        "Flight Distance quintile": {
+          "(1189.0, 2240.0]": {
+            "rows": 139817,
+            "positive_rate": 0.579686304240543,
+            "auc": 0.9563637275100583
+          },
+          "(2240.0, 4983.0]": {
+            "rows": 139864,
+            "positive_rate": 0.7503002917119488,
+            "auc": 0.9379868251640082
+          },
+          "(591.0, 842.0]": {
+            "rows": 138813,
+            "positive_rate": 0.2947706626900939,
+            "auc": 0.9451295136293149
+          },
+          "(66.999, 591.0]": {
+            "rows": 141090,
+            "positive_rate": 0.3099581827202495,
+            "auc": 0.945920672512235
+          },
+          "(842.0, 1189.0]": {
+            "rows": 140051,
+            "positive_rate": 0.28346102491235337,
+            "auc": 0.9446632554534012
+          }
+        },
+        "Departure Delay in Minutes band": {
+          "0": {
+            "rows": 635152,
+            "positive_rate": 0.4479573393455425,
+            "auc": 0.9591115405802713
+          },
+          "1-15": {
+            "rows": 45856,
+            "positive_rate": 0.42818824145150036,
+            "auc": 0.9621841154752584
+          },
+          "16-60": {
+            "rows": 18274,
+            "positive_rate": 0.3322753639050016,
+            "auc": 0.9614956262164847
+          }
+        },
+        "Arrival Delay in Minutes band": {
+          "0": {
+            "rows": 640707,
+            "positive_rate": 0.45206311153148004,
+            "auc": 0.958975063616574
+          },
+          "1-15": {
+            "rows": 40284,
+            "positive_rate": 0.37220732797140305,
+            "auc": 0.9626539979376488
+          },
+          "16-60": {
+            "rows": 18334,
+            "positive_rate": 0.30593432966073963,
+            "auc": 0.9607208033958895
+          }
+        },
+        "Age band": {
+          "25-34": {
+            "rows": 147648,
+            "positive_rate": 0.34233447117468574,
+            "auc": 0.9530607322788935
+          },
+          "35-44": {
+            "rows": 172082,
+            "positive_rate": 0.5116339884473681,
+            "auc": 0.9578468538220378
+          },
+          "45-54": {
+            "rows": 156236,
+            "positive_rate": 0.6014042858240098,
+            "auc": 0.9551553363417677
+          },
+          "55+": {
+            "rows": 104682,
+            "positive_rate": 0.46589671576775377,
+            "auc": 0.9631786745545385
+          },
+          "<=24": {
+            "rows": 118987,
+            "positive_rate": 0.24388378562363955,
+            "auc": 0.935876998927224
+          }
+        }
+      }
+    }
+  },
+  "pairwise_spearman_rank_correlation": {
+    "V2918 LightGBM <> V2919R2 TabM": 0.9648424343484685,
+    "V2918 LightGBM <> V2920 XGBoost": 0.9881691311815506,
+    "V2918 LightGBM <> V2921 CatBoost": 0.9702344896344938,
+    "V2919R2 TabM <> V2920 XGBoost": 0.9620785475312847,
+    "V2919R2 TabM <> V2921 CatBoost": 0.9637320231580155,
+    "V2920 XGBoost <> V2921 CatBoost": 0.973568092986526
+  },
+  "notes": [
+    "Subgroup AUC is descriptive and does not prove a blend gain.",
+    "Pairwise rank correlation is a diversity diagnostic, not a promotion criterion.",
+    "All OOF artifacts are ID/target aligned to the official train file before analysis."
+  ]
+}
