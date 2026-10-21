@@ -1,9 +1,9 @@
 {
   "competition": "playground-series-s6e10",
-  "stage": "kernel_queued",
+  "stage": "kernel_running",
   "kernel": "mjw3177109/kas-v2916-interaction-realmlp-ens8-t4-s6e10",
   "submitted": false,
-  "updated_at": "2026-10-21T04:39:11.639314+00:00",
-  "kernel_state": "kernel_queued",
-  "kernel_message": "mjw3177109/kas-v2916-interaction-realmlp-ens8-t4-s6e10 has status \"KernelWorkerStatus.QUEUED\""
+  "updated_at": "2026-10-21T04:43:36.674245+00:00",
+  "kernel_state": "kernel_running",
+  "kernel_message": "mjw3177109/kas-v2916-interaction-realmlp-ens8-t4-s6e10 has status \"KernelWorkerStatus.RUNNING\""
 }
