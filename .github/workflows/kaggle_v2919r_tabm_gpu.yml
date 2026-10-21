@@ -1,0 +1,162 @@
+name: Kaggle V2.9.19R Self-contained TabM k8 T4
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Launch one unique owner-checked standalone TabM Notebook or recover"
+        type: choice
+        required: false
+        default: run
+        options:
+          - run
+          - recover_existing
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2919r_tabm_gpu.yml"
+      - "kaggle_agent/v2919r_pipeline.py"
+      - "kaggle_agent/v2919r_tabm_selfcontained_train.py"
+      - "tests/test_v2919r_tabm.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-s6e10-v2919r-selfcontained-unique-tabm-t4
+  cancel-in-progress: false
+
+jobs:
+  train-one-independent-tabm-t4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      REQUESTED_MODE: ${{ inputs.mode || 'run' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Preflight champion, V2917 terminal, single TabM GPU kernel and cutoff
+        id: gate
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,os
+          from pathlib import Path
+          from datetime import datetime,timezone
+          def read(name):
+              p=Path("state")/name
+              return json.loads(p.read_text()) if p.exists() else {}
+          official=read("v2_9_15_submission.json")
+          champion=read("v2_9_15_status.json")
+          ranking=read("score_rank_latest.json")
+          ladder=read("dual_ladder.json")
+          trial=read("v2_9_19r_status.json")
+          previous=read("v2_9_16_status.json")
+          last_compare=previous.get("comparison") or {}
+          older_gpu=read("v2_9_17_status.json")
+          older_gpu_comp=older_gpu.get("comparison") or {}
+          original_failure=read("v2_9_19_status.json")
+          terminal={"candidate_ready_unsubmitted","skipped_no_cv_gain",
+            "kernel_failed","output_failed","validation_mismatch",
+            "push_failed","kernel_access_error"}
+          try:
+              deadline=datetime.fromisoformat(str(ladder.get("active_deadline","")).replace("Z","+00:00"))
+              active=deadline.tzinfo is not None and datetime.now(timezone.utc)<deadline
+          except ValueError:
+              active=False
+          existing=trial.get("kernel")
+          passed=(active and ladder.get("active_competition")=="playground-series-s6e10"
+            and official.get("stage")=="complete" and official.get("submitted") is True
+            and official.get("submission_attempted") is True
+            and str((official.get("submission") or {}).get("ref"))=="57446286"
+            and (official.get("submission") or {}).get("status")=="SubmissionStatus.COMPLETE"
+            and abs(float(official.get("official_lb",0))-.96099)<1e-9
+            and champion.get("stage")=="candidate_ready_unsubmitted"
+            and abs(float((champion.get("comparison") or {}).get("candidate_auc",0))-.9612850399332336)<.000002
+            and official.get("prediction_hash")==champion.get("candidate_test_hash")
+            and str((ranking.get("score") or {}).get("submission_id"))=="57446286"
+            and previous.get("stage")=="skipped_no_cv_gain"
+            and previous.get("submitted") is False
+            and abs(float(last_compare.get("candidate_auc",0))-.9613243650285448)<.000002
+            and float(last_compare.get("gain",1))<.00005
+            and older_gpu.get("stage")=="skipped_no_cv_gain"
+            and older_gpu.get("submitted") is False
+            and abs(float(older_gpu_comp.get("candidate_auc",0))-.9613002570031772)<.000002
+            and original_failure.get("stage")=="kernel_failed"
+            and original_failure.get("submitted") is False
+            and original_failure.get("kernel")=="mjw3177109/kas-v2919-tabm-route-t4-s6e10"
+            and trial.get("stage") not in terminal
+            and (not existing or (isinstance(existing,str) and existing.startswith("mjw3177109/"))))
+          mode=os.getenv("REQUESTED_MODE") or "run"
+          if existing:mode="recover_existing"
+          print("allowed="+str(passed).lower())
+          print("mode="+mode)
+          print("reason="+("qualified" if passed else "blocked_by_champion_or_terminal_gate"))
+          PY
+
+      - name: Install Kaggle TabM OOF audit dependencies
+        if: steps.gate.outputs.allowed == 'true'
+        run: python -m pip install -r requirements.txt numpy pandas scipy scikit-learn
+
+      - name: Compile model and run immutable fold-safe regression gates
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2919r_tabm_selfcontained_train.py kaggle_agent/v2919r_pipeline.py
+          python -m unittest discover -s tests -p 'test_v2919r_tabm.py' -v
+
+      - name: Train exactly one owner-verified TabM T4 Notebook or recover
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          if test "$MODE" = "recover_existing"; then
+            python kaggle_agent/v2919r_pipeline.py --recover-only
+          else
+            python kaggle_agent/v2919r_pipeline.py
+          fi
+
+      - name: Persist Notebook ID, authentic OOF evidence and experiments
+        if: always() && steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          for file in state/v2_9_19r_status.json state/v2_9_experiments.json reports/v2_9_19r_tabm_selfcontained.md; do
+            if test -f "$file"; then git add -A -- "$file"; fi
+          done
+          if test -d competitions/playground-series-s6e10/kaggle_gpu_v2919r; then
+            git add -A -- competitions/playground-series-s6e10/kaggle_gpu_v2919r/
+          fi
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: V2919R self-contained TabM k8 GPU OOF"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+
+      - name: Archive small verified status and report only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2919r-selfcontained-tabm-audit
+          path: |
+            state/v2_9_19r_status.json
+            reports/v2_9_19r_tabm_selfcontained.md
+          if-no-files-found: ignore
