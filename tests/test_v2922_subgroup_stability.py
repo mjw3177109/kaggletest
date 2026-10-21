@@ -69,7 +69,7 @@ class SubgroupAuditTests(unittest.TestCase):
         self.assertIn('"training_performed":False',code)
         self.assertIn('"submission_performed":False',code)
         self.assertIn('"blend_weight_search":False',code)
-        self.assertIn("kaggle kernels output",code)
+        self.assertIn('["kaggle","kernels","output"',code)
         self.assertNotIn("kaggle competitions submit",code)
         self.assertNotIn("CatBoostClassifier(",code)
 
