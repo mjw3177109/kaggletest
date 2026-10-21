@@ -3,7 +3,7 @@
   "stage": "skipped_no_cv_gain",
   "kernel": "mjw3177109/kas-v2921-catboost-native-route-cpu-s6e10",
   "submitted": false,
-  "updated_at": "2026-10-21T16:14:23.290Z",
+  "updated_at": "2026-10-21T16:15:15.025Z",
   "kernel_state": "kernel_complete",
   "kernel_message": "mjw3177109/kas-v2921-catboost-native-route-cpu-s6e10 has status \"KernelWorkerStatus.QUEUED\"",
   "validation_recovery": "recompute_missing_full_oof_auc_from_aligned_oof",
@@ -141,5 +141,6 @@
       "sha256": "2d524fd3fc96ba8bef0024c2c28a0c4cf1ff50e925ff5e519ea4e11e0225fa22"
     }
   },
-  "recovered_validation_error": "'full_oof_auc'"
+  "recovered_validation_error": "'full_oof_auc'",
+  "error": null
 }
