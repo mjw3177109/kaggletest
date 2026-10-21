@@ -443,6 +443,33 @@
       ],
       "experiment_id": "8f28beeceabe01c1b318e8db85c982293c141ef202bf35029d1eefa09adcfba8",
       "created_at": "2026-10-21T14:02:57.815913+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2918_route_profile_exact_distance_te23",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261026,
+        "model": "LightGBM",
+        "feature_family": "exact_distance_profile_te23_v1",
+        "n_estimators": 900,
+        "inner_target_folds": 5,
+        "blend": {
+          "v2915_rank": 0.85,
+          "v2918_rank": 0.15
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-21T14:22:38.112008+00:00",
+      "cv": 0.9612515540913926,
+      "cpu_seconds": 174.6,
+      "kernel_sources": [
+        "mjw3177109/kas-v2918-routeprofile-lightgbm-cpu-s6e10"
+      ],
+      "experiment_id": "d310fa9e2517f32dd249bc2e4da14edf69c9bf8bef765976fae225d4f89b5d26",
+      "created_at": "2026-10-21T14:22:38.112296+00:00"
     }
   ]
 }
