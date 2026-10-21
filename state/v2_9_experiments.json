@@ -470,6 +470,34 @@
       ],
       "experiment_id": "d310fa9e2517f32dd249bc2e4da14edf69c9bf8bef765976fae225d4f89b5d26",
       "created_at": "2026-10-21T14:22:38.112296+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2920_xgboost_hist_route_profile_te23",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261028,
+        "model": "XGBoost_hist",
+        "feature_family": "exact_distance_profile_te23_v1",
+        "n_estimators": 1000,
+        "max_depth": 6,
+        "inner_target_folds": 5,
+        "blend": {
+          "v2915_rank": 0.85,
+          "v2920_rank": 0.15
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-21T14:44:59.577999+00:00",
+      "cv": 0.9612378193529525,
+      "cpu_seconds": 194.5,
+      "kernel_sources": [
+        "mjw3177109/kas-v2920-routeprofile-xgboost-hist-cpu-s6e10"
+      ],
+      "experiment_id": "53ce3fda565f122446cba2d87f592f001aca6e11fc9cac2cad84716d50a49bbb",
+      "created_at": "2026-10-21T14:44:59.578293+00:00"
     }
   ]
 }
