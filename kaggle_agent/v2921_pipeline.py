@@ -1,4 +1,4 @@
-"""V2.9.21 independent CPU route-profile XGBoost hist challenger; NO Kaggle submission.
+"""V2.9.21 independent CPU native-categorical CatBoost challenger; NO Kaggle submission.
 
 All outputs are reconstructed against frozen V2915 OOF/test predictions.
 Only one pre-registered 85/15 rank blend is evaluated for promotion.
