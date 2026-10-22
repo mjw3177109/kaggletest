@@ -32,9 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     env:
-      KAGGLE_API_TOKEN: \${{ secrets.KAGGLE_API_TOKEN }}
-      KAGGLE_USERNAME: \${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
-      REQUESTED_MODE: \${{ inputs.mode || 'run' }}
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      REQUESTED_MODE: ${{ inputs.mode || 'run' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -126,7 +126,7 @@ jobs:
       - name: Train one owner-verified Notebook or recover existing Notebook
         if: steps.gate.outputs.allowed == 'true'
         env:
-          MODE: \${{ steps.gate.outputs.mode }}
+          MODE: ${{ steps.gate.outputs.mode }}
         run: |
           set -euo pipefail
           test "$KAGGLE_USERNAME" = "mjw3177109"
