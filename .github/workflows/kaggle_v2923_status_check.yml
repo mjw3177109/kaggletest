@@ -1,0 +1,83 @@
+name: Kaggle V2.9.23 Read-only Kernel Status Check
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2923_status_check.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kaggle-s6e10-v2923-status-only
+  cancel-in-progress: false
+
+jobs:
+  status-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Kaggle CLI
+        run: python -m pip install -r requirements.txt
+      - name: Query exact existing Notebook status only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          python - <<'PY'
+          import json, re, subprocess
+          from datetime import datetime, timezone
+          kernel = "mjw3177109/kas-v2923-personal-weight2-lightgbm-cpu-s6e10"
+          p = subprocess.run(
+              ["kaggle", "kernels", "status", kernel],
+              capture_output=True, text=True, timeout=90
+          )
+          raw = ((p.stdout or "") + "\n" + (p.stderr or "")).strip()
+          states = re.findall(r"KernelWorkerStatus\.([A-Z_]+)", raw)
+          if states:
+              status = states[-1]
+          elif re.search(r'has status ["\']queued', raw, re.I):
+              status = "QUEUED"
+          elif re.search(r'has status ["\']running', raw, re.I):
+              status = "RUNNING"
+          elif re.search(r'has status ["\']complete', raw, re.I):
+              status = "COMPLETE"
+          else:
+              status = "UNKNOWN"
+          result = {
+              "checked_at": datetime.now(timezone.utc).isoformat(),
+              "kernel": kernel,
+              "command_exit_code": p.returncode,
+              "parsed_status_tokens": states,
+              "status": status,
+              "raw_output_tail": raw[-2500:],
+              "read_only": True,
+              "created_notebook": False,
+              "submitted": False
+          }
+          with open("v2923_kernel_status_check.json", "w", encoding="utf-8") as f:
+              json.dump(result, f, indent=2, ensure_ascii=False)
+          print(json.dumps(result, indent=2, ensure_ascii=False))
+          if p.returncode != 0:
+              raise SystemExit("Kaggle status command failed; do not launch a new Notebook.")
+          PY
+      - name: Archive status evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2923-read-only-kernel-status
+          path: v2923_kernel_status_check.json
+          if-no-files-found: ignore
