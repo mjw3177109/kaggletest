@@ -5,7 +5,7 @@
   "submitted": false,
   "updated_at": "2026-10-22T03:03:24.375060+00:00",
   "kernel_state": "kernel_complete",
-  "kernel_message": "mjw3177109/kas-v2923-personal-weight2-lightgbm-cpu-s6e10 has status \"KernelWorkerStatus.RUNNING\"",
+  "kernel_message": "mjw3177109/kas-v2923-personal-weight2-lightgbm-cpu-s6e10 has status \"KernelWorkerStatus.COMPLETE\" (confirmed by read-only status check run 39714997224)",
   "metrics": {
     "competition": "playground-series-s6e10",
     "model": "LightGBM personal-travel-weight2 route-profile TE23 3fold seeded",
@@ -38,8 +38,8 @@
     "model_seed": 20261030,
     "feature_family": "exact_distance_profile_te23_personal_weight2_v1",
     "sample_weight_policy": {
-      "Personal Travel": 2.0,
-      "all_other_rows": 1.0
+      "Personal Travel": 2,
+      "all_other_rows": 1
     },
     "weighting_source": "Type of Travel feature only; no validation labels",
     "route_profile_feature_count": 12,
@@ -58,11 +58,11 @@
     "baseline_auc": 0.9612850399332336,
     "standalone_auc": 0.96002755328987,
     "candidate_auc": 0.96123680234935,
-    "gain": -4.823758388350363e-05,
+    "gain": -0.00004823758388350363,
     "fold_gain": [
-      -6.251114796462787e-05,
-      -2.9369142964030814e-05,
-      -5.1964923908798255e-05
+      -0.00006251114796462787,
+      -0.000029369142964030814,
+      -0.000051964923908798255
     ],
     "positive_folds": 0,
     "fixed_weights": {
@@ -110,5 +110,8 @@
       "notebook": "mjw3177109/kas-v2923-personal-weight2-lightgbm-cpu-s6e10",
       "sha256": "7df62b03259e69d43dee151892d1e2c2c13e0757b11e17008cf0feeeeb8c5a60"
     }
-  }
+  },
+  "kernel_status_verified_at": "2026-10-22T03:06:34.102592+00:00",
+  "kernel_status_verification": "read_only_kaggle_cli_status",
+  "status_check_workflow_run_id": 39714997224
 }
