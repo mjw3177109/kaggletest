@@ -95,17 +95,27 @@ def residual_correct(base, specialist, mask, alpha=ALPHA):
 
 def preregistered_v2923_is_terminal(state):
     stage = state.get("stage")
-    if stage not in SAFE_TO_ADVANCE_V2923:
-        return False
+    message = str(state.get("kernel_message") or "")
     if stage == "skipped_no_cv_gain":
-        message = str(state.get("kernel_message") or "")
         return (
             state.get("kernel_state") == "kernel_complete"
             and "KernelWorkerStatus.COMPLETE" in message
             and "KernelWorkerStatus.RUNNING" not in message
         )
-    return state.get("kernel_state") not in {"kernel_running", "kernel_queued"}
-
+    if stage == "kernel_failed":
+        return (
+            state.get("kernel_state") == "kernel_failed"
+            and any(token in message for token in ("KernelWorkerStatus.ERROR", "KernelWorkerStatus.FAILED", "KernelWorkerStatus.CANCELLED"))
+            and "KernelWorkerStatus.RUNNING" not in message
+        )
+    if stage in {"output_failed", "validation_mismatch"}:
+        return (
+            state.get("kernel_state") == "kernel_complete"
+            and "KernelWorkerStatus.COMPLETE" in message
+            and "KernelWorkerStatus.RUNNING" not in message
+        )
+    # Ambiguous push/access failures are not proof that a Notebook is terminal.
+    return False
 
 def preflight():
     champion = v23.preflight()
