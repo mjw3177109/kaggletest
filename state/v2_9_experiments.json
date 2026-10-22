@@ -560,6 +560,34 @@
       ],
       "experiment_id": "f5b38d946255811d305ac3241a6ad85b6fc6d2f6db095d9b27d246b65124a975",
       "created_at": "2026-10-21T16:12:50.962269+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2923_personal_travel_weight2_lightgbm",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261030,
+        "model": "LightGBM_sample_weighted",
+        "feature_family": "exact_distance_profile_te23_personal_weight2_v1",
+        "n_estimators": 900,
+        "sample_weight_personal_travel": 2.0,
+        "inner_target_folds": 5,
+        "blend": {
+          "v2915_rank": 0.85,
+          "v2923_rank": 0.15
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "completed_at": "2026-10-22T03:03:24.364266+00:00",
+      "cv": 0.96123680234935,
+      "cpu_seconds": 173.6,
+      "kernel_sources": [
+        "mjw3177109/kas-v2923-personal-weight2-lightgbm-cpu-s6e10"
+      ],
+      "experiment_id": "41d2223048edd3a0aae376c691cc4f6e14bb53691c593b44f074713e724e952d",
+      "created_at": "2026-10-22T03:03:24.364591+00:00"
     }
   ]
 }
