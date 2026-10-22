@@ -1,4 +1,5 @@
 name: Kaggle Latest Authenticated Public Rank Refresh
+# 2026-10-22: one authenticated read-only rank refresh; no submission action.
 
 on:
   workflow_dispatch:
