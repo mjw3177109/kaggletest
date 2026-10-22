@@ -29,8 +29,8 @@ V2.8 保留 V2.5 已验证的内层 5 折无泄漏目标编码，新增真正运
 ## 当前已评分冠军对应的官方排名
 
 - 此名次关联的 Public LB：0.96035
-- 当前 Public 排名：**第 897 名 / 2722 支队伍**
-- 排名核验 UTC：2026-10-22T19:18:25.473866+00:00
+- 当前 Public 排名：**第 897 名 / 2723 支队伍**
+- 排名核验 UTC：2026-10-22T19:34:07.429999+00:00
 - 排名证据：kaggle_authenticated_userRank
 - 官方排行榜：https://www.kaggle.com/competitions/playground-series-s6e10/leaderboard
 
