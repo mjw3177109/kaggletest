@@ -1,5 +1,6 @@
 name: Kaggle V2.9.23 Personal-Travel-Weighted LightGBM CPU
 # Recover the existing queued Notebook on subsequent workflow runs; never create duplicates.
+# 2026-10-22 safe status refresh: existing owner-verified kernel is recovered only; never duplicated.
 
 on:
   workflow_dispatch:
