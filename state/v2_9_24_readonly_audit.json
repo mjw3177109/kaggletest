@@ -1,0 +1,71 @@
+{
+  "competition": "playground-series-s6e10",
+  "stage": "skipped_no_cv_gain_verified_readonly",
+  "checked_at": "2026-10-23T08:38:10Z",
+  "original_v2924_status": "validation_mismatch (preserved immutable)",
+  "original_status_file": "state/v2_9_24_status.json",
+  "diagnostic_run_id": 39925902649,
+  "diagnostic_run_url": "https://github.com/mjw3177109/kaggletest/actions/runs/39925902649",
+  "diagnostic_artifact_id": 12488834541,
+  "diagnostic_artifact_name": "v2924-frozen-baseline-readonly-diagnostic",
+  "read_only": true,
+  "notebook": "mjw3177109/kas-v2924-personal-travel-specialist-cpu-s6e10",
+  "kernel_state": "COMPLETE_authenticated_cli",
+  "reproducibility": {
+    "original_v2915_environment": {
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "scipy": "1.17.1",
+      "scikit_learn": "1.9.1"
+    },
+    "failed_v2924_environment": {
+      "numpy": "2.4.6",
+      "pandas": "3.1.0",
+      "scipy": "1.17.1",
+      "scikit_learn": "1.9.1"
+    },
+    "successful_readonly_environment": {
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "scipy": "1.17.1",
+      "scikit_learn": "1.9.1"
+    },
+    "frozen_champion_test_sha_verified": true,
+    "frozen_champion_oof_auc": 0.9612850399332336,
+    "cause_assessment": "Pandas version drift is strongly implicated; do not override the frozen SHA check. Pin the known-good scientific environment for future read-only evaluations."
+  },
+  "specialist": {
+    "personal_oof_auc": 0.8292877737242009,
+    "fold_auc": [
+      0.8277192655455503,
+      0.8315024142270017,
+      0.8287932946983605
+    ],
+    "personal_train_rows": 202194,
+    "personal_test_rows": 86703,
+    "source_npz_sha256": "47b5aa6931ab925e6cb2ec89dfd262c508da1445af8766f69eb8525bc93d9568"
+  },
+  "full_candidate": {
+    "cv_auc": 0.9612947642045307,
+    "gain_vs_champion": 0.000009724271297195664,
+    "fold_gain": [
+      0.000009779850551616676,
+      0.00001349792909666192,
+      0.000007161975721925451
+    ],
+    "positive_folds": 3,
+    "cv_floor": 0.96125635576833,
+    "min_gain": 0.00005,
+    "meets_promotion_gate": false,
+    "candidate_test_hash": null,
+    "reason_no_candidate_test_hash": "No candidate test submission generated for non-promotable experiment"
+  },
+  "frozen_official": {
+    "submission_id": 57446286,
+    "public_lb": 0.96099,
+    "private_lb": null
+  },
+  "submitted": false,
+  "submission_attempted": false,
+  "next": "V2.9.25 may be preregistered as a distinct fixed dual-axis OOF fusion; no new Notebook or submission from this audit."
+}
