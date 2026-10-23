@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.25",
-  "stage": "preregistered_not_started",
+  "stage": "skipped_no_cv_gain",
   "preregistered_at": "2026-10-23T08:38:10Z",
   "candidate": "v2925_dual_axis_realmlp_interactions_plus_personal_residual",
   "model_family": "frozen RealMLP service-delay interaction ensemble plus subgroup LightGBM rank-residual correction",
@@ -38,15 +38,15 @@
     "no_new_model_fit": true,
     "external_labels": false,
     "threshold_full_cv": 0.96125635576833,
-    "threshold_gain_vs_champion": 0.00005,
+    "threshold_gain_vs_champion": 5e-05,
     "threshold_positive_folds": 2,
-    "threshold_worst_fold_strictly_greater_than": -0.00005
+    "threshold_worst_fold_strictly_greater_than": -5e-05
   },
   "baseline_evidence": {
     "v2916_cv": 0.9613243650285448,
-    "v2916_gain": 0.000039325095311237845,
+    "v2916_gain": 3.9325095311237845e-05,
     "v2924_cv": 0.9612947642045307,
-    "v2924_gain": 0.000009724271297195664,
+    "v2924_gain": 9.724271297195664e-06,
     "note": "Positive but individually subthreshold gains; joint effect is unknown until independent full OOF evaluation."
   },
   "gates": [
@@ -59,5 +59,40 @@
     "Evaluator must never submit; a separate persistent one-shot reservation workflow is required if all gates pass"
   ],
   "no_active_training_confirmed_at_preregistration": true,
-  "next_action": "Implement independently guarded read-only evaluator; do not create a Notebook until owner lookup and workflow preflight are verified."
+  "next_action": "Candidate below preregistered promotion gate; no submission.",
+  "checked_at": "2026-10-23T10:59:15.833648+00:00",
+  "no_new_model_fit": true,
+  "official_submission_id": 57446286,
+  "official_public_lb": 0.96099,
+  "private_lb": null,
+  "baseline_cv": 0.9612850399332336,
+  "full_cv": 0.961332372152315,
+  "gain_vs_champion": 4.7332219081486215e-05,
+  "fold_auc": [
+    0.9608553593237901,
+    0.96163363866964,
+    0.9615335146281629
+  ],
+  "fold_gain": [
+    4.8360544329884014e-05,
+    5.9068185063737566e-05,
+    3.509017975955597e-05
+  ],
+  "positive_folds": 3,
+  "promotable": false,
+  "candidate_oof_hash": "b486693cc108fbf48e14c69b6b1efd9f10f9c6b0d92642c07b24d5962c8eacf5",
+  "candidate_test_hash": "d1a478ffabd4148c88b50cd2604d95333e91f0a8a5dcc17a53f5bc1bcea86f02",
+  "v2924_personal_oof_auc": 0.8292877737242009,
+  "promotion_gates": {
+    "cv_floor": 0.96125635576833,
+    "min_gain": 5e-05,
+    "min_positive_folds": 2,
+    "worst_fold_gt": -5e-05
+  },
+  "source_artifacts_verified": {
+    "v2916": "05facb3098732f1348928c8de62cefae3ecb64b5b1fabdb3a7a84342b7bfe0d7",
+    "v2924": "47b5aa6931ab925e6cb2ec89dfd262c508da1445af8766f69eb8525bc93d9568",
+    "v2915_test": "906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7"
+  },
+  "updated_at": "2026-10-23T10:59:15.833648+00:00"
 }
