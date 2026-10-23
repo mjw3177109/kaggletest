@@ -1,0 +1,120 @@
+name: Kaggle V2.9.25 Preregistered Read-only Dual-Axis Fusion
+
+on:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2925_readonly_fusion.yml"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: kaggle-s6e10-v2925-readonly-fusion
+  cancel-in-progress: false
+
+jobs:
+  evaluate-existing-oof-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Fail closed on competing active workflows
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REPOSITORY}" = "mjw3177109/kaggletest"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs?branch=feature%2Fv29-autonomous-evolution&per_page=100" > /tmp/v2925_runs.json
+          python - <<'PY'
+          import json, os
+          data=json.load(open('/tmp/v2925_runs.json', encoding='utf-8'))
+          if not isinstance(data.get('workflow_runs'),list):
+              raise SystemExit('Workflow inventory unavailable; refusing evaluation')
+          self_id=int(os.environ['GITHUB_RUN_ID'])
+          active=[(x['id'],x['name']) for x in data['workflow_runs']
+                  if x.get('status') in {'queued','in_progress','waiting','pending','requested'}
+                  and int(x['id']) != self_id]
+          if active:
+              raise SystemExit('Another active workflow exists; no new evaluation: '+str(active))
+          print('No competing active GitHub Actions workflows.')
+          PY
+
+      - name: Pin exact frozen scientific environment
+        run: |
+          python -m pip install -r requirements.txt 'numpy==2.4.6' 'pandas==3.0.6' 'scipy==1.17.1' 'scikit-learn==1.9.1'
+
+      - name: Compile and test fixed nontraining fusion invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2925_readonly_fusion.py
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+          import numpy as np
+          sys.path.insert(0,str(Path.cwd()/'kaggle_agent'))
+          import v2925_readonly_fusion as v
+          a=np.array([0.1,0.2,0.3,0.4,0.5,0.6])
+          b=np.array([0.2,0.1,0.4,0.3,0.6,0.5])
+          m=np.array([False,True,False,True,False,True])
+          c=v.fused(a,b,np.array([0.9,0.7,0.8]),m)
+          d=0.85*v.v24.v23.audit.rank(a)+0.15*v.v24.v23.audit.rank(b)
+          assert np.array_equal(c[~m],d[~m])
+          assert len(c)==6 and np.isfinite(c).all()
+          try:
+              v.fused(a,b,np.array([0.1,0.2]),m)
+          except ValueError:
+              pass
+          else:
+              raise AssertionError('Subgroup shape guard failed')
+          print('Frozen fusion invariants verified.')
+          PY
+
+      - name: Read existing Kaggle source outputs and verify complete threefold OOF
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${KAGGLE_USERNAME}" = "mjw3177109"
+          test -n "${KAGGLE_API_TOKEN}"
+          python kaggle_agent/v2925_readonly_fusion.py
+
+      - name: Persist independently audited V2925 state without any Kaggle submission
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/v2_9_25_status.json reports/v2_9_25_readonly_result.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: persist read-only V2925 threefold OOF audit"
+          for attempt in 1 2 3; do
+            git pull --rebase origin feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+
+      - name: Archive SHA and full threefold evidence (never a submission)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2925-readonly-dual-axis-evidence
+          path: |
+            v2925_readonly_evidence.json
+            state/v2_9_25_status.json
+            reports/v2_9_25_readonly_result.md
+          if-no-files-found: ignore
