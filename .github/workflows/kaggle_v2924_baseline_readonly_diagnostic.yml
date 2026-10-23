@@ -1,0 +1,150 @@
+name: Kaggle V2.9.24 Frozen Baseline Read-only Diagnostic
+
+on:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2924_baseline_readonly_diagnostic.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kaggle-s6e10-v2924-baseline-readonly-diagnostic
+  cancel-in-progress: false
+
+jobs:
+  baseline-readonly-diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      KAGGLE_API_TOKEN: \${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: \${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify frozen state and never start or submit any Kaggle job
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          state=json.loads(Path('state/v2_9_24_status.json').read_text())
+          official=json.loads(Path('state/v2_9_15_submission.json').read_text())
+          champ=json.loads(Path('state/v2_9_15_status.json').read_text())
+          assert state['stage']=='validation_mismatch'
+          assert state['kernel']=='mjw3177109/kas-v2924-personal-travel-specialist-cpu-s6e10'
+          assert state['kernel_state']=='kernel_complete'
+          assert state['submitted'] is False
+          assert official['prediction_hash']==champ['candidate_test_hash']
+          assert str(official['submission']['ref'])=='57446286'
+          assert official['official_lb']==0.96099
+          print('Read-only baseline diagnosis authorized; terminal V2924 state is immutable.')
+          PY
+      - name: Recreate original V2915 scientific package versions
+        run: |
+          python -m pip install -r requirements.txt 'numpy==2.4.6' 'pandas==3.0.6' 'scipy==1.17.1' 'scikit-learn==1.9.1'
+      - name: Read-only Kaggle kernel status and baseline SHA diagnosis
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          python - <<'PY'
+          import sys, json, tempfile, hashlib, subprocess
+          from pathlib import Path
+          import numpy as np
+          from sklearn.metrics import roc_auc_score
+          from sklearn.model_selection import StratifiedKFold
+          import pandas, scipy, sklearn
+          sys.path.insert(0,str(Path.cwd()/'kaggle_agent'))
+          import v2924_pipeline as v24
+          report={'mode':'readonly_diagnostic_no_training_no_submission',
+                  'library_versions':{'numpy':np.__version__,'pandas':pandas.__version__,
+                                      'scipy':scipy.__version__,'scikit_learn':sklearn.__version__},
+                  'notebook':v24.KERNEL,
+                  'official_submission_id':57446286,
+                  'official_public_lb':0.96099}
+          def digest(arr):
+              return hashlib.sha256(np.asarray(arr,dtype='<f8').tobytes()).hexdigest()
+          def write():
+              Path('v2924_baseline_diagnostic.json').write_text(json.dumps(report,indent=2)+'\n')
+          p=subprocess.run(['kaggle','kernels','status',v24.KERNEL],
+                           capture_output=True,text=True,timeout=90)
+          if p.returncode or 'KernelWorkerStatus.COMPLETE' not in p.stdout:
+              report['stage']='kernel_status_unverified'
+              report['error']='Authenticated read-only status did not confirm COMPLETE'
+              write()
+              raise SystemExit(1)
+          report['kernel_status']='COMPLETE_authenticated_cli'
+          champion=v24.preflight()
+          with tempfile.TemporaryDirectory(prefix='v2924_readonly_') as td:
+              try:
+                  result=v24.baseline_arrays(td,champion)
+              except ValueError as exc:
+                  report['stage']='baseline_hash_mismatch'
+                  report['error_type']=type(exc).__name__
+                  report['error']=str(exc)
+                  tb=exc.__traceback__
+                  while tb:
+                      if tb.tb_frame.f_code.co_name=='baseline_arrays':
+                          loc=tb.tb_frame.f_locals
+                          if 'v2913_test' in loc:
+                              report['recomputed_v2913_test_sha']=digest(loc['v2913_test'])
+                              report['frozen_v2913_test_sha']=v24.read(v24.ROOT/'state/v2_9_13_status.json').get('candidate_test_hash')
+                              report['v2913_sha_matches']=(report['recomputed_v2913_test_sha']==report['frozen_v2913_test_sha'])
+                          if 'baseline_test_hash' in loc:
+                              report['recomputed_v2915_test_sha']=loc['baseline_test_hash']
+                              report['frozen_v2915_test_sha']=champion['candidate_test_hash']
+                              report['v2915_sha_matches']=(loc['baseline_test_hash']==champion['candidate_test_hash'])
+                          break
+                      tb=tb.tb_next
+                  write()
+                  print(json.dumps(report,indent=2))
+                  raise SystemExit(0)
+              train,test,train_id,test_id,y,baseline_oof,baseline_test,files=result
+              report['baseline_sha_verified']=True
+              report['baseline_oof_auc']=float(roc_auc_score(y,baseline_oof))
+              raw=Path(td)/'v2924_output'
+              raw.mkdir()
+              p=subprocess.run(['kaggle','kernels','output',v24.KERNEL,'-p',str(raw),'-o','-q'],
+                               capture_output=True,text=True,timeout=600)
+              if p.returncode:
+                  report['stage']='notebook_output_unavailable'
+                  write()
+                  raise SystemExit(1)
+              metrics,pred_file,sub_oof,sub_test,train_mask,test_mask=v24.load_specialist(
+                  raw,train_id,test_id,y,train,test)
+              candidate=v24.residual_correct(baseline_oof,sub_oof,train_mask)
+              score=float(roc_auc_score(y,candidate))
+              folds=[]
+              for _,idx in StratifiedKFold(3,shuffle=True,random_state=v24.SEED).split(
+                  np.zeros(len(y),dtype=np.uint8),y):
+                  folds.append(float(roc_auc_score(y[idx],candidate[idx])-roc_auc_score(y[idx],baseline_oof[idx])))
+              report.update({'stage':'threefold_full_oof_verified',
+                             'source_sha256':files,
+                             'specialist_oof_file_sha256':v24.v23.audit.sha256(pred_file),
+                             'specialist_personal_oof_auc':float(metrics['personal_oof_auc']),
+                             'candidate_full_cv_auc':score,
+                             'gain_vs_champion':score-v24.BASELINE,
+                             'fold_gain':folds,
+                             'positive_folds':sum(x>0 for x in folds),
+                             'meets_cv_promotion_gate':bool(score>=v24.CV_FLOOR and score-v24.BASELINE>=v24.MIN_GAIN and sum(x>0 for x in folds)>=2 and min(folds)>-0.00005)})
+              write()
+              print(json.dumps({k:v for k,v in report.items() if k!='source_sha256'},indent=2))
+          PY
+      - name: Archive read-only diagnosis, never a submission
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2924-frozen-baseline-readonly-diagnostic
+          path: v2924_baseline_diagnostic.json
+          if-no-files-found: ignore
