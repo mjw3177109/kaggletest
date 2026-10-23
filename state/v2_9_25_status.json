@@ -1,0 +1,63 @@
+{
+  "competition": "playground-series-s6e10",
+  "version": "V2.9.25",
+  "stage": "preregistered_not_started",
+  "preregistered_at": "2026-10-23T08:38:10Z",
+  "candidate": "v2925_dual_axis_realmlp_interactions_plus_personal_residual",
+  "model_family": "frozen RealMLP service-delay interaction ensemble plus subgroup LightGBM rank-residual correction",
+  "feature_family": "dual_axis_service_delay_and_personal_travel_residual_v1",
+  "unique_kernel_slug": "mjw3177109/kas-v2925-dual-axis-residual-cpu-s6e10",
+  "kernel": null,
+  "kernel_exists": "not_checked_on_kaggle",
+  "notebook_created": false,
+  "training_started": false,
+  "submitted": false,
+  "submission_attempted": false,
+  "evaluation_only": true,
+  "independent_state_file": "state/v2_9_25_status.json",
+  "pre_registered_parameters": {
+    "frozen_champion": "V2.9.15",
+    "base_champion_cv": 0.9612850399332336,
+    "source_interaction": "V2.9.16 existing complete threefold OOF",
+    "source_specialist": "V2.9.24 existing complete threefold OOF",
+    "source_v2916_kernel": "mjw3177109/kas-v2916-interaction-realmlp-ens8-t4-s6e10",
+    "source_v2916_sha256": "05facb3098732f1348928c8de62cefae3ecb64b5b1fabdb3a7a84342b7bfe0d7",
+    "source_v2924_kernel": "mjw3177109/kas-v2924-personal-travel-specialist-cpu-s6e10",
+    "source_v2924_sha256": "47b5aa6931ab925e6cb2ec89dfd262c508da1445af8766f69eb8525bc93d9568",
+    "source_champion_test_hash": "906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7",
+    "rank_fusion_weights": {
+      "v2915": 0.85,
+      "v2916": 0.15
+    },
+    "subgroup": "Personal Travel",
+    "residual_alpha": 0.15,
+    "algorithm": "rank_blend_then_fixed_within_subgroup_rank_residual",
+    "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+    "outer_folds": 3,
+    "cpu_only": true,
+    "no_new_model_fit": true,
+    "external_labels": false,
+    "threshold_full_cv": 0.96125635576833,
+    "threshold_gain_vs_champion": 0.00005,
+    "threshold_positive_folds": 2,
+    "threshold_worst_fold_strictly_greater_than": -0.00005
+  },
+  "baseline_evidence": {
+    "v2916_cv": 0.9613243650285448,
+    "v2916_gain": 0.000039325095311237845,
+    "v2924_cv": 0.9612947642045307,
+    "v2924_gain": 0.000009724271297195664,
+    "note": "Positive but individually subthreshold gains; joint effect is unknown until independent full OOF evaluation."
+  },
+  "gates": [
+    "Verify no active Kaggle training and no active competing recovery or submission workflow before any execution",
+    "Read-only owner Kaggle CLI lookup for unique slug; refuse any ambiguous existing or duplicate Notebook",
+    "Pin numpy=2.4.6 pandas=3.0.6 scipy=1.17.1 scikit-learn=1.9.1 for frozen baseline SHA reproducibility",
+    "Check all frozen source artifact SHA and train/test ID alignment",
+    "Only use existing threefold OOF/test predictions, no training, no external labels, no hyperparameter search",
+    "Compute full threefold OOF, each fold gain, source SHA, and candidate hash; refuse submission if any gate fails",
+    "Evaluator must never submit; a separate persistent one-shot reservation workflow is required if all gates pass"
+  ],
+  "no_active_training_confirmed_at_preregistration": true,
+  "next_action": "Implement independently guarded read-only evaluator; do not create a Notebook until owner lookup and workflow preflight are verified."
+}
