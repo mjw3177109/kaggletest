@@ -1,9 +1,10 @@
 {
   "competition": "playground-series-s6e10",
-  "stage": "kernel_queued",
+  "stage": "validation_mismatch",
   "kernel": "mjw3177109/kas-v2924-personal-travel-specialist-cpu-s6e10",
   "submitted": false,
-  "updated_at": "2026-10-22T03:11:54.530319+00:00",
-  "kernel_state": "kernel_queued",
-  "kernel_message": "mjw3177109/kas-v2924-personal-travel-specialist-cpu-s6e10 has status \"KernelWorkerStatus.QUEUED\""
+  "updated_at": "2026-10-23T01:37:11.231791+00:00",
+  "kernel_state": "kernel_complete",
+  "kernel_message": "mjw3177109/kas-v2924-personal-travel-specialist-cpu-s6e10 has status \"KernelWorkerStatus.COMPLETE\"",
+  "error": "Reconstructed V2915 frozen test prediction hash changed"
 }
