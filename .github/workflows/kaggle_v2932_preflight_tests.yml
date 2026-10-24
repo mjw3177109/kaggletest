@@ -26,7 +26,7 @@ jobs:
       - name: Install pinned CPU-only scientific test dependencies
         run: |
           set -euo pipefail
-          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1
+          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1 PyYAML==6.0.2
           python -m pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
       - name: Syntax-check all three new modules and dry-run 7 safety tests
         run: |
