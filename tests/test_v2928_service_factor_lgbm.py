@@ -34,8 +34,13 @@ class V2928SafeExperiment(unittest.TestCase):
         self.assertEqual(state["model_parameters"],p.frozen_params())
         self.assertEqual(state["model_parameters"],m.MODEL_PARAMETERS)
         self.assertEqual(p.KERNEL,"mjw3177109/kas-v2928-service-factor-pca-lgbm-cpu-s6e10")
-        self.assertFalse(state["notebook_created"])
-        self.assertFalse(state["training_started"])
+        if state["stage"]=="preregistered_not_started":
+            self.assertFalse(state["notebook_created"])
+            self.assertFalse(state["training_started"])
+        else:
+            self.assertEqual(state["kernel"],p.KERNEL)
+            self.assertFalse(state["submitted"])
+            self.assertFalse(state["submission_attempted"])
 
     def test_pca_fits_outer_training_only(self):
         fit=frame(50,1);hold=frame(10,2);test=frame(8,3)
