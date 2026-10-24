@@ -1,15 +1,15 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.31",
-  "stage": "pushing_kernel",
+  "stage": "kernel_queued",
   "preregistered_at": "2026-10-24",
   "hypothesis": "fold_local_supervised_mutual_information_pruning_of_champion_features",
   "model_family": "global_RealMLP_TD_T4",
   "feature_family": "v2915_37_features_fold_local_mi_select_29",
   "intended_kernel": "mjw3177109/kas-v2931-foldlocal-mi-pruned-realmlp-t4-s6e10",
   "kernel": "mjw3177109/kas-v2931-foldlocal-mi-pruned-realmlp-t4-s6e10",
-  "notebook_created": false,
-  "training_started": false,
+  "notebook_created": true,
+  "training_started": true,
   "submitted": false,
   "submission_attempted": false,
   "baseline_features": 37,
@@ -60,5 +60,7 @@
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "awaiting_trainer_verifier_tests_workflow_review",
   "reservation_at": "2026-10-24T15:30:51.410648+00:00",
-  "updated_at": "2026-10-24T15:30:51.410669+00:00"
+  "updated_at": "2026-10-24T15:30:55.527041+00:00",
+  "kernel_state": "kernel_queued",
+  "kernel_message": "mjw3177109/kas-v2931-foldlocal-mi-pruned-realmlp-t4-s6e10 has status \"KernelWorkerStatus.QUEUED\""
 }
