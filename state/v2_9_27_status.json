@@ -1,0 +1,47 @@
+{
+  "competition": "playground-series-s6e10",
+  "version": "V2.9.27",
+  "stage": "preregistered_not_started",
+  "preregistered_at": "2026-10-24T06:20:00Z",
+  "hypothesis": "travel_type_gated_dual_realmlp_interaction_experts",
+  "model_family": "two_fold_local_RealMLP_TD_travel_experts",
+  "feature_family": "v2916_service_delay_interactions_no_route_profile",
+  "intended_kernel": "mjw3177109/kas-v2927-travel-gated-dual-realmlp-t4-s6e10",
+  "kernel": "",
+  "notebook_created": false,
+  "training_started": false,
+  "submitted": false,
+  "submission_attempted": false,
+  "external_labels": false,
+  "outer_folds": 3,
+  "seed": 20261018,
+  "model_seed": 20261027,
+  "experts": [
+    "Personal Travel",
+    "Business travel"
+  ],
+  "epochs": 5,
+  "n_ens": 8,
+  "interaction_feature_count": 9,
+  "route_feature_count": 0,
+  "blend": {
+    "v2915_rank": 0.85,
+    "v2927_rank": 0.15
+  },
+  "baseline_cv": 0.9612850399332336,
+  "previous_v2926": {
+    "stage": "skipped_no_cv_gain",
+    "standalone_cv": 0.9602205569678511,
+    "full_cv": 0.9613072330727896,
+    "gain": 0.00002219313955609259,
+    "source_sha256": "1026cf4aa6990f7eb3fc9e9e5c21209cbe4ae8b6fd42e8398fb9f9a24853e2e2"
+  },
+  "promotion": {
+    "min_cv": 0.96125635576833,
+    "min_gain_vs_v2915": 0.00005,
+    "min_positive_folds": 2,
+    "worst_fold_strict_gt": -0.00005
+  },
+  "submission_policy": "evaluation_only_no_submission",
+  "implementation_status": "awaiting_reviewed_trainer_verifier_workflow_tests"
+}
