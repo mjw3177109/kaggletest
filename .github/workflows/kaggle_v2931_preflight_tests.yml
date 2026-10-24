@@ -1,4 +1,5 @@
 name: Kaggle V2.9.31 Preflight Only - No Notebook Creation
+# Revalidate after fixing isolated V2931 state/report paths; still no Kaggle credentials.
 
 on:
   push:
