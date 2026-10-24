@@ -1,0 +1,86 @@
+{
+  "competition": "playground-series-s6e10",
+  "version": "V2.9.34",
+  "stage": "preregistered_not_started",
+  "preregistered_at": "2026-10-24",
+  "hypothesis": "explicit_second_order_field_interactions_deepfm_on_champion_original37",
+  "model_family": "PyTorch_DeepFM_Explicit_SecondOrder_T4",
+  "feature_family": "v2915_original37_3_inner5fold_TE_no_extra_features",
+  "intended_kernel": "mjw3177109/kas-v2934-explicit-secondorder-deepfm-t4-s6e10",
+  "kernel": null,
+  "notebook_created": false,
+  "training_started": false,
+  "submitted": false,
+  "submission_attempted": false,
+  "baseline_features": 37,
+  "numeric_features": 23,
+  "categorical_features": 14,
+  "protected_target_encoded_features": 3,
+  "outer_folds": 3,
+  "inner_target_folds": 5,
+  "seed": 20261018,
+  "model_seed": 20261103,
+  "architecture": {
+    "field_embedding_dim": 8,
+    "linear_first_order": true,
+    "explicit_second_order_fm": true,
+    "deep_hidden_layers": [
+      128,
+      64
+    ],
+    "activation": "GELU",
+    "dropout": 0.1,
+    "final_logit": "linear_plus_FM_plus_deep"
+  },
+  "epochs": 5,
+  "batch_size": 1024,
+  "optimizer": "AdamW",
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "loss": "BCEWithLogitsLoss",
+  "early_stopping": false,
+  "ensemble": false,
+  "external_labels": false,
+  "pseudo_labels": false,
+  "route_features": false,
+  "pca_features": false,
+  "ordinal_threshold_features": false,
+  "travel_gated_experts": false,
+  "new_conditional_te_features": false,
+  "feature_pruning": false,
+  "blend": {
+    "v2915_rank": 0.85,
+    "v2934_rank": 0.15
+  },
+  "baseline_cv": 0.9612850399332336,
+  "champion_test_prediction_sha256": "906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7",
+  "official_submission_id": 57446286,
+  "official_public_lb": 0.96099,
+  "latest_authenticated_rank": {
+    "rank": 977,
+    "ranked_teams": 2915,
+    "checked_at": "2026-10-24T20:15:14.221310+00:00"
+  },
+  "previous_v2933": {
+    "stage": "skipped_no_cv_gain",
+    "standalone_cv": 0.957190461399015,
+    "full_cv": 0.9611521544050623,
+    "gain": -0.00013288552817125598,
+    "fold_gain": [
+      -0.00015233592694940956,
+      -0.00012001750662271604,
+      -0.00011193011886700965
+    ],
+    "source_sha256": "8ad08e8083ae85d5ab235b3003ab64cda0d89f43f21b074f14c58eb0532be226",
+    "recovery_run_id": 40128638628
+  },
+  "promotion": {
+    "min_cv": 0.96125635576833,
+    "min_gain_vs_v2915": 0.00005,
+    "min_positive_folds": 2,
+    "worst_fold_strict_gt": -0.00005
+  },
+  "submission_policy": "evaluation_only_no_submission",
+  "implementation_status": "awaiting_independent_trainer_verifier_tests_workflow_review",
+  "preregistration_report": "reports/v2_9_34_preregistration.md"
+}
