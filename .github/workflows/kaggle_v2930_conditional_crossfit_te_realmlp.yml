@@ -1,4 +1,5 @@
 name: Kaggle V2.9.30 Conditional Crossfit TE RealMLP T4 Single Experiment
+# 2026-10-24 14:48 UTC: one guarded status recovery of existing persisted V2930 Notebook; no create, push, or submit.
 
 on:
   workflow_dispatch:
