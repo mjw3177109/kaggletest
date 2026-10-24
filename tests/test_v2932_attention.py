@@ -1,6 +1,7 @@
 """V2932 preregistered attention model, leakage, unique-owner and no-submit tests."""
 import ast
 import hashlib
+import os
 import sys
 import unittest
 from pathlib import Path
@@ -97,6 +98,31 @@ class V2932Safety(unittest.TestCase):
         with patch.object(torch.cuda,"is_available",return_value=False):
             with self.assertRaises(RuntimeError):
                 m.prove_gpu()
+
+    def test_authenticated_missing_unrelated_kernel_is_not_active(self):
+        def fake_kaggle(args,timeout=120):
+            if args[:2]==["competitions","submissions"]:
+                return "57446286,0.96099"
+            if args[:2]==["kernels","list"]:
+                return "ref,title\\nmjw3177109/agent,deleted\\n"
+            if args[:2]==["kernels","status"]:
+                if args[2]=="mjw3177109/agent":
+                    raise LookupError("authenticated NOT_FOUND")
+                return "KernelWorkerStatus.COMPLETE"
+            raise AssertionError(args)
+        with patch.dict(os.environ,{"KAGGLE_USERNAME":"mjw3177109",
+                                     "KAGGLE_API_TOKEN":"test-only-placeholder"}):
+            with patch.object(gate,"kaggle",side_effect=fake_kaggle):
+                gate.assert_kaggle_idle_and_official()
+        def fail_known(args,timeout=120):
+            if args[:2]==["kernels","status"] and "v2931" in args[2]:
+                raise LookupError("authenticated NOT_FOUND")
+            return fake_kaggle(args,timeout)
+        with patch.dict(os.environ,{"KAGGLE_USERNAME":"mjw3177109",
+                                     "KAGGLE_API_TOKEN":"test-only-placeholder"}):
+            with patch.object(gate,"kaggle",side_effect=fail_known):
+                with self.assertRaises(RuntimeError):
+                    gate.assert_kaggle_idle_and_official()
 
     def test_no_submission_pickle_or_workflow_bypass(self):
         paths=[
