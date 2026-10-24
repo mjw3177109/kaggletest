@@ -588,6 +588,32 @@
       ],
       "experiment_id": "41d2223048edd3a0aae376c691cc4f6e14bb53691c593b44f074713e724e952d",
       "created_at": "2026-10-22T03:03:24.364591+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2926_route_profile_realmlp_5epoch",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261026,
+        "epochs": 5,
+        "n_ens": 8,
+        "route_feature_count": 12,
+        "fusion_weights": {
+          "v2915_rank": 0.8,
+          "v2926_rank": 0.2
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "cv": 0.9613072330727896,
+      "completed_at": "2026-10-24T06:17:04.551047+00:00",
+      "gpu_seconds": 845.6,
+      "kernel_sources": [
+        "mjw3177109/kas-v2926-route-profile-realmlp-t4-s6e10"
+      ],
+      "experiment_id": "d605a6046275de3b25b355d2a9f44b61994d166789f382ca42f918d834a516a6",
+      "created_at": "2026-10-24T06:17:04.551439+00:00"
     }
   ]
 }
