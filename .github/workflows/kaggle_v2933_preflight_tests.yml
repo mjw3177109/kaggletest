@@ -1,6 +1,6 @@
 name: Kaggle V2.9.33 RankNet CPU Dry-Run and Safety Tests Only
 # This workflow NEVER accesses Kaggle credentials, creates a Notebook, or submits.
-# Frozen V2933 preflight only; NO Kaggle credentials or Notebook push.
+# V2933 corrected isolated state and previous-run evidence; repeat all 11 CPU-only tests.
 on:
   workflow_dispatch:
   push:
