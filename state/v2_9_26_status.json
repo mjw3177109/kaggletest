@@ -1,14 +1,14 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.26",
-  "stage": "preregistered_not_started",
+  "stage": "kernel_queued",
   "method": "fold_local_route_profile_realmlp_5epoch_t4",
-  "kernel": "",
+  "kernel": "mjw3177109/kas-v2926-route-profile-realmlp-t4-s6e10",
   "intended_kernel": "mjw3177109/kas-v2926-route-profile-realmlp-t4-s6e10",
   "submitted": false,
   "submission_attempted": false,
-  "notebook_created": false,
-  "training_started": false,
+  "notebook_created": true,
+  "training_started": true,
   "preregistered_at": "2026-10-24",
   "outer_folds": 3,
   "seed": 20261018,
@@ -27,9 +27,12 @@
   "official_public_lb": 0.96099,
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 0.00005,
+    "min_gain_vs_v2915": 5e-05,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -0.00005
+    "worst_fold_strict_gt": -5e-05
   },
-  "submission_policy": "evaluation_only_no_submission"
+  "submission_policy": "evaluation_only_no_submission",
+  "updated_at": "2026-10-24T05:27:25.650543+00:00",
+  "kernel_state": "kernel_queued",
+  "kernel_message": "mjw3177109/kas-v2926-route-profile-realmlp-t4-s6e10 has status \"KernelWorkerStatus.QUEUED\""
 }
