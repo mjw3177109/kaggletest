@@ -1,13 +1,13 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.31",
-  "stage": "preregistered_not_started",
+  "stage": "pushing_kernel",
   "preregistered_at": "2026-10-24",
   "hypothesis": "fold_local_supervised_mutual_information_pruning_of_champion_features",
   "model_family": "global_RealMLP_TD_T4",
   "feature_family": "v2915_37_features_fold_local_mi_select_29",
   "intended_kernel": "mjw3177109/kas-v2931-foldlocal-mi-pruned-realmlp-t4-s6e10",
-  "kernel": "",
+  "kernel": "mjw3177109/kas-v2931-foldlocal-mi-pruned-realmlp-t4-s6e10",
   "notebook_created": false,
   "training_started": false,
   "submitted": false,
@@ -44,7 +44,7 @@
     "stage": "skipped_no_cv_gain",
     "standalone_cv": 0.9606450272778854,
     "full_cv": 0.9613286615476094,
-    "gain": 0.000043621614375877193,
+    "gain": 4.3621614375877193e-05,
     "positive_folds": 3,
     "source_sha256": "45e96e595676ec91a1e6c8eea98f975e63c9c0762412b898fe549c0636107362",
     "candidate_oof_hash": "9233b274dbd475b11623cc33d31fe9ee64d748fc3f2bae621adece4887236153",
@@ -53,10 +53,12 @@
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 0.00005,
+    "min_gain_vs_v2915": 5e-05,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -0.00005
+    "worst_fold_strict_gt": -5e-05
   },
   "submission_policy": "evaluation_only_no_submission",
-  "implementation_status": "awaiting_trainer_verifier_tests_workflow_review"
+  "implementation_status": "awaiting_trainer_verifier_tests_workflow_review",
+  "reservation_at": "2026-10-24T15:30:51.410648+00:00",
+  "updated_at": "2026-10-24T15:30:51.410669+00:00"
 }
