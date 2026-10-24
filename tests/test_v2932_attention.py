@@ -38,7 +38,7 @@ def toy_frames(n=16):
 class V2932Safety(unittest.TestCase):
     def test_immutable_preregistration_and_champion(self):
         state=p.read(p.STATUS)
-        self.assertTrue(p.verify_prereg(state))
+        self.assertEqual(p.verify_prereg(state),state["stage"] not in p.TERMINAL)
         self.assertEqual(p.KERNEL,gate.KERNEL)
         self.assertEqual(m.FEATURE_FAMILY,p.FEATURE_FAMILY)
         self.assertEqual(state["architecture"],p.frozen_params()["architecture"])
@@ -87,12 +87,32 @@ class V2932Safety(unittest.TestCase):
             m.feature_tokens(train,val,test)
 
     def test_recover_only_cannot_create_kernel(self):
-        s=p.read(p.STATUS)
-        with patch.object(p,"preflight",return_value=s),patch.object(
-                p,"checked_owner_exists",side_effect=AssertionError("should not query/push")):
+        # Simulate the pristine pre-launch state independently of persisted
+        # production state (which advances to running/terminal over time).
+        pristine=dict(p.read(p.STATUS))
+        pristine.update(stage="preregistered_not_started",kernel=None,
+                        notebook_created=False,training_started=False)
+        with patch.object(p,"read",return_value=pristine),patch.object(
+                p,"preflight",return_value=pristine),patch.object(
+                p,"checked_owner_exists",side_effect=AssertionError("must not query/push")),patch.object(
+                p,"durably_reserve_unique_kernel",side_effect=AssertionError("must not reserve")):
             result=p.run(recover_only=True)
         self.assertEqual(result["stage"],"preregistered_not_started")
         self.assertFalse(result["notebook_created"])
+
+    def test_persisted_owner_recovery_never_repushes(self):
+        active=dict(p.read(p.STATUS))
+        active.update(stage="kernel_running",kernel=p.KERNEL,
+                      notebook_created=True,training_started=True)
+        with patch.object(p,"read",return_value=active),patch.object(
+                p,"preflight",return_value=active),patch.object(
+                p,"checked_owner_exists",side_effect=AssertionError("must not query/push")),patch.object(
+                p,"durably_reserve_unique_kernel",side_effect=AssertionError("must not reserve")),patch.object(
+                p.v24,"poll_kernel_strict",return_value=("kernel_running","KernelWorkerStatus.RUNNING")),patch.object(
+                p,"persist") as persist:
+            result=p.run(recover_only=True)
+        self.assertEqual(result["stage"],"kernel_running")
+        persist.assert_called_once()
 
     def test_fail_closed_without_cuda(self):
         with patch.object(torch.cuda,"is_available",return_value=False):
