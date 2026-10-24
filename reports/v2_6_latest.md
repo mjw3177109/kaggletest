@@ -30,7 +30,7 @@ V2.6 在原有内部 5 折无泄漏 TE 基础上，增加 12 个按航程、年�
 
 - 此名次关联的 Public LB：0.96035
 - 当前 Public 排名：**第 966 名 / 2876 支队伍**
-- 排名核验 UTC：2026-10-24T11:39:19.516592+00:00
+- 排名核验 UTC：2026-10-24T11:40:19.929182+00:00
 - 排名证据：kaggle_authenticated_userRank
 - 官方排行榜：https://www.kaggle.com/competitions/playground-series-s6e10/leaderboard
 
