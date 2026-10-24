@@ -271,7 +271,7 @@ def fit_fold(train,test,y,itr,iva,fold):
     if not (np.isfinite(pv).all() and np.isfinite(pt).all()
             and (pv>=0).all() and (pv<=1).all()
             and (pt>=0).all() and (pt<=1).all()):
-        raise RuntimeError("Nonfinite/out-of-range Pairwise DeepFM probabilities")
+        raise RuntimeError("Nonfinite/out-of-range DeepFM probabilities")
     info={"fold":fold,"train_rows":len(itr),"validation_rows":len(iva),
           "model_seed":MODEL_SEED+fold,"features":FEATURE_COUNT,
           "feature_order":columns,"token_types":types,
@@ -328,8 +328,8 @@ def main():
     dump("v2934_metrics.json",{
         "competition":"playground-series-s6e10",
         "stage":"three_folds_complete",
-        "model":"Pairwise DeepFM PyTorch original V2915 37-feature independent",
-        "model_family":"PyTorch_Tabular_MLP_Pairwise_RankNet_T4",
+        "model":"DeepFM explicit second-order PyTorch original V2915 37-feature independent",
+        "model_family":"PyTorch_DeepFM_Explicit_SecondOrder_T4",
         "feature_family":FEATURE_FAMILY,
         "train_rows":len(train),"test_rows":len(test),
         "validation":"StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
