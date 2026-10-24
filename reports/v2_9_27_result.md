@@ -1,7 +1,7 @@
 # V2.9.27 fixed travel-gated dual RealMLP threefold OOF
 
-- Updated UTC: 2026-10-24T07:54:58.831285+00:00
-- Stage: kernel_queued
+- Updated UTC: 2026-10-24T07:59:38.732718+00:00
+- Stage: kernel_running
 - Kaggle Notebook: https://www.kaggle.com/code/mjw3177109/kas-v2927-travel-gated-dual-realmlp-t4-s6e10
 - Frozen champion CV: 0.9612850399332336
 - New independent model full OOF: pending
