@@ -104,7 +104,7 @@ class V2932Safety(unittest.TestCase):
             if args[:2]==["competitions","submissions"]:
                 return "57446286,0.96099"
             if args[:2]==["kernels","list"]:
-                return "ref,title\\nmjw3177109/agent,deleted\\n"
+                return "ref,title\nmjw3177109/agent,deleted\n"
             if args[:2]==["kernels","status"]:
                 if args[2]=="mjw3177109/agent":
                     raise LookupError("authenticated NOT_FOUND")
