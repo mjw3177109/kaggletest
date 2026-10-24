@@ -1,6 +1,7 @@
 name: Kaggle V2.9.32 Attention CPU Dry-Run and Safety Tests Only
 # This workflow NEVER accesses Kaggle credentials, creates a Notebook, or submits.
 # Revalidate authenticated-404 safety branch and eight CPU tests before launch.
+# 2026-10-24: rerun live-state-independent 9/9 safety tests before persisted-owner recovery.
 on:
   workflow_dispatch:
   push:
