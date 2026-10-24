@@ -1,7 +1,7 @@
 {
   "version": "V2.4 ladder",
   "active_competition": "playground-series-s6e10",
-  "updated_at": "2026-10-24T16:17:20.497902+00:00",
+  "updated_at": "2026-10-24T16:17:52.218898+00:00",
   "public_rank_verified": true,
   "status": "working_toward_top3",
   "warning": "",
@@ -23,7 +23,7 @@
   "next_competition": null,
   "next_training_enabled": false,
   "rank_source": "kaggle_authenticated_userRank",
-  "rank_checked_at": "2026-10-24T16:17:16.164116+00:00",
+  "rank_checked_at": "2026-10-24T16:17:46.830759+00:00",
   "ranked_teams": 2901,
   "latest_scored_submission": {
     "source": "v2_5_status.json",
