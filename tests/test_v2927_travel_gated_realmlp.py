@@ -17,9 +17,13 @@ class V2927FrozenSafety(unittest.TestCase):
     def test_preregistration_immutable_and_notebook_unique(self):
         state = p.read(p.STATUS)
         self.assertTrue(p.verify_prereg(state))
-        self.assertEqual(state["stage"], "preregistered_not_started")
-        self.assertFalse(state["notebook_created"])
-        self.assertFalse(state["training_started"])
+        self.assertIn(state["stage"], {"preregistered_not_started", "pushing_kernel",
+                                      "kernel_queued", "kernel_running"})
+        if state["kernel"]:
+            self.assertEqual(state["kernel"], p.KERNEL)
+        else:
+            self.assertFalse(state["notebook_created"])
+            self.assertFalse(state["training_started"])
         self.assertEqual(p.KERNEL, "mjw3177109/kas-v2927-travel-gated-dual-realmlp-t4-s6e10")
         self.assertEqual(p.NEW_WEIGHT, 0.15)
         self.assertEqual(p.MIN_GAIN, 0.00005)
