@@ -1451,6 +1451,58 @@
       ],
       "experiment_id": "c0641d30f378bc0207cc68c0a4366b20b23af6473315c1e556738f0fdeb85986",
       "created_at": "2026-10-24T16:09:39.566761+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2932_attention_original37",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261101,
+        "model_parameters": {
+          "baseline_features": 37,
+          "protected_target_encoded_features": 3,
+          "new_features": 0,
+          "selected_total_features": 37,
+          "outer_folds": 3,
+          "inner_target_folds": 5,
+          "seed": 20261018,
+          "model_seed": 20261101,
+          "epochs": 4,
+          "batch_size": 512,
+          "optimizer": "AdamW",
+          "learning_rate": 0.001,
+          "weight_decay": 0.0001,
+          "loss": "BCEWithLogitsLoss",
+          "early_stopping": false,
+          "n_ens": 1,
+          "architecture": {
+            "d_model": 64,
+            "n_layers": 2,
+            "n_heads": 4,
+            "ffn_hidden": 128,
+            "dropout": 0.1,
+            "cls_token": true,
+            "pre_norm": true
+          },
+          "numeric_standardization": "outer_train_only_mean_std",
+          "categorical_vocabulary": "outer_train_only_unknown_missing_id"
+        },
+        "fusion_weights": {
+          "v2915_rank": 0.85,
+          "v2932_rank": 0.15
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "cv": 0.9611155305341598,
+      "completed_at": "2026-10-24T18:10:11.621549+00:00",
+      "gpu_seconds": 711.9,
+      "kernel_sources": [
+        "mjw3177109/kas-v2932-attention-baseline37-t4-s6e10"
+      ],
+      "experiment_id": "92863532784c4a10c6c12fe23b279d8b1292fae1af4fce844380b73b429a81cd",
+      "created_at": "2026-10-24T18:10:11.622036+00:00"
     }
   ]
 }
