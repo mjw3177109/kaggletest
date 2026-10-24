@@ -56,6 +56,8 @@ def kaggle(args,timeout=120):
         category=("not_found" if any(x in diagnostic for x in ("404","not found","notfound"))
                   else "forbidden" if any(x in diagnostic for x in ("403","forbidden"))
                   else "rate_limited" if "429" in diagnostic else "unknown")
+        if category=="not_found" and args[:2]==["kernels","status"]:
+            raise LookupError("Kaggle kernel status authenticated NOT_FOUND")
         raise RuntimeError("Authenticated read-only Kaggle CLI unavailable; category="+category+
                            "; exit="+str(p.returncode))
     return p.stdout
@@ -84,6 +86,11 @@ def assert_kaggle_idle_and_official():
     for ref in sorted((set(refs)|known)-{KERNEL}):
         try:
             status=kaggle(["kernels","status",ref],timeout=90)
+        except LookupError as exc:
+            if ref in known or "s6e10" in ref or "playground-series-s6e10" in ref:
+                raise RuntimeError("Required S6E10 Kaggle Notebook status NOT_FOUND: "+ref) from exc
+            print("Authenticated NOT_FOUND for historical non-S6E10 Notebook, not active: "+ref)
+            continue
         except RuntimeError as exc:
             raise RuntimeError("Kaggle owner Notebook status inaccessible for "+ref) from exc
         if any("KernelWorkerStatus."+x in status for x in ("QUEUED","RUNNING","PENDING")):
