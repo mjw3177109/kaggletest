@@ -1,5 +1,6 @@
 name: Kaggle V2.9.31 Fold-Local MI Pruned RealMLP T4 Single Experiment
 # First guarded launch after offline 6/6 pass (Actions 40107154450).
+# Read-only V2931 recovery trigger 2026-10-24 16:07 UTC; existing durable slug; gate forces --recover-only; no second push.
 
 on:
   workflow_dispatch:
