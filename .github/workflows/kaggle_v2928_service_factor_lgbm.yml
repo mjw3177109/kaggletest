@@ -1,4 +1,5 @@
 name: Kaggle V2.9.28 Service-Factor PCA LightGBM CPU Single Experiment
+# Read-only recovery check 2026-10-24T10:44Z: stored V2928 owner slug forces --recover-only; no second Notebook push.
 
 on:
   workflow_dispatch:
