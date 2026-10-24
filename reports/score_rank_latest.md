@@ -4,10 +4,10 @@
 - 当前最佳 Public LB：0.96099
 - 提交编号：57446286
 - 最佳模型：V2.9.15 RealMLP 5epoch blended
-- **当前 Public 排名：第 962 名 / 共 2870 支队伍**
-- 已识别排行榜队伍数：2870
+- **当前 Public 排名：第 968 名 / 共 2884 支队伍**
+- 已识别排行榜队伍数：2884
 - 排名数据源：kaggle_authenticated_userRank
-- 最近核验 UTC：2026-10-24T09:18:27.220937+00:00
+- 最近核验 UTC：2026-10-24T13:02:35.976307+00:00
 - 官方榜：https://www.kaggle.com/competitions/playground-series-s6e10/leaderboard
 
 注意：公开榜名次会随着其他人提交而变化。比赛结束后需另行确认 Private 榜最终排名和领奖资格。
