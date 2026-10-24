@@ -52,7 +52,12 @@ def assert_no_other_actions():
 def kaggle(args,timeout=120):
     p=subprocess.run(["kaggle",*args],capture_output=True,text=True,timeout=timeout)
     if p.returncode:
-        raise RuntimeError("Authenticated read-only Kaggle CLI verification unavailable")
+        diagnostic=(p.stderr or p.stdout or "").lower()
+        category=("not_found" if any(x in diagnostic for x in ("404","not found","notfound"))
+                  else "forbidden" if any(x in diagnostic for x in ("403","forbidden"))
+                  else "rate_limited" if "429" in diagnostic else "unknown")
+        raise RuntimeError("Authenticated read-only Kaggle CLI unavailable; category="+category+
+                           "; exit="+str(p.returncode))
     return p.stdout
 
 
