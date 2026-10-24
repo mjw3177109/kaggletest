@@ -1,4 +1,4 @@
-"""V2.9.30 safe single-owner Notebook evaluator, frozen 110-feature full-service conditional TE RealMLP-TD T4.
+"""V2.9.30 safe single-owner Notebook evaluator, frozen 45-feature conditional crossfit TE RealMLP-TD T4.
 Only Kaggle kernels may be created; this evaluator NEVER submits competition predictions.
 Recover-only cannot create or push a Notebook. Always persist owner reservation first.
 """
@@ -21,8 +21,8 @@ ROOT=Path(__file__).resolve().parents[1]
 SLUG="playground-series-s6e10"
 BRANCH="feature/v29-autonomous-evolution"
 KERNEL="mjw3177109/kas-v2930-conditional-crossfit-te-realmlp-t4-s6e10"
-STATUS=ROOT/"state/v2_9_29_status.json"
-REPORT=ROOT/"reports/v2_9_29_result.md"
+STATUS=ROOT/"state/v2_9_30_status.json"
+REPORT=ROOT/"reports/v2_9_30_result.md"
 WORKDIR=ROOT/"competitions"/SLUG/"kaggle_gpu_v2930_conditional_te"
 OUTDIR=ROOT/"competitions"/SLUG/"results_v2930_conditional_te"
 LEDGER=ROOT/"state/v2_9_experiments.json"
@@ -30,7 +30,7 @@ BASELINE=0.9612850399332336
 FLOOR=0.96125635576833
 MIN_GAIN=0.00005
 SEED=20261018
-MODEL_SEED=20261029
+MODEL_SEED=20261030
 NEW_WEIGHT=0.15
 TERMINAL={"candidate_ready_unsubmitted","skipped_no_cv_gain","kernel_failed",
           "output_failed","validation_mismatch","push_failed","kernel_access_error"}
