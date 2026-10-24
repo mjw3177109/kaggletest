@@ -1,5 +1,5 @@
 name: Kaggle V2.9.29 Fullservice Ordinal RealMLP T4 Single Experiment
-# Read-only recovery check 2026-10-24T10:44Z: stored V2929 owner slug forces --recover-only; no second Notebook push.
+# V2929 2026-10-24T11:45Z: first run tests blocked launch, fixed isolated status+slug; strict owner gate and recover-only on saved slug.
 
 on:
   workflow_dispatch:
@@ -150,6 +150,23 @@ jobs:
           set -euo pipefail
           python -m py_compile kaggle_agent/v2929_fullservice_ordinal_realmlp_train.py kaggle_agent/v2929_pipeline.py
           python -m unittest discover -s tests -p 'test_v2929_fullservice_ordinal_realmlp.py' -v
+      - name: Verify previous Kaggle experiment owners are terminal before new GPU training
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import subprocess
+          for slug in (
+              "mjw3177109/kas-v2927-travel-gated-dual-realmlp-t4-s6e10",
+              "mjw3177109/kas-v2928-service-factor-pca-lgbm-cpu-s6e10",
+          ):
+              result=subprocess.run(["kaggle","kernels","status",slug],
+                                    capture_output=True,text=True,timeout=90)
+              if result.returncode or "KernelWorkerStatus.COMPLETE" not in result.stdout:
+                  raise SystemExit("Previous Kaggle Notebook is not certified COMPLETE; refuse new GPU training")
+          print("Prior V2927/V2928 Kaggle owners both certified COMPLETE")
+          PY
       - name: Create one owner-authenticated Notebook or recover only the recorded one
         if: steps.gate.outputs.allowed == 'true'
         env:
