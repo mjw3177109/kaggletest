@@ -1,0 +1,40 @@
+name: Kaggle V2.9.30 Preflight Only - No Notebook Creation
+
+on:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2930_preflight_tests.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kaggle-v2930-offline-preflight
+  cancel-in-progress: false
+
+jobs:
+  test-no-kaggle-operations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned verification dependencies only
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install numpy==2.4.6 pandas==3.0.6 scipy==1.17.1 scikit-learn==1.9.1
+      - name: Compile immutable V2930 trainer and pipeline
+        run: |
+          python -m py_compile kaggle_agent/v2930_conditional_te_realmlp_train.py kaggle_agent/v2930_pipeline.py
+      - name: Test inner crossfit leakage, bins, state isolation and no-submit gates
+        run: |
+          python -m unittest discover -s tests -p 'test_v2930_conditional_te_realmlp.py' -v
+      - name: Confirm no Kaggle create or submit invoked
+        run: |
+          echo "Offline preflight only: no Kaggle credentials, Notebook, GPU, or submission."
