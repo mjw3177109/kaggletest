@@ -1503,6 +1503,54 @@
       ],
       "experiment_id": "92863532784c4a10c6c12fe23b279d8b1292fae1af4fce844380b73b429a81cd",
       "created_at": "2026-10-24T18:10:11.622036+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2933_ranknet_original37",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261102,
+        "model_parameters": {
+          "baseline_features": 37,
+          "protected_target_encoded_features": 3,
+          "outer_folds": 3,
+          "inner_target_folds": 5,
+          "seed": 20261018,
+          "model_seed": 20261102,
+          "epochs": 5,
+          "batch_size": 512,
+          "positive_per_batch": 256,
+          "negative_per_batch": 256,
+          "optimizer": "AdamW",
+          "learning_rate": 0.001,
+          "weight_decay": 0.0001,
+          "loss": "0.5*BCEWithLogitsLoss+0.5*softplus(-(positive_logit-negative_logit)).mean",
+          "early_stopping": false,
+          "ensemble": false,
+          "embedding_dim": 16,
+          "hidden_layers": [
+            256,
+            128
+          ],
+          "activation": "GELU",
+          "dropout": 0.1
+        },
+        "fusion_weights": {
+          "v2915_rank": 0.85,
+          "v2933_rank": 0.15
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "cv": 0.9611521544050623,
+      "completed_at": "2026-10-24T20:13:37.781218+00:00",
+      "gpu_seconds": 591.5,
+      "kernel_sources": [
+        "mjw3177109/kas-v2933-pairwise-ranknet-mlp-t4-s6e10"
+      ],
+      "experiment_id": "20f8066bdacd921d3b7c70238ab432023ce2149eb5d3920049e4da55a700009c",
+      "created_at": "2026-10-24T20:13:37.781828+00:00"
     }
   ]
 }
