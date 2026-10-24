@@ -1,0 +1,106 @@
+name: Kaggle V2.9.33 Pairwise RankNet MLP T4 Unique Notebook
+# V2933 frozen 37-feature pairwise RankNet. CPU safety 11/11 passed in Actions #40127014398.
+# Unique Notebook push only after authenticated global Actions/Kaggle owner gates.
+# Never submit predictions; persisted owner always --recover-only.
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Unique Notebook launch or safe read-only recovery"
+        type: choice
+        required: false
+        default: run
+        options:
+          - run
+          - recover_only
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2933_ranknet.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: kaggle-s6e10-v2933-unique-notebook
+  cancel-in-progress: false
+
+jobs:
+  guarded-ranknet-oofer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      GH_API_TOKEN: ${{ github.token }}
+      REQUESTED_MODE: ${{ inputs.mode || 'run' }}
+    steps:
+      - name: Checkout original feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Kaggle CLI and pinned CPU-only verification dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install -r requirements.txt
+          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1 PyYAML==6.0.2
+          python -m pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+      - name: Compile and repeat V2933 CPU forward-backward and safety tests
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2933_ranknet_train.py kaggle_agent/v2933_pipeline.py kaggle_agent/v2933_actions_gate.py
+          python -m unittest discover -s tests -p 'test_v2933_ranknet.py' -v
+      - name: Fail-closed owner, official submission, deadline, and global Actions gate
+        id: gate
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          python kaggle_agent/v2933_actions_gate.py
+      - name: Create sole V2933 Notebook once or recover only
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          if test "$MODE" = "recover_only"; then
+            python kaggle_agent/v2933_pipeline.py --recover-only
+          else
+            python kaggle_agent/v2933_pipeline.py
+          fi
+      - name: Persist canonical owner and strict OOF validation evidence
+        if: always() && steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          for file in state/v2_9_33_status.json state/v2_9_experiments.json reports/v2_9_33_result.md; do
+            if test -f "$file"; then git add -- "$file"; fi
+          done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: persist V2933 sole ranknet Notebook and audited OOF"
+          for attempt in 1 2 3 4; do
+            git fetch origin feature/v29-autonomous-evolution
+            git rebase origin/feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*2))"
+          done
+          exit 1
+      - name: Archive only compact V2933 status and result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2933-ranknet-status
+          path: |
+            state/v2_9_33_status.json
+            reports/v2_9_33_result.md
+          if-no-files-found: ignore
