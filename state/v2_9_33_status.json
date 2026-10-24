@@ -1,13 +1,13 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.33",
-  "stage": "preregistered_not_started",
+  "stage": "pushing_kernel",
   "preregistered_at": "2026-10-24",
   "hypothesis": "paired_auc_surrogate_ranknet_plus_bce_on_champion_original37",
   "model_family": "PyTorch_Tabular_MLP_Pairwise_RankNet_T4",
   "feature_family": "v2915_original37_3_inner5fold_TE_no_extra_features",
   "intended_kernel": "mjw3177109/kas-v2933-pairwise-ranknet-mlp-t4-s6e10",
-  "kernel": null,
+  "kernel": "mjw3177109/kas-v2933-pairwise-ranknet-mlp-t4-s6e10",
   "notebook_created": false,
   "training_started": false,
   "submitted": false,
@@ -68,11 +68,13 @@
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 0.00005,
+    "min_gain_vs_v2915": 5e-05,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -0.00005
+    "worst_fold_strict_gt": -5e-05
   },
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "awaiting_independent_trainer_verifier_tests_workflow_review",
-  "preregistration_report": "reports/v2_9_33_preregistration.md"
+  "preregistration_report": "reports/v2_9_33_preregistration.md",
+  "reservation_at": "2026-10-24T19:51:42.364841+00:00",
+  "updated_at": "2026-10-24T19:51:42.364861+00:00"
 }
