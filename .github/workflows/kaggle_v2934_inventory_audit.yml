@@ -1,0 +1,75 @@
+name: Kaggle V2934 Read-Only Kernel Inventory Audit
+# Inventory only. Never push a Notebook, train, accept rules, or submit predictions.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2934_inventory_audit.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: kaggle-s6e10-v2934-readonly-inventory
+  cancel-in-progress: false
+
+jobs:
+  inspect-kaggle-owner-inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Kaggle CLI only
+        run: python -m pip install kaggle
+      - name: Authenticated bounded read-only inventory and metadata schema
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv, io, json, os, subprocess
+          from datetime import datetime, timezone
+          assert os.environ.get("KAGGLE_USERNAME") == "mjw3177109", "Owner mismatch"
+          assert os.environ.get("KAGGLE_API_TOKEN"), "Kaggle credentials missing"
+          def call(*args):
+              p = subprocess.run(["kaggle", *args], capture_output=True, text=True, timeout=90)
+              if p.returncode:
+                  diag=(p.stderr or p.stdout or "").lower()
+                  category="rate_limited" if "429" in diag else "not_found" if "404" in diag or "not found" in diag else "other"
+                  raise RuntimeError("Read-only Kaggle audit unavailable: "+category)
+              return p.stdout
+          print("AUDIT_UTC",datetime.now(timezone.utc).isoformat())
+          output=call("kernels","list","--mine","--page-size","100","-v")
+          rows=list(csv.DictReader(io.StringIO(output)))
+          if not rows or len(rows)>=100 or "ref" not in rows[0]:
+              raise RuntimeError("Kaggle owner inventory incomplete or ambiguous")
+          print("INVENTORY_COUNT",len(rows))
+          print("INVENTORY_COLUMNS",json.dumps(list(rows[0]),ensure_ascii=False))
+          for row in rows:
+              ref=str(row.get("ref","")).strip()
+              if not ref.startswith("mjw3177109/"):
+                  raise RuntimeError("Owner mismatch in inventory")
+          fields=[k for k in rows[0] if any(t in k.lower() for t in ("time","date","status","state","version"))]
+          print("STATE_TIME_FIELDS",json.dumps(fields,ensure_ascii=False))
+          # Do not infer idle from age or an undocumented listing column.
+          for row in rows[:40]:
+              print("KERNEL_METADATA",json.dumps({"ref":row["ref"],**{k:row.get(k) for k in fields}},ensure_ascii=False))
+          submissions=call("competitions","submissions","-c","playground-series-s6e10")
+          if "57446286" not in submissions or "0.96099" not in submissions:
+              raise RuntimeError("Official champion submission/score could not be authenticated")
+          print("CHAMPION_SUBMISSION_VERIFIED",57446286,0.96099)
+          # One direct current S6E10 Notebook check; this audit never authorizes launch.
+          status=call("kernels","status","mjw3177109/kas-v2933-pairwise-ranknet-mlp-t4-s6e10")
+          print("V2933_NOTEBOOK_STATUS",status.strip()[:300])
+          print("AUDIT_ONLY_NO_LAUNCH_AUTHORIZATION")
+          PY
