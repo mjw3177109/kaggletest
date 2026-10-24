@@ -1,15 +1,15 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.30",
-  "stage": "pushing_kernel",
+  "stage": "kernel_queued",
   "preregistered_at": "2026-10-24",
   "hypothesis": "conditional_crossfit_supervised_category_te_realmlp",
   "model_family": "global_RealMLP_TD_T4",
   "feature_family": "v2915_37_features_plus_8_inner_crossfit_conditional_target_encodings",
   "intended_kernel": "mjw3177109/kas-v2930-conditional-crossfit-te-realmlp-t4-s6e10",
   "kernel": "mjw3177109/kas-v2930-conditional-crossfit-te-realmlp-t4-s6e10",
-  "notebook_created": false,
-  "training_started": false,
+  "notebook_created": true,
+  "training_started": true,
   "submitted": false,
   "submission_attempted": false,
   "outer_folds": 3,
@@ -53,5 +53,7 @@
   "implementation_status": "awaiting_trainer_verifier_tests_workflow_review",
   "launch_blocker": "V2.8 challenger workflow active at preregistration; check live actions before any training",
   "reservation_at": "2026-10-24T13:00:43.449414+00:00",
-  "updated_at": "2026-10-24T13:00:43.449432+00:00"
+  "updated_at": "2026-10-24T13:00:47.298248+00:00",
+  "kernel_state": "kernel_queued",
+  "kernel_message": "mjw3177109/kas-v2930-conditional-crossfit-te-realmlp-t4-s6e10 has status \"KernelWorkerStatus.QUEUED\""
 }
