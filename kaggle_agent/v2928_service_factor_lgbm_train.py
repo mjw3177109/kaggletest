@@ -185,6 +185,8 @@ def matrices(fit, holdout, test, labels, fold):
 
 def main():
     import lightgbm as lgb
+    import sklearn
+    import platform
     started = time.monotonic()
     train, test = competition_csv("train.csv"), competition_csv("test.csv")
     sample = competition_csv("sample_submission.csv")
@@ -272,6 +274,11 @@ def main():
         "external_labels":False,"leakage_safe_inner_cross_fit":True,
         "outer_validation_used_in_training":False,
         "runtime_seconds":round(time.monotonic()-started, 1),
+        "environment_versions":{
+            "python":platform.python_version(),"numpy":np.__version__,
+            "pandas":pd.__version__,"sklearn":sklearn.__version__,
+            "lightgbm":lgb.__version__,
+        },
         "submitted":False,
     })
     print("V2928 genuine independent 3-fold OOF AUC", roc_auc_score(y, oof), flush=True)
