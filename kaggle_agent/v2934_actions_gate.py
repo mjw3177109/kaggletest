@@ -5,6 +5,7 @@ import io
 import json
 import os
 import subprocess
+import time
 import urllib.parse
 import urllib.request
 from datetime import datetime,timezone
@@ -14,6 +15,10 @@ ROOT=Path(__file__).resolve().parents[1]
 KERNEL="mjw3177109/kas-v2934-explicit-secondorder-deepfm-t4-s6e10"
 COMPETITION="playground-series-s6e10"
 ACTIVE=("in_progress","queued","waiting","requested","pending")
+# Rate-limit prevention: every authenticated Kaggle request remains mandatory.
+# Never treat a 429 as idle or silently skip any owner kernel.
+_MIN_KAGGLE_CALL_GAP_SECONDS=3.0
+_last_kaggle_call_at=None
 
 
 def read(path):
@@ -50,6 +55,14 @@ def assert_no_other_actions():
 
 
 def kaggle(args,timeout=120):
+    global _last_kaggle_call_at
+    # Bound the request rate across list/submission/status reads in this process.
+    # The gate still checks every owned kernel and fails closed on any 429.
+    if _last_kaggle_call_at is not None:
+        remaining=_MIN_KAGGLE_CALL_GAP_SECONDS-(time.monotonic()-_last_kaggle_call_at)
+        if remaining>0:
+            time.sleep(remaining)
+    _last_kaggle_call_at=time.monotonic()
     p=subprocess.run(["kaggle",*args],capture_output=True,text=True,timeout=timeout)
     if p.returncode:
         diagnostic=(p.stderr or p.stdout or "").lower()
