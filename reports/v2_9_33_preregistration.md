@@ -1,0 +1,32 @@
+# V2.9.33 — paired ranking-loss tabular MLP (immutable pre-registration)
+
+Date: 2026-10-24 UTC. **Research proposal only. No V2933 Notebook exists or has been launched, no training, no official submission.** This file must be committed before implementation or observing any V2933 score.
+
+## Frozen official champion and V2932 diagnosis
+
+Only official submitted champion: V2.9.15, Kaggle submission **57446286**, authenticated Public LB **0.96099**, full threefold CV **0.9612850399332336**, canonical champion test prediction SHA256 **906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7**. Latest persisted authenticated rank is **975/2901**, 2026-10-24 16:12:21 UTC; it is not current or final Private rank.
+
+V2932's sole Notebook `mjw3177109/kas-v2932-attention-baseline37-t4-s6e10` was authenticated COMPLETE and recovered without push by Actions **#40119272263**. FT-Transformer independent threefold OOF CV **0.9567401071644861**; precommitted 85/15 rank-fusion full CV **0.9611155305341598**; paired gain **-0.00016950939907378615**, fold gains **[-0.0001714155842010845,-0.00011887993752512926,-0.00016701326598966837]**. Zero positive folds. Source NPZ SHA256 **b2c9415e3239159eff5b670becca587e6652e49e54801c2f45c22ac489acf3fd**, candidate OOF SHA256 **6bb2d666e1f19dfacc68ace619044653ea867bddb7624ae936be2d9d31a590eb**, candidate test SHA256 **280c3646d6de136c07c9bcf32b0a81b6734dce0ebb9adad3bfb6b40dc83a7aaf**. Authenticated T4 and 3/3 folds verified. V2932 is permanently `skipped_no_cv_gain`, never retrain or submit. The observed gap suggests this exact 4-epoch FT-Transformer underperformed the frozen RealMLP baseline; it does **not** identify a unique causal failure. Do not adjust its epochs, seeds, features or fusion after observing its scores.
+
+A 2026-10-24 read-only recovery poll initially failed a safety test because the test assumed the preregistered state even though the Notebook was already running. Fixed **test fixtures only**, preserving gate and scientific parameters; 9/9 safety tests passed before successful --recover-only recovery. No unsafe deserialization, second Notebook push or submission.
+
+## Distinct V2933 hypothesis — directly optimize pairwise discrimination
+
+Change the **training objective and model family**, not the feature set. Train a small PyTorch **tabular MLP with a frozen hybrid pointwise BCE + pairwise RankNet logistic ranking loss**, rather than the previously tested RealMLP-TD, TabM, FT-Transformer attention, gradient-boosted trees, subgroup experts, or feature engineering. Pairwise ranking may provide complementary ROC-AUC ordering information; no gain is assumed.
+
+Use the same original ordered **37 V2915 columns** and three inner-fivefold cross-fitted target-encoding columns. Fit all numeric train-fold mean/std statistics, categorical train-fold vocabulary and target encoders using only the outer training fold. For outer-train rows, each TE is inner-5fold OOF; outer validation and test use only outer-train-fitted maps. No route profiles, extra TE, PCA, ordinal thresholds, MI pruning, external labels, pseudo-labels, or sample reweighting based on held-out outcomes.
+
+**Frozen architecture and training**:
+- Each of the 14 original categorical features gets a train-fold-only embedding of dimension 16 with ID 0 reserved for unknown/missing; concatenate all categorical embeddings with the 23 train-fold-standardized continuous columns, preserving the canonical 37-feature order.
+- MLP hidden layers 256 and 128, GELU activations, dropout 0.10 after each hidden layer, final single unbounded logit. No attention, residual specialist, early stopping, ensembling or checkpoint search.
+- StratifiedKFold(n_splits=3, shuffle=True, random_state=20261018) over the exact champion 699635 train IDs; identical 299844 test IDs. Train 5 epochs, 512 examples per optimization step, with exactly 256 positive and 256 negative examples sampled from the **outer training fold only**, deterministically shuffled/reshuffled using MODEL_SEED=20261102+fold. Steps per epoch = ceil(outer_train_rows/512); no adaptive class balance.
+- AdamW lr=0.001, weight_decay=0.0001. Objective = **0.5 * BCEWithLogitsLoss(logits, labels) + 0.5 * softplus(-(logit_positive - logit_negative)).mean()**, where positives/negatives are paired by their fixed batch order. No hyperparameter, loss-weight, seed or epoch search. Inference uses logits, rank-transformed for fusion.
+- Require authenticated NVIDIA T4, record exact PyTorch/CUDA, NumPy/Pandas/scikit-learn, train source SHA, per-fold seed, token order, 3 fold membership hashes, train/test IDs, raw OOF and test prediction SHA, fold AUC, complete OOF AUC and runtime. Fail closed if resource/runtime cannot support the frozen experiment.
+
+**Frozen candidate:** `0.85*rank(V2915 champion) + 0.15*rank(V2933 independent model)` on both OOF and test. Do not search weights or tune after results.
+
+## Hard validation, promotion, and launch controls
+
+Promotion only to *consider* a separate one-shot submission if **full candidate CV >= 0.96125635576833**, **gain vs V2915 >= +0.00005**, **at least 2 folds with positive paired gain**, **worst fold gain strictly > -0.00005**. Validate every original 3-fold OOF row and AUC replay, all fold membership hashes, exact train/test IDs and target alignment, 37 ordered feature names, fold-local preprocessing/TE, source and candidate SHA, champion prediction SHA, T4 provenance and version records. Evaluation and training code **must never submit**. Any promotion needs a distinct durable one-shot submission reservation, prediction SHA, official Kaggle history dedup, remaining quota and submission-ID recovery. CV is never official Public LB/rank.
+
+Sole **reserved but not created** Notebook slug: `mjw3177109/kas-v2933-pairwise-ranknet-mlp-t4-s6e10`. First implement an independent trainer, strict read-only validator, unique-owner gate, isolated state, safety tests and Actions. Before creating once, authenticate branch HEAD, all repository Actions in_progress/queued/waiting/requested/pending, Kaggle owner and other active kernels, official champion submission, and deadline **2026-10-31 23:59 UTC**. Persist reservation before a single push. If slug exists or any ownership ambiguity, **recover-only**, never repeat push/training. Respect competition rules; never accept rules automatically, reveal tokens or bypass protections. Failed candidate is terminal and must not be rerun.
