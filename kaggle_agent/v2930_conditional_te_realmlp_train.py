@@ -148,7 +148,7 @@ def _conditional_component(frame, name):
     if name == "AgeBand":
         numeric = pd.to_numeric(frame["Age"], errors="coerce")
         result = pd.cut(numeric, [0, 25, 35, 45, 55, float("inf")],
-                        right=False, labels=["0-24", "25-34", "35-44", "45+54", "55+"])
+                        right=False, labels=["0-24", "25-34", "35-44", "45-54", "55+"])
         return result.astype("string").fillna("__MISSING__").reset_index(drop=True)
     if name in ("DepartureDelayBand", "ArrivalDelayBand"):
         column = ("Departure Delay in Minutes" if name == "DepartureDelayBand"
