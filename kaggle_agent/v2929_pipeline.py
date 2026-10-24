@@ -1,4 +1,4 @@
-"""V2.9.29 safe single-owner Notebook evaluator, fixed PCA3+contrast8 global LGBM.
+"""V2.9.29 safe single-owner Notebook evaluator, frozen 110-feature full-service ordinal RealMLP-TD T4.
 Only Kaggle kernels may be created; this evaluator NEVER submits competition predictions.
 Recover-only cannot create or push a Notebook. Always persist owner reservation first.
 """
@@ -20,9 +20,9 @@ import v2924_pipeline as v24
 ROOT=Path(__file__).resolve().parents[1]
 SLUG="playground-series-s6e10"
 BRANCH="feature/v29-autonomous-evolution"
-KERNEL="mjw3177109/kas-v2929-fullservice-ordinal-pca-lgbm-cpu-s6e10"
-STATUS=ROOT/"state/v2_9_28_status.json"
-REPORT=ROOT/"reports/v2_9_28_result.md"
+KERNEL="mjw3177109/kas-v2929-fullservice-ordinal-realmlp-t4-s6e10"
+STATUS=ROOT/"state/v2_9_29_status.json"
+REPORT=ROOT/"reports/v2_9_29_result.md"
 WORKDIR=ROOT/"competitions"/SLUG/"kaggle_gpu_v2929_fullservice_ordinal"
 OUTDIR=ROOT/"competitions"/SLUG/"results_v2929_fullservice_ordinal"
 LEDGER=ROOT/"state/v2_9_experiments.json"
@@ -109,7 +109,7 @@ def persist(s):
     m=s.get("metrics") or {}
     REPORT.parent.mkdir(parents=True,exist_ok=True)
     REPORT.write_text(
-        "# V2.9.29 fullservice-ordinal PCA3/contrasts8 LightGBM OOF\n\n"
+        "# V2.9.29 fullservice ordinal RealMLP-TD threefold OOF\n\n"
         +f"- UTC: {s['updated_at']}\n"
         +f"- Stage: {s.get('stage')}\n"
         +f"- Unique Notebook: https://www.kaggle.com/code/{KERNEL}\n"
