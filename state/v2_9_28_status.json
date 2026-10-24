@@ -1,13 +1,13 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.28",
-  "stage": "preregistered_not_started",
+  "stage": "pushing_kernel",
   "preregistered_at": "2026-10-24T08:22:00Z",
   "hypothesis": "fold_local_service_pca_global_lightgbm",
   "model_family": "global_LightGBM_CPU",
   "feature_family": "service_factor_pca3_contrasts8_te23_no_route_profile",
   "intended_kernel": "mjw3177109/kas-v2928-service-factor-pca-lgbm-cpu-s6e10",
-  "kernel": "",
+  "kernel": "mjw3177109/kas-v2928-service-factor-pca-lgbm-cpu-s6e10",
   "notebook_created": false,
   "training_started": false,
   "submitted": false,
@@ -47,15 +47,17 @@
     "stage": "skipped_no_cv_gain",
     "standalone_cv": 0.9593005287908923,
     "full_cv": 0.9613084824713334,
-    "gain": 0.000023442538099827104,
+    "gain": 2.3442538099827104e-05,
     "source_sha256": "180cd12af6fcc097725718148946bfcb0a0b6184cf6403cc360b44ef26ffb840"
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 0.00005,
+    "min_gain_vs_v2915": 5e-05,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -0.00005
+    "worst_fold_strict_gt": -5e-05
   },
   "submission_policy": "evaluation_only_no_submission",
-  "implementation_status": "awaiting_reviewed_trainer_verifier_workflow_tests"
+  "implementation_status": "awaiting_reviewed_trainer_verifier_workflow_tests",
+  "reservation_at": "2026-10-24T09:17:20.518315+00:00",
+  "updated_at": "2026-10-24T09:17:20.518338+00:00"
 }
