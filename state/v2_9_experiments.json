@@ -614,6 +614,33 @@
       ],
       "experiment_id": "d605a6046275de3b25b355d2a9f44b61994d166789f382ca42f918d834a516a6",
       "created_at": "2026-10-24T06:17:04.551439+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2927_travel_gated_realmlp_5epoch",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261027,
+        "epochs": 5,
+        "n_ens": 8,
+        "interaction_feature_count": 9,
+        "route_feature_count": 0,
+        "fusion_weights": {
+          "v2915_rank": 0.85,
+          "v2927_rank": 0.15
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "cv": 0.9613084824713334,
+      "completed_at": "2026-10-24T08:20:37.907609+00:00",
+      "gpu_seconds": 892.5,
+      "kernel_sources": [
+        "mjw3177109/kas-v2927-travel-gated-dual-realmlp-t4-s6e10"
+      ],
+      "experiment_id": "80f8579c2427b2d31ab2e5173ed1db2cffe5c6116146b199602f7a6e4a1c54bd",
+      "created_at": "2026-10-24T08:20:37.907979+00:00"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.27",
-  "stage": "kernel_complete_pending_revalidation",
+  "stage": "skipped_no_cv_gain",
   "preregistered_at": "2026-10-24T06:20:00Z",
   "hypothesis": "travel_type_gated_dual_realmlp_interaction_experts",
   "model_family": "two_fold_local_RealMLP_TD_travel_experts",
@@ -33,19 +33,19 @@
     "stage": "skipped_no_cv_gain",
     "standalone_cv": 0.9602205569678511,
     "full_cv": 0.9613072330727896,
-    "gain": 0.00002219313955609259,
+    "gain": 2.219313955609259e-05,
     "source_sha256": "1026cf4aa6990f7eb3fc9e9e5c21209cbe4ae8b6fd42e8398fb9f9a24853e2e2"
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 0.00005,
+    "min_gain_vs_v2915": 5e-05,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -0.00005
+    "worst_fold_strict_gt": -5e-05
   },
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "awaiting_reviewed_trainer_verifier_workflow_tests",
   "reservation_at": "2026-10-24T07:54:55.284429+00:00",
-  "updated_at": "2026-10-24T08:19:00+00:00",
+  "updated_at": "2026-10-24T08:20:37.931426+00:00",
   "kernel_state": "kernel_complete",
   "kernel_message": "mjw3177109/kas-v2927-travel-gated-dual-realmlp-t4-s6e10 has status \"KernelWorkerStatus.COMPLETE\"",
   "error": "Prior object-dtype gate validation failure preserved in validation_incident; pending one-time safe read-only revalidation",
@@ -62,5 +62,216 @@
     "no_training_restart": true,
     "one_time_revalidation": true
   },
-  "revalidation_attempts": 0
+  "revalidation_attempts": 1,
+  "travel_gate_provenance": {
+    "serialization": {
+      "train_travel_type": "opaque_object_header_only",
+      "test_travel_type": "opaque_object_header_only"
+    },
+    "membership_validation": "canonical_input_IDs_plus_per_fold_expert_row_counts_and_AUC",
+    "object_pickle_loaded": false,
+    "limitation": "original object-dtype gate payload not deserialized"
+  },
+  "metrics": {
+    "competition": "playground-series-s6e10",
+    "model": "two travel-type-gated RealMLP-TD n_ens=8 5epoch",
+    "stage": "three_folds_complete",
+    "train_rows": 699635,
+    "test_rows": 299844,
+    "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+    "folds": 3,
+    "fold_results": [
+      {
+        "fold": 0,
+        "validation_rows": 233212,
+        "auc": 0.9588299924830467,
+        "experts": [
+          {
+            "expert": "Personal Travel",
+            "expert_index": 0,
+            "model_seed": 20261027,
+            "train_rows": 135058,
+            "validation_rows": 67136,
+            "test_rows": 86703,
+            "auc": 0.8163306347997991,
+            "elapsed_seconds": 109.86,
+            "features": 46,
+            "inner_target_folds": 5
+          },
+          {
+            "expert": "Business travel",
+            "expert_index": 1,
+            "model_seed": 20261028,
+            "train_rows": 331365,
+            "validation_rows": 166076,
+            "test_rows": 213141,
+            "auc": 0.956283537934816,
+            "elapsed_seconds": 197.6,
+            "features": 46,
+            "inner_target_folds": 5
+          }
+        ]
+      },
+      {
+        "fold": 1,
+        "validation_rows": 233212,
+        "auc": 0.9595101383496443,
+        "experts": [
+          {
+            "expert": "Personal Travel",
+            "expert_index": 0,
+            "model_seed": 20261029,
+            "train_rows": 134832,
+            "validation_rows": 67362,
+            "test_rows": 86703,
+            "auc": 0.8232182755180552,
+            "elapsed_seconds": 85.01,
+            "features": 46,
+            "inner_target_folds": 5
+          },
+          {
+            "expert": "Business travel",
+            "expert_index": 1,
+            "model_seed": 20261030,
+            "train_rows": 331591,
+            "validation_rows": 165850,
+            "test_rows": 213141,
+            "auc": 0.9568061778885839,
+            "elapsed_seconds": 197.67,
+            "features": 46,
+            "inner_target_folds": 5
+          }
+        ]
+      },
+      {
+        "fold": 2,
+        "validation_rows": 233211,
+        "auc": 0.9595690642858382,
+        "experts": [
+          {
+            "expert": "Personal Travel",
+            "expert_index": 0,
+            "model_seed": 20261031,
+            "train_rows": 134498,
+            "validation_rows": 67696,
+            "test_rows": 86703,
+            "auc": 0.8190538848195031,
+            "elapsed_seconds": 84.89,
+            "features": 46,
+            "inner_target_folds": 5
+          },
+          {
+            "expert": "Business travel",
+            "expert_index": 1,
+            "model_seed": 20261032,
+            "train_rows": 331926,
+            "validation_rows": 165515,
+            "test_rows": 213141,
+            "auc": 0.9576207088495786,
+            "elapsed_seconds": 203.25,
+            "features": 46,
+            "inner_target_folds": 5
+          }
+        ]
+      }
+    ],
+    "full_oof_auc": 0.9593005287908923,
+    "group_auc": {
+      "Personal Travel": 0.8195406930134544,
+      "Business travel": 0.9568923457818472
+    },
+    "gpu_verified": true,
+    "hardware": {
+      "ok": true,
+      "device": "Tesla T4",
+      "devices": [
+        "Tesla T4, 15360 MiB",
+        "Tesla T4, 15360 MiB"
+      ],
+      "torch_version": "2.11.0+cu128",
+      "cuda_available": true
+    },
+    "leakage_safe_inner_cross_fit": true,
+    "outer_validation_used_in_training": false,
+    "feature_count": 46,
+    "interaction_feature_count": 9,
+    "route_feature_count": 0,
+    "experts": [
+      "Personal Travel",
+      "Business travel"
+    ],
+    "model_seed": 20261027,
+    "epochs": 5,
+    "n_ens": 8,
+    "runtime_seconds": 892.5,
+    "feature_family": "v2916_service_delay_interactions_no_route_profile",
+    "external_labels": false,
+    "submitted": false,
+    "ready_for_submission": false
+  },
+  "comparison": {
+    "baseline_auc": 0.9612850399332336,
+    "standalone_auc": 0.9593005287908923,
+    "candidate_auc": 0.9613084824713334,
+    "gain": 2.3442538099827104e-05,
+    "fold_auc": [
+      0.960817335589642,
+      0.9616043772830493,
+      0.9615275711344038
+    ],
+    "fold_gain": [
+      1.0336810181810208e-05,
+      2.9806798472975515e-05,
+      2.9146686000403044e-05
+    ],
+    "positive_folds": 3,
+    "fixed_weights": {
+      "v2915_rank": 0.85,
+      "v2927_rank": 0.15
+    },
+    "promotable": false
+  },
+  "source_artifacts": {
+    "v25": {
+      "notebook": "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+      "sha256": "f86ad876ac279865c059d4466ce76a7f7cfcae1a11a5ed45f68092136bdd5a74",
+      "submission_sha256": "adb4b48b917f7e8e86ba4fb5a723069e185b27a0dfe5f7ed814beaf01af0c92f"
+    },
+    "v28": {
+      "notebook": "mjw3177109/kas-v28-catboost-playground-series-s6e10",
+      "sha256": "06170ae706973234a7b97c2dc3e18ca6bd0f3b72a0e48f605ab4b9d0313e8691",
+      "submission_sha256": "22bc466b10bb8944cb8296ee47c7231fc780310aee4d1c12cecd33932a7f41af"
+    },
+    "v296": {
+      "notebook": "mjw3177109/kas-v296-realmlp-full-s6e10",
+      "sha256": "ee849ba5ae5aafa57998df48c5c612eaf0227461100def5aabc4c9096314a598"
+    },
+    "v297": {
+      "notebook": "mjw3177109/kas-v297-conditional-cpu-s6e10",
+      "sha256": "92a92e1ad0e5a44d27aba6ea7d3c5fad779d01f799f9b838911c3c03cea6c3a8"
+    },
+    "v294": {
+      "notebook": "mjw3177109/kas-v294-original-route-playground-series-s6e10",
+      "sha256": "9de31b2f509e4f1973f5df9f560200d2e71344d7b4f9ce4a1145f4e53f4797fe",
+      "submission_sha256": "1db97da7c58789d6bffbf7f2bcea67ba134239bbab4e647109262e03e97de48a"
+    },
+    "v2913": {
+      "notebook": "mjw3177109/kas-v2913-realmlp-ens8-t4-s6e10",
+      "sha256": "a809ebf41f9ff1784d3be300e70b367a4f174a2d7eefd75b9f1c1ddf8e0ea800"
+    },
+    "v2914": {
+      "notebook": "mjw3177109/kas-v2914-dual-numeric-realmlp-t4-s6e10",
+      "sha256": "350571c8b41e7647089c92b16fbd7f298a6de6a8154a0cc869cc7c4342e6bd20"
+    },
+    "v2915": {
+      "notebook": "mjw3177109/kas-v2915-realmlp-5epoch-t4-s6e10",
+      "sha256": "46ad63f08537cd8d61c4c8e8698efc20bb3c8fbad4eb0d94ecd7c993b2d894b9"
+    },
+    "v2927": {
+      "notebook": "mjw3177109/kas-v2927-travel-gated-dual-realmlp-t4-s6e10",
+      "sha256": "180cd12af6fcc097725718148946bfcb0a0b6184cf6403cc360b44ef26ffb840"
+    }
+  },
+  "candidate_oof_hash": "189462dab0764630351155dea81c2dc52497d7c7cd981e5417791f122085ace6",
+  "candidate_test_hash": "a1067fbf594957ed16c3437f8264cc5798fdd154bf731f98c0f3cf83c2bbb743"
 }
