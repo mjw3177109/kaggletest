@@ -33,22 +33,22 @@
     "stage": "skipped_no_cv_gain",
     "standalone_cv": 0.9602205569678511,
     "full_cv": 0.9613072330727896,
-    "gain": 2.219313955609259e-05,
+    "gain": 0.00002219313955609259,
     "source_sha256": "1026cf4aa6990f7eb3fc9e9e5c21209cbe4ae8b6fd42e8398fb9f9a24853e2e2"
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 5e-05,
+    "min_gain_vs_v2915": 0.00005,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -5e-05
+    "worst_fold_strict_gt": -0.00005
   },
   "submission_policy": "evaluation_only_no_submission",
-  "implementation_status": "awaiting_reviewed_trainer_verifier_workflow_tests",
+  "implementation_status": "complete_verified_threefold",
   "reservation_at": "2026-10-24T07:54:55.284429+00:00",
   "updated_at": "2026-10-24T08:20:37.931426+00:00",
   "kernel_state": "kernel_complete",
   "kernel_message": "mjw3177109/kas-v2927-travel-gated-dual-realmlp-t4-s6e10 has status \"KernelWorkerStatus.COMPLETE\"",
-  "error": "Prior object-dtype gate validation failure preserved in validation_incident; pending one-time safe read-only revalidation",
+  "error": null,
   "validation_incident": {
     "source_run_id": 40077444649,
     "source_job_id": 120823776779,
@@ -60,7 +60,10 @@
     "no_pickle_unserialization": true,
     "no_notebook_repush": true,
     "no_training_restart": true,
-    "one_time_revalidation": true
+    "one_time_revalidation": true,
+    "resolution": "safe_one_time_revalidation_passed",
+    "resolution_run_id": 40077588836,
+    "resolution_note": "OOF numeric arrays/IDs and subgroup metrics validated; opaque object-string gate payload not deserialized, canonical travel group membership reconstructed"
   },
   "revalidation_attempts": 1,
   "travel_gate_provenance": {
@@ -213,16 +216,16 @@
     "baseline_auc": 0.9612850399332336,
     "standalone_auc": 0.9593005287908923,
     "candidate_auc": 0.9613084824713334,
-    "gain": 2.3442538099827104e-05,
+    "gain": 0.000023442538099827104,
     "fold_auc": [
       0.960817335589642,
       0.9616043772830493,
       0.9615275711344038
     ],
     "fold_gain": [
-      1.0336810181810208e-05,
-      2.9806798472975515e-05,
-      2.9146686000403044e-05
+      0.000010336810181810208,
+      0.000029806798472975515,
+      0.000029146686000403044
     ],
     "positive_folds": 3,
     "fixed_weights": {
@@ -273,5 +276,6 @@
     }
   },
   "candidate_oof_hash": "189462dab0764630351155dea81c2dc52497d7c7cd981e5417791f122085ace6",
-  "candidate_test_hash": "a1067fbf594957ed16c3437f8264cc5798fdd154bf731f98c0f3cf83c2bbb743"
+  "candidate_test_hash": "a1067fbf594957ed16c3437f8264cc5798fdd154bf731f98c0f3cf83c2bbb743",
+  "final_decision": "permanent_no_submit_due_to_gain_below_preregistered_threshold"
 }
