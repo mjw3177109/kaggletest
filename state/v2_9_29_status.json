@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.29",
-  "stage": "validation_mismatch",
+  "stage": "skipped_no_cv_gain",
   "preregistered_at": "2026-10-24",
   "hypothesis": "full_service_ordinal_threshold_realmlp",
   "model_family": "global_RealMLP_TD_T4",
@@ -60,8 +60,168 @@
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "awaiting_trainer_verifier_tests_workflow_review",
   "reservation_at": "2026-10-24T11:46:07.543737+00:00",
-  "updated_at": "2026-10-24T12:11:16.517166+00:00",
+  "updated_at": "2026-10-24T12:14:24.960592+00:00",
   "kernel_state": "kernel_complete",
   "kernel_message": "mjw3177109/kas-v2929-fullservice-ordinal-realmlp-t4-s6e10 has status \"KernelWorkerStatus.COMPLETE\"",
-  "error": "V2929 T4/3fold/ordinal/TE provenance mismatch"
+  "metrics": {
+    "competition": "playground-series-s6e10",
+    "model": "RealMLP-TD n_ens=8 5 epochs independent seeded",
+    "stage": "three_folds_complete",
+    "train_rows": 699635,
+    "test_rows": 299844,
+    "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+    "folds": 3,
+    "fold_results": [
+      {
+        "fold": 0,
+        "validation_rows": 233212,
+        "train_rows": 466423,
+        "model_seed": 20261029,
+        "auc": 0.9603590705989764,
+        "elapsed_seconds": 421.88,
+        "features": 110
+      },
+      {
+        "fold": 1,
+        "validation_rows": 233212,
+        "train_rows": 466423,
+        "model_seed": 20261030,
+        "auc": 0.9610079007617333,
+        "elapsed_seconds": 409.29,
+        "features": 110
+      },
+      {
+        "fold": 2,
+        "validation_rows": 233211,
+        "train_rows": 466424,
+        "model_seed": 20261031,
+        "auc": 0.9609131945605407,
+        "elapsed_seconds": 409.2,
+        "features": 110
+      }
+    ],
+    "full_oof_auc": 0.9607552044022232,
+    "gpu_verified": true,
+    "hardware": {
+      "ok": true,
+      "device": "Tesla T4",
+      "devices": [
+        "Tesla T4, 15360 MiB",
+        "Tesla T4, 15360 MiB"
+      ],
+      "torch_version": "2.11.0+cu128",
+      "cuda_available": true
+    },
+    "leakage_safe_inner_cross_fit": true,
+    "outer_validation_used_in_training": false,
+    "feature_count": 110,
+    "model_seed": 20261029,
+    "feature_family": "v2929_baseline_plus_13x5_service_ordinal_thresholds_plus_8_dual_service_cats",
+    "baseline_features": 37,
+    "new_threshold_features": 65,
+    "new_dual_service_features": 8,
+    "service_rating_columns": 13,
+    "thresholds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "pseudo_labels": false,
+    "external_labels": false,
+    "route_features": false,
+    "pca_features": false,
+    "travel_gated_experts": false,
+    "data_source": "competition_train_only",
+    "inner_target_folds": 5,
+    "target_encoding_columns": 3,
+    "submitted": false,
+    "environment_versions": {
+      "python": "3.13.15",
+      "numpy": "2.1.3",
+      "pandas": "2.3.3",
+      "sklearn": "1.6.1",
+      "pytabkit": "1.7.3",
+      "torch": "2.11.0+cu128"
+    },
+    "epochs": 5,
+    "runtime_seconds": 1254.0,
+    "ready_for_submission": false,
+    "pilot_validated_prior": true,
+    "source_inspiration": "published independent S6E10 RealMLP-TD reproducibility"
+  },
+  "comparison": {
+    "baseline_auc": 0.9612850399332336,
+    "standalone_auc": 0.9607552044022232,
+    "candidate_auc": 0.9613230501945584,
+    "gain": 3.801026132488339e-05,
+    "fold_auc": [
+      0.9608491719056875,
+      0.9616113050531525,
+      0.9615302587376813
+    ],
+    "fold_gain": [
+      4.2173126227340596e-05,
+      3.673456857622437e-05,
+      3.1834289277887784e-05
+    ],
+    "positive_folds": 3,
+    "fixed_weights": {
+      "v2915_rank": 0.85,
+      "v2929_rank": 0.15
+    },
+    "promotable": false
+  },
+  "source_artifacts": {
+    "v25": {
+      "notebook": "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+      "sha256": "f86ad876ac279865c059d4466ce76a7f7cfcae1a11a5ed45f68092136bdd5a74",
+      "submission_sha256": "adb4b48b917f7e8e86ba4fb5a723069e185b27a0dfe5f7ed814beaf01af0c92f"
+    },
+    "v28": {
+      "notebook": "mjw3177109/kas-v28-catboost-playground-series-s6e10",
+      "sha256": "06170ae706973234a7b97c2dc3e18ca6bd0f3b72a0e48f605ab4b9d0313e8691",
+      "submission_sha256": "22bc466b10bb8944cb8296ee47c7231fc780310aee4d1c12cecd33932a7f41af"
+    },
+    "v296": {
+      "notebook": "mjw3177109/kas-v296-realmlp-full-s6e10",
+      "sha256": "ee849ba5ae5aafa57998df48c5c612eaf0227461100def5aabc4c9096314a598"
+    },
+    "v297": {
+      "notebook": "mjw3177109/kas-v297-conditional-cpu-s6e10",
+      "sha256": "92a92e1ad0e5a44d27aba6ea7d3c5fad779d01f799f9b838911c3c03cea6c3a8"
+    },
+    "v294": {
+      "notebook": "mjw3177109/kas-v294-original-route-playground-series-s6e10",
+      "sha256": "9de31b2f509e4f1973f5df9f560200d2e71344d7b4f9ce4a1145f4e53f4797fe",
+      "submission_sha256": "1db97da7c58789d6bffbf7f2bcea67ba134239bbab4e647109262e03e97de48a"
+    },
+    "v2913": {
+      "notebook": "mjw3177109/kas-v2913-realmlp-ens8-t4-s6e10",
+      "sha256": "a809ebf41f9ff1784d3be300e70b367a4f174a2d7eefd75b9f1c1ddf8e0ea800"
+    },
+    "v2914": {
+      "notebook": "mjw3177109/kas-v2914-dual-numeric-realmlp-t4-s6e10",
+      "sha256": "350571c8b41e7647089c92b16fbd7f298a6de6a8154a0cc869cc7c4342e6bd20"
+    },
+    "v2915": {
+      "notebook": "mjw3177109/kas-v2915-realmlp-5epoch-t4-s6e10",
+      "sha256": "46ad63f08537cd8d61c4c8e8698efc20bb3c8fbad4eb0d94ecd7c993b2d894b9"
+    },
+    "v2929": {
+      "notebook": "mjw3177109/kas-v2929-fullservice-ordinal-realmlp-t4-s6e10",
+      "sha256": "845f1995556050ce10c23822557541f4885d1b96ba9ddbe1d8e5fdcedc4e59a8"
+    }
+  },
+  "candidate_oof_hash": "9915a987fa5c837b873732e4c57630685820bd441ee75186a540c477b91fc40d",
+  "candidate_test_hash": "bc86f43afbf741a4171167cecfe94be894b17d2ae0f7ef46a96a781191e7f4a6",
+  "recovered_validation_incident": {
+    "original_stage": "validation_mismatch",
+    "original_error": "V2929 T4/3fold/ordinal/TE provenance mismatch",
+    "cause": "Training output used v2929_ rather than v2915_ feature-family label; exact 110-feature schema and other immutable gates independently checked",
+    "resolution": "strict read-only --recover-only validation of same completed Notebook, no model retraining",
+    "trainer_feature_family": "v2929_baseline_plus_13x5_service_ordinal_thresholds_plus_8_dual_service_cats",
+    "preregistered_feature_family": "v2915_baseline_plus_13x5_service_ordinal_thresholds_plus_8_dual_service_cats"
+  }
 }

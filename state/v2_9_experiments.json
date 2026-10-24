@@ -679,6 +679,56 @@
       ],
       "experiment_id": "db3aa2bd21e9ad6abb45a653ea9e4d614babe2de4f9b081f5764ee859be5f113",
       "created_at": "2026-10-24T10:46:35.665173+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2929_fullservice_ordinal_realmlp",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261029,
+        "model_parameters": {
+          "baseline_features": 37,
+          "new_threshold_features": 65,
+          "new_dual_service_features": 8,
+          "feature_count": 110,
+          "original_service_count": 13,
+          "thresholds": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "outer_folds": 3,
+          "seed": 20261018,
+          "model_seed": 20261029,
+          "epochs": 5,
+          "n_ens": 8
+        },
+        "thresholds": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "new_threshold_features": 65,
+        "fusion_weights": {
+          "v2915_rank": 0.85,
+          "v2929_rank": 0.15
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "cv": 0.9613230501945584,
+      "completed_at": "2026-10-24T12:14:24.938852+00:00",
+      "gpu_seconds": 1254.0,
+      "kernel_sources": [
+        "mjw3177109/kas-v2929-fullservice-ordinal-realmlp-t4-s6e10"
+      ],
+      "experiment_id": "e2bfa907d5d62b111589d329c6d0a1f4f407e8b163249d4b25646a5af460eb4c",
+      "created_at": "2026-10-24T12:14:24.939285+00:00"
     }
   ]
 }
