@@ -15,9 +15,10 @@ on:
     branches:
       - feature/v29-autonomous-evolution
     paths:
-      - ".github/workflows/kaggle_v293_fast_gain.yml"
-      - "kaggle_agent/v293*.py"
-      - "tests/test_v293*.py"
+      # Scope legacy V2.9.3 to its own files only; v2930_* must not retrigger
+      # a terminal V2.9.3 experiment or its one-shot submission machinery.
+      - "kaggle_agent/v293_*.py"
+      - "tests/test_v293_*.py"
 
 permissions:
   contents: write
