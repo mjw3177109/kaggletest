@@ -95,8 +95,19 @@ def assert_kaggle_idle_and_official():
             continue
         except RuntimeError as exc:
             raise RuntimeError("Kaggle owner Notebook status inaccessible for "+ref) from exc
-        if any("KernelWorkerStatus."+x in status for x in ("QUEUED","RUNNING","PENDING")):
-            raise RuntimeError("Another Kaggle Notebook is active: refuse V2934")
+        if any("KernelWorkerStatus."+x in status for x in
+               ("QUEUED","RUNNING","PENDING","CANCEL_REQUESTED","NEW_SCRIPT")):
+            raise RuntimeError("Another Kaggle Notebook may be active: refuse V2934: "+ref)
+        if "KernelWorkerStatus.CANCEL_ACKNOWLEDGED" in status:
+            # Kaggle reports an acknowledged cancellation, not a successful run.
+            # Require two authenticated identical reads and an unrelated old slug.
+            if ref in known or "s6e10" in ref or "playground-series-s6e10" in ref:
+                raise RuntimeError("S6E10 canceled Notebook requires manual review: "+ref)
+            confirmation=kaggle(["kernels","status",ref],timeout=90)
+            if "KernelWorkerStatus.CANCEL_ACKNOWLEDGED" not in confirmation:
+                raise RuntimeError("Kaggle cancellation changed during verification: "+ref)
+            print("Historical non-S6E10 Notebook cancellation acknowledged twice: "+ref)
+            continue
         if not any("KernelWorkerStatus."+x in status for x in ("COMPLETE","ERROR","CANCELLED")):
             raise RuntimeError("Unknown Kaggle Notebook status for "+ref+": "+repr(status.strip()[:160]))
 
