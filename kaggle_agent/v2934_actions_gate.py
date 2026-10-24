@@ -98,7 +98,7 @@ def assert_kaggle_idle_and_official():
         if any("KernelWorkerStatus."+x in status for x in ("QUEUED","RUNNING","PENDING")):
             raise RuntimeError("Another Kaggle Notebook is active: refuse V2934")
         if not any("KernelWorkerStatus."+x in status for x in ("COMPLETE","ERROR","CANCELLED")):
-            raise RuntimeError("Unknown Kaggle Notebook status: fail closed")
+            raise RuntimeError("Unknown Kaggle Notebook status for "+ref+": "+repr(status.strip()[:160]))
 
 
 def assert_preregistration():
