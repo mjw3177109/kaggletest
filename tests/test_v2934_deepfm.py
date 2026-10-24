@@ -181,6 +181,42 @@ class V2934Safety(unittest.TestCase):
                 with self.assertRaises(RuntimeError):
                     gate.assert_kaggle_idle_and_official()
 
+    def test_historical_cancellation_acknowledged_twice_is_not_training(self):
+        seen=[]
+        def fake_kaggle(args,timeout=120):
+            if args[:2]==["competitions","submissions"]:
+                return "57446286,0.96099"
+            if args[:2]==["kernels","list"]:
+                return "ref,title\\nmjw3177109/best-cv-score-0-95625,canceled\\n"
+            if args[:2]==["kernels","status"]:
+                seen.append(args[2])
+                if args[2]=="mjw3177109/best-cv-score-0-95625":
+                    return 'has status "KernelWorkerStatus.CANCEL_ACKNOWLEDGED"'
+                return "KernelWorkerStatus.COMPLETE"
+            raise AssertionError(args)
+        with patch.dict(os.environ,{"KAGGLE_USERNAME":"mjw3177109",
+                                     "KAGGLE_API_TOKEN":"test-only-placeholder"}):
+            with patch.object(gate,"kaggle",side_effect=fake_kaggle):
+                gate.assert_kaggle_idle_and_official()
+        self.assertEqual(seen.count("mjw3177109/best-cv-score-0-95625"),2)
+
+    def test_cancel_requested_is_not_terminal(self):
+        def fake_kaggle(args,timeout=120):
+            if args[:2]==["competitions","submissions"]:
+                return "57446286,0.96099"
+            if args[:2]==["kernels","list"]:
+                return "ref,title\\nmjw3177109/best-cv-score-0-95625,canceling\\n"
+            if args[:2]==["kernels","status"]:
+                if args[2]=="mjw3177109/best-cv-score-0-95625":
+                    return 'has status "KernelWorkerStatus.CANCEL_REQUESTED"'
+                return "KernelWorkerStatus.COMPLETE"
+            raise AssertionError(args)
+        with patch.dict(os.environ,{"KAGGLE_USERNAME":"mjw3177109",
+                                     "KAGGLE_API_TOKEN":"test-only-placeholder"}):
+            with patch.object(gate,"kaggle",side_effect=fake_kaggle):
+                with self.assertRaises(RuntimeError):
+                    gate.assert_kaggle_idle_and_official()
+
     def test_unknown_kaggle_kernel_status_blocks(self):
         def fake_kaggle(args,timeout=120):
             if args[:2]==["competitions","submissions"]:
