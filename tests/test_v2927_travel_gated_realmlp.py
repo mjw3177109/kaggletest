@@ -1,5 +1,6 @@
 """V2927 safety and fold-local expert tests; never contact Kaggle."""
 import sys
+import tempfile
 import types
 import unittest
 from pathlib import Path
@@ -18,7 +19,8 @@ class V2927FrozenSafety(unittest.TestCase):
         state = p.read(p.STATUS)
         self.assertTrue(p.verify_prereg(state))
         self.assertIn(state["stage"], {"preregistered_not_started", "pushing_kernel",
-                                      "kernel_queued", "kernel_running"})
+                                      "kernel_queued", "kernel_running",
+                                      "kernel_complete_pending_revalidation"})
         if state["kernel"]:
             self.assertEqual(state["kernel"], p.KERNEL)
         else:
@@ -100,6 +102,39 @@ class V2927FrozenSafety(unittest.TestCase):
         self.assertEqual(seen, [("fit", 300, 300)])
         self.assertEqual(model.call_count, 1)
         self.assertTrue(np.isfinite(pv).all() and np.isfinite(pt).all())
+
+    def test_object_gate_npz_is_never_unpickled(self):
+        # Regression for Kaggle COMPLETE archive: pandas wrote object arrays.
+        # Numeric OOF and IDs must remain readable with allow_pickle=False.
+        with tempfile.TemporaryDirectory() as folder:
+            file = Path(folder) / "v2927_realmlp_oof.npz"
+            n_train, n_test = 699635, 299844
+            np.savez_compressed(
+                file,
+                train_id=np.arange(n_train, dtype=np.int64),
+                target=np.zeros(n_train, dtype=np.int8),
+                oof_gated_realmlp=np.full(n_train, 0.5, dtype=np.float32),
+                test_id=np.arange(n_test, dtype=np.int64),
+                pred_gated_realmlp=np.full(n_test, 0.5, dtype=np.float32),
+                train_travel_type=np.full(n_train, "Personal Travel", dtype=object),
+                test_travel_type=np.full(n_test, "Business travel", dtype=object),
+            )
+            values, gate_mode = p.safe_read_prediction_npz(file)
+            self.assertEqual(values["train_id"].shape, (n_train,))
+            self.assertEqual(values["pred_gated_realmlp"].shape, (n_test,))
+            self.assertNotIn("train_travel_type", values)
+            self.assertEqual(gate_mode["train_travel_type"], "opaque_object_header_only")
+            self.assertEqual(gate_mode["test_travel_type"], "opaque_object_header_only")
+
+    def test_revalidation_is_single_use_recover_only(self):
+        state = p.read(p.STATUS)
+        self.assertEqual(state.get("kernel"), p.KERNEL)
+        self.assertEqual(state.get("kernel_state"), "kernel_complete")
+        self.assertEqual(state.get("stage"), "kernel_complete_pending_revalidation")
+        self.assertEqual(state.get("revalidation_attempts"), 0)
+        self.assertEqual((state.get("validation_incident") or {}).get("cause"),
+                         "object_dtype_gate_serialization")
+        self.assertTrue(p.verify_prereg(state))
 
     def test_evaluator_no_submit_and_recover_only_guard(self):
         source = (ROOT / "kaggle_agent/v2927_pipeline.py").read_text(encoding="utf-8")
