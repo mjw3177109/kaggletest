@@ -1,4 +1,5 @@
 name: Kaggle V2.9.29 Fullservice Ordinal RealMLP T4 Single Experiment
+# V2929 2026-10-24T12:13Z: exact training metadata label mismatch; strict COMPLETE-owner recovery only, no new Notebook or model training.
 # V2929 2026-10-24T12:10Z: recovery-only inspection of persisted canonical Notebook; no new push, training, or submission.
 # V2929 2026-10-24T11:45Z: first run tests blocked launch, fixed isolated status+slug; strict owner gate and recover-only on saved slug.
 
@@ -69,6 +70,17 @@ jobs:
               timely=False
           owner="mjw3177109/kas-v2929-fullservice-ordinal-realmlp-t4-s6e10"
           stored=s.get("kernel")
+          # Only this exact previously observed, completed, immutable Notebook
+          # provenance-label incident may re-enter read-only recovery.
+          known_completed_incident=(
+              s.get("stage")=="validation_mismatch"
+              and s.get("error")=="V2929 T4/3fold/ordinal/TE provenance mismatch"
+              and s.get("kernel_state")=="kernel_complete"
+              and stored==owner
+              and s.get("notebook_created") is True
+              and s.get("training_started") is True
+              and s.get("submitted") is False
+              and s.get("submission_attempted") is False)
           frozen={"baseline_features":37,"new_threshold_features":65,
                   "new_dual_service_features":8,"feature_count":110,
                   "original_service_count":13,"thresholds":[1,2,3,4,5],
@@ -78,7 +90,7 @@ jobs:
             and s.get("competition")=="playground-series-s6e10"
             and s.get("version")=="V2.9.29"
             and s.get("intended_kernel")==owner
-            and s.get("stage") in {"preregistered_not_started","kernel_queued","kernel_running","pushing_kernel"}
+            and (s.get("stage") in {"preregistered_not_started","kernel_queued","kernel_running","pushing_kernel"} or known_completed_incident)
             and stored in ("",None,owner)
             and (s.get("stage")!="preregistered_not_started"
                  or (not stored and s.get("notebook_created") is False
@@ -136,6 +148,8 @@ jobs:
               raise SystemExit("Unrecognized request mode")
           if stored:
               mode="recover_only"
+          if known_completed_incident and mode!="recover_only":
+              safe=False
           print("allowed="+str(bool(safe)).lower())
           print("mode="+mode)
           print("reason="+("strict_preregistered_gate_passed" if safe else "preflight_or_concurrent_actions_blocked"))
