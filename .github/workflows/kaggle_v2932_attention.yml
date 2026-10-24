@@ -1,6 +1,7 @@
 name: Kaggle V2.9.32 FT-Transformer T4 Unique Notebook
 # One guarded launch after CPU 7/7 safety pass (Actions 40114121253).
 # No competition submission in this workflow. Existing owner always recover-only.
+# Gate diagnostics retry after owner-status error; no safety bypass or second Notebook.
 on:
   workflow_dispatch:
     inputs:
