@@ -180,6 +180,10 @@ def durably_reserve_unique_kernel(s):
 
 def verify_metrics(metrics,y,oof):
     hardware=metrics.get("hardware") or {}
+    versions=metrics.get("environment_versions") or {}
+    if any(not isinstance(versions.get(key),str) or not versions[key].strip()
+           for key in ("python","numpy","pandas","sklearn","lightgbm")):
+        raise ValueError("V2928 missing Kaggle execution version provenance")
     if (metrics.get("competition")!=SLUG
         or metrics.get("stage")!="three_folds_complete"
         or metrics.get("validation")!="StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)"
