@@ -19,8 +19,8 @@ import v2924_pipeline as v24
 ROOT = Path(__file__).resolve().parents[1]
 SLUG = "playground-series-s6e10"
 KERNEL = "mjw3177109/kas-v2927-travel-gated-dual-realmlp-t4-s6e10"
-STATUS = ROOT / "state/v2_9_26_status.json"
-REPORT = ROOT / "reports/v2_9_26_result.md"
+STATUS = ROOT / "state/v2_9_27_status.json"
+REPORT = ROOT / "reports/v2_9_27_result.md"
 WORKDIR = ROOT / "competitions" / SLUG / "kaggle_gpu_v2927_travel_gated"
 OUTDIR = ROOT / "competitions" / SLUG / "results_v2927_travel_gated"
 LEDGER = ROOT / "state/v2_9_experiments.json"
@@ -59,7 +59,7 @@ def verify_prereg(s):
         or s.get("route_feature_count") != 0
         or s.get("experts") != ["Personal Travel", "Business travel"]
         or s.get("external_labels") is not False
-        or s.get("blend") != {"v2915_rank": 0.8555, "v2927_rank": NEW_WEIGHT}
+        or s.get("blend") != {"v2915_rank": 0.85, "v2927_rank": NEW_WEIGHT}
         or s.get("baseline_cv") != BASELINE
         or s.get("promotion") != {
             "min_cv": FLOOR, "min_gain_vs_v2915": MIN_GAIN,
@@ -260,7 +260,7 @@ def validate(raw, s):
             "fold_auc": fold_auc,
             "fold_gain": fold_gain,
             "positive_folds": positive,
-            "fixed_weights": {"v2915_rank": 0.855, "v2927_rank": NEW_WEIGHT},
+            "fixed_weights": {"v2915_rank": 0.85, "v2927_rank": NEW_WEIGHT},
             "promotable": promoted,
         }
         s.update({
@@ -277,7 +277,7 @@ def validate(raw, s):
             "validation": metrics["validation"], "seed": SEED,
             "parameters": {
                 "model_seed": MODEL_SEED, "epochs": 5, "n_ens": 8,
-                "interaction_feature_count": 9, "interaction_feature_count": 9, "route_feature_count": 0,
+                "interaction_feature_count": 9, "route_feature_count": 0,
                 "fusion_weights": dict(result["fixed_weights"]),
                 "min_gain": MIN_GAIN,
             },
