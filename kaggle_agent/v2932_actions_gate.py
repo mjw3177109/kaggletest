@@ -77,7 +77,10 @@ def assert_kaggle_idle_and_official():
         "mjw3177109/kas-v2931-foldlocal-mi-pruned-realmlp-t4-s6e10",
     }
     for ref in sorted((set(refs)|known)-{KERNEL}):
-        status=kaggle(["kernels","status",ref],timeout=90)
+        try:
+            status=kaggle(["kernels","status",ref],timeout=90)
+        except RuntimeError as exc:
+            raise RuntimeError("Kaggle owner Notebook status inaccessible for "+ref) from exc
         if any("KernelWorkerStatus."+x in status for x in ("QUEUED","RUNNING","PENDING")):
             raise RuntimeError("Another Kaggle Notebook is active: refuse V2932")
         if "KernelWorkerStatus." not in status:
