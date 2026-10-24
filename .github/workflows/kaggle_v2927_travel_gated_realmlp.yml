@@ -1,0 +1,190 @@
+name: Kaggle V2.9.27 Travel-Gated Dual RealMLP T4 Single Experiment
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Safely run a unique Notebook once, otherwise only recover"
+        type: choice
+        required: false
+        default: run
+        options:
+          - run
+          - recover_only
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2927_travel_gated_realmlp.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: kaggle-s6e10-v2927-single-notebook
+  cancel-in-progress: false
+
+jobs:
+  guarded-travel-gated-oofer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      GH_API_TOKEN: ${{ github.token }}
+      REQUESTED_MODE: ${{ inputs.mode || 'run' }}
+    steps:
+      - name: Check out branch, preserving immutable status
+        uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Independent preregistration, deadline and no-active-run gate
+        id: gate
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import os, json, urllib.request, urllib.parse
+          from pathlib import Path
+          from datetime import datetime, timezone
+          def read(p):
+              f=Path("state")/p
+              return json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+          s=read("v2_9_27_status.json")
+          v26=read("v2_9_26_status.json")
+          champ=read("v2_9_15_status.json")
+          official=read("v2_9_15_submission.json")
+          rank=read("score_rank_latest.json")
+          ladder=read("dual_ladder.json")
+          terminal={"candidate_ready_unsubmitted","skipped_no_cv_gain",
+                    "kernel_failed","output_failed","validation_mismatch",
+                    "push_failed","kernel_access_error"}
+          try:
+              deadline=datetime.fromisoformat(ladder["active_deadline"].replace("Z","+00:00"))
+              timely=deadline.tzinfo is not None and datetime.now(timezone.utc)<deadline
+          except (ValueError,KeyError,TypeError):
+              timely=False
+          owner="mjw3177109/kas-v2927-travel-gated-dual-realmlp-t4-s6e10"
+          stored=s.get("kernel")
+          safe_state=s.get("stage") in {"preregistered_not_started","kernel_queued","kernel_running","pushing_kernel"}
+          safe=(timely and ladder.get("active_competition")=="playground-series-s6e10"
+            and s.get("competition")=="playground-series-s6e10"
+            and s.get("version")=="V2.9.27"
+            and s.get("intended_kernel")==owner
+            and safe_state and s.get("stage") not in terminal
+            and stored in ("",None,owner)
+            and s.get("submitted") is False
+            and s.get("submission_attempted") is False
+            and s.get("external_labels") is False
+            and s.get("hypothesis")=="travel_type_gated_dual_realmlp_interaction_experts"
+            and s.get("model_family")=="two_fold_local_RealMLP_TD_travel_experts"
+            and s.get("feature_family")=="v2916_service_delay_interactions_no_route_profile"
+            and s.get("outer_folds")==3
+            and s.get("seed")==20261018 and s.get("model_seed")==20261027
+            and s.get("experts")==["Personal Travel","Business travel"]
+            and s.get("epochs")==5 and s.get("n_ens")==8
+            and s.get("interaction_feature_count")==9
+            and s.get("route_feature_count")==0
+            and s.get("blend")=={"v2915_rank":0.85,"v2927_rank":0.15}
+            and s.get("promotion")=={"min_cv":0.96125635576833,
+                "min_gain_vs_v2915":0.00005,"min_positive_folds":2,
+                "worst_fold_strict_gt":-0.00005}
+            and s.get("submission_policy")=="evaluation_only_no_submission"
+            and v26.get("stage")=="skipped_no_cv_gain"
+            and v26.get("submitted") is False
+            and v26.get("kernel_state")=="kernel_complete"
+            and (v26.get("source_artifacts") or {}).get("v2926",{}).get("sha256")
+                =="1026cf4aa6990f7eb3fc9e9e5c21209cbe4ae8b6fd42e8398fb9f9a24853e2e2"
+            and abs(float((v26.get("comparison") or {}).get("candidate_auc",0))-.9613072330727896)<1e-12
+            and champ.get("candidate_test_hash")==official.get("prediction_hash")
+            and official.get("stage")=="complete"
+            and official.get("submitted") is True
+            and str((official.get("submission") or {}).get("ref"))=="57446286"
+            and abs(float(official.get("official_lb",0))-.96099)<1e-9
+            and str((rank.get("score") or {}).get("submission_id"))=="57446286"
+            and abs(float((rank.get("score") or {}).get("public_score",0))-.96099)<1e-9)
+          # Authenticated GitHub Actions API must prove no other live job exists.
+          token=os.getenv("GH_API_TOKEN","")
+          repo=os.getenv("GITHUB_REPOSITORY","")
+          own=int(os.getenv("GITHUB_RUN_ID","0"))
+          if not token or repo!="mjw3177109/kaggletest" or not own:
+              raise SystemExit("Cannot authenticate GitHub Actions running-job gate")
+          for status in ("in_progress","queued","waiting","requested","pending"):
+              query=urllib.parse.urlencode({
+                "branch":"feature/v29-autonomous-evolution","status":status,"per_page":100})
+              url=f"https://api.github.com/repos/{repo}/actions/runs?{query}"
+              req=urllib.request.Request(url,headers={
+                "Authorization":"Bearer "+token,
+                "Accept":"application/vnd.github+json",
+                "User-Agent":"kaggle-autoscientist-v2927"})
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  payload=json.load(response)
+              competitors=[r for r in payload.get("workflow_runs",[])
+                           if int(r.get("id",0))!=own]
+              if competitors or len(payload.get("workflow_runs", [])) >= 100:
+                  safe=False
+          mode="recover_only" if stored else (os.getenv("REQUESTED_MODE") or "run")
+          if mode not in {"run","recover_only"}:
+              raise SystemExit("Unrecognized request mode")
+          if stored:
+              mode="recover_only"
+          print("allowed="+str(bool(safe)).lower())
+          print("mode="+mode)
+          print("reason="+("strict_preregistered_gate_passed" if safe else "preflight_or_concurrent_actions_blocked"))
+          PY
+      - name: Pin historical scientific and Kaggle dependencies
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install numpy==2.4.6 pandas==3.0.6 scipy==1.17.1 scikit-learn==1.9.1
+      - name: Compile new trainer and execute fold isolation tests
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2927_travel_gated_realmlp_train.py kaggle_agent/v2927_pipeline.py
+          python -m unittest discover -s tests -p 'test_v2927_travel_gated_realmlp.py' -v
+      - name: Create one owner-authenticated Notebook or recover only the recorded one
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          if test "$MODE" = "recover_only"; then
+            python kaggle_agent/v2927_pipeline.py --recover-only
+          else
+            python kaggle_agent/v2927_pipeline.py
+          fi
+      - name: Persist exact saved kernel ID and evidence to original branch
+        if: always() && steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          for file in state/v2_9_27_status.json state/v2_9_experiments.json reports/v2_9_27_result.md; do
+            if test -f "$file"; then git add -- "$file"; fi
+          done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: persist V2927 travel-gated dual RealMLP unique Notebook evidence"
+          for attempt in 1 2 3 4; do
+            git fetch origin feature/v29-autonomous-evolution
+            git rebase origin/feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*2))"
+          done
+          exit 1
+      - name: Archive compact status only, not underlying Kaggle competition data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2927-travel-gated-dual-realmlp-status
+          path: |
+            state/v2_9_27_status.json
+            reports/v2_9_27_result.md
+          if-no-files-found: ignore
