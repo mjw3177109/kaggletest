@@ -1,13 +1,13 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.34",
-  "stage": "preregistered_not_started",
+  "stage": "pushing_kernel",
   "preregistered_at": "2026-10-24",
   "hypothesis": "explicit_second_order_field_interactions_deepfm_on_champion_original37",
   "model_family": "PyTorch_DeepFM_Explicit_SecondOrder_T4",
   "feature_family": "v2915_original37_3_inner5fold_TE_no_extra_features",
   "intended_kernel": "mjw3177109/kas-v2934-explicit-secondorder-deepfm-t4-s6e10",
-  "kernel": null,
+  "kernel": "mjw3177109/kas-v2934-explicit-secondorder-deepfm-t4-s6e10",
   "notebook_created": false,
   "training_started": false,
   "submitted": false,
@@ -76,9 +76,9 @@
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 0.00005,
+    "min_gain_vs_v2915": 5e-05,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -0.00005
+    "worst_fold_strict_gt": -5e-05
   },
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "trainer_validator_gate_workflow_14_cpu_tests_passed_prelaunch_blocked_rate_limit",
@@ -94,5 +94,7 @@
     "latest_cpu_test_run_id": 40136161097,
     "latest_cpu_test_passed": 14,
     "rank_refresh_run_id": 40135599670
-  }
+  },
+  "reservation_at": "2026-10-24T22:22:42.248508+00:00",
+  "updated_at": "2026-10-24T22:22:42.248527+00:00"
 }
