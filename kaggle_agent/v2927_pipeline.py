@@ -8,6 +8,7 @@ import hashlib
 import json
 import re
 import shutil
+import subprocess
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -140,6 +141,47 @@ def checked_owner_exists():
     if reference.returncode or "KernelWorkerStatus.COMPLETE" not in (reference.stdout or ""):
         raise RuntimeError("Known owner identity witness unavailable: no Notebook push")
     return False
+
+
+def durably_reserve_unique_kernel(s):
+    """Commit canonical slug to GitHub BEFORE Kaggle push; crash means recover-only."""
+    if s.get("kernel") or s.get("stage") != "preregistered_not_started":
+        raise RuntimeError("Only a pristine V2927 preregistration can reserve Notebook")
+    if not verify_prereg(s):
+        raise RuntimeError("V2927 registration already terminal")
+    subprocess.run(["git", "fetch", "origin", "feature/v29-autonomous-evolution"],
+                   cwd=ROOT, check=True, timeout=90, capture_output=True)
+    local = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True,
+                           timeout=20, capture_output=True, text=True).stdout.strip()
+    remote = subprocess.run(["git", "rev-parse", "FETCH_HEAD"], cwd=ROOT, check=True,
+                            timeout=20, capture_output=True, text=True).stdout.strip()
+    if local != remote:
+        raise RuntimeError("Repository HEAD changed since V2927 preflight; refuse push")
+    s.update({"kernel": KERNEL, "stage": "pushing_kernel",
+              "notebook_created": False, "training_started": False,
+              "reservation_at": now()})
+    persist(s)
+    subprocess.run(["git", "config", "user.name", "kaggle-auto-scientist[bot]"],
+                   cwd=ROOT, check=True, timeout=20, capture_output=True)
+    subprocess.run(["git", "config", "user.email",
+                    "kaggle-auto-scientist[bot]@users.noreply.github.com"],
+                   cwd=ROOT, check=True, timeout=20, capture_output=True)
+    subprocess.run(["git", "add", "--", str(STATUS.relative_to(ROOT)),
+                    str(REPORT.relative_to(ROOT))],
+                   cwd=ROOT, check=True, timeout=20, capture_output=True)
+    subprocess.run(["git", "commit", "-m",
+                    "bot: durable V2927 unique Kaggle Notebook reservation"],
+                   cwd=ROOT, check=True, timeout=20, capture_output=True)
+    subprocess.run(["git", "push", "origin", "HEAD:feature/v29-autonomous-evolution"],
+                   cwd=ROOT, check=True, timeout=90, capture_output=True)
+    reserved = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True,
+                              timeout=20, capture_output=True, text=True).stdout.strip()
+    remote_ref = subprocess.run(
+        ["git", "ls-remote", "origin", "refs/heads/feature/v29-autonomous-evolution"],
+        cwd=ROOT, check=True, timeout=30, capture_output=True, text=True).stdout.strip()
+    if not remote_ref.startswith(reserved + "\t"):
+        raise RuntimeError("V2927 remote reservation not confirmed; refuse Notebook push")
+    return s
 
 
 def verify_metrics(metrics, y, oof, train, test):
@@ -321,8 +363,7 @@ def run(recover_only=False):
             "dataset_sources": [], "competition_sources": [SLUG],
             "kernel_sources": [], "model_sources": [],
         })
-        s.update({"stage": "pushing_kernel", "kernel": KERNEL, "notebook_created": False})
-        persist(s)  # durable stopgap: any subsequent run MUST enter recovery-only.
+        s = durably_reserve_unique_kernel(s)
         pushed = v24.cmd(["kaggle", "kernels", "push", "-p", str(WORKDIR), "-t", "3600"],
                          timeout=300, check=False)
         if pushed.returncode:
