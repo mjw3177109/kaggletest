@@ -187,7 +187,7 @@ class V2934Safety(unittest.TestCase):
             if args[:2]==["competitions","submissions"]:
                 return "57446286,0.96099"
             if args[:2]==["kernels","list"]:
-                return "ref,title\\nmjw3177109/best-cv-score-0-95625,canceled\\n"
+                return "ref,title\nmjw3177109/best-cv-score-0-95625,canceled\n"
             if args[:2]==["kernels","status"]:
                 seen.append(args[2])
                 if args[2]=="mjw3177109/best-cv-score-0-95625":
@@ -205,7 +205,7 @@ class V2934Safety(unittest.TestCase):
             if args[:2]==["competitions","submissions"]:
                 return "57446286,0.96099"
             if args[:2]==["kernels","list"]:
-                return "ref,title\\nmjw3177109/best-cv-score-0-95625,canceling\\n"
+                return "ref,title\nmjw3177109/best-cv-score-0-95625,canceling\n"
             if args[:2]==["kernels","status"]:
                 if args[2]=="mjw3177109/best-cv-score-0-95625":
                     return 'has status "KernelWorkerStatus.CANCEL_REQUESTED"'
