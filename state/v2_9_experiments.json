@@ -641,6 +641,44 @@
       ],
       "experiment_id": "80f8579c2427b2d31ab2e5173ed1db2cffe5c6116146b199602f7a6e4a1c54bd",
       "created_at": "2026-10-24T08:20:37.907979+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2928_service_factor_pca_global_lgbm",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261028,
+        "model_parameters": {
+          "n_estimators": 1200,
+          "learning_rate": 0.035,
+          "max_depth": 8,
+          "num_leaves": 63,
+          "min_child_samples": 60,
+          "subsample": 0.9,
+          "colsample_bytree": 0.85,
+          "reg_lambda": 3.0,
+          "reg_alpha": 0,
+          "random_state_base": 20261028,
+          "n_jobs": 4
+        },
+        "pca_components": 3,
+        "service_contrast_features": 8,
+        "fusion_weights": {
+          "v2915_rank": 0.85,
+          "v2928_rank": 0.15
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "cv": 0.9612196682704917,
+      "completed_at": "2026-10-24T10:46:35.664739+00:00",
+      "cpu_seconds": 320.3,
+      "kernel_sources": [
+        "mjw3177109/kas-v2928-service-factor-pca-lgbm-cpu-s6e10"
+      ],
+      "experiment_id": "db3aa2bd21e9ad6abb45a653ea9e4d614babe2de4f9b081f5764ee859be5f113",
+      "created_at": "2026-10-24T10:46:35.665173+00:00"
     }
   ]
 }
