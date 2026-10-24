@@ -107,7 +107,7 @@ def persist(s):
         + f"- Kaggle Notebook: https://www.kaggle.com/code/{KERNEL}\n"
         + f"- Frozen champion CV: {BASELINE}\n"
         + f"- New independent model full OOF: {m.get('full_oof_auc', 'pending')}\n"
-        + f"- Frozen 80/20 fusion full OOF: {c.get('candidate_auc', 'pending')}\n"
+        + f"- Frozen 85/15 fusion full OOF: {c.get('candidate_auc', 'pending')}\n"
         + f"- Candidate gain: {c.get('gain', 'pending')}\n"
         + f"- Paired fold gains: {c.get('fold_gain', 'pending')}\n"
         + f"- CV gain gate: >= {MIN_GAIN}; official Public LB stays 0.96099 until independently scored.\n"
