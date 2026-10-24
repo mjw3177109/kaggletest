@@ -97,7 +97,7 @@ def assert_kaggle_idle_and_official():
             raise RuntimeError("Kaggle owner Notebook status inaccessible for "+ref) from exc
         if any("KernelWorkerStatus."+x in status for x in ("QUEUED","RUNNING","PENDING")):
             raise RuntimeError("Another Kaggle Notebook is active: refuse V2934")
-        if "KernelWorkerStatus." not in status:
+        if not any("KernelWorkerStatus."+x in status for x in ("COMPLETE","ERROR","CANCELLED")):
             raise RuntimeError("Unknown Kaggle Notebook status: fail closed")
 
 
