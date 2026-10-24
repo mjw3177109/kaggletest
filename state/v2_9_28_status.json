@@ -1,0 +1,61 @@
+{
+  "competition": "playground-series-s6e10",
+  "version": "V2.9.28",
+  "stage": "preregistered_not_started",
+  "preregistered_at": "2026-10-24T08:22:00Z",
+  "hypothesis": "fold_local_service_pca_global_lightgbm",
+  "model_family": "global_LightGBM_CPU",
+  "feature_family": "service_factor_pca3_contrasts8_te23_no_route_profile",
+  "intended_kernel": "mjw3177109/kas-v2928-service-factor-pca-lgbm-cpu-s6e10",
+  "kernel": "",
+  "notebook_created": false,
+  "training_started": false,
+  "submitted": false,
+  "submission_attempted": false,
+  "external_labels": false,
+  "pseudo_labels": false,
+  "outer_folds": 3,
+  "seed": 20261018,
+  "model_seed": 20261028,
+  "pca_components": 3,
+  "service_contrast_features": 8,
+  "service_rating_columns": 13,
+  "te_columns": 23,
+  "route_feature_count": 0,
+  "global_model": true,
+  "model_parameters": {
+    "n_estimators": 1200,
+    "learning_rate": 0.035,
+    "max_depth": 8,
+    "num_leaves": 63,
+    "min_child_samples": 60,
+    "subsample": 0.9,
+    "colsample_bytree": 0.85,
+    "reg_lambda": 3,
+    "reg_alpha": 0,
+    "random_state_base": 20261028,
+    "n_jobs": 4
+  },
+  "blend": {
+    "v2915_rank": 0.85,
+    "v2928_rank": 0.15
+  },
+  "baseline_cv": 0.9612850399332336,
+  "official_submission_id": 57446286,
+  "official_public_lb": 0.96099,
+  "previous_v2927": {
+    "stage": "skipped_no_cv_gain",
+    "standalone_cv": 0.9593005287908923,
+    "full_cv": 0.9613084824713334,
+    "gain": 0.000023442538099827104,
+    "source_sha256": "180cd12af6fcc097725718148946bfcb0a0b6184cf6403cc360b44ef26ffb840"
+  },
+  "promotion": {
+    "min_cv": 0.96125635576833,
+    "min_gain_vs_v2915": 0.00005,
+    "min_positive_folds": 2,
+    "worst_fold_strict_gt": -0.00005
+  },
+  "submission_policy": "evaluation_only_no_submission",
+  "implementation_status": "awaiting_reviewed_trainer_verifier_workflow_tests"
+}
