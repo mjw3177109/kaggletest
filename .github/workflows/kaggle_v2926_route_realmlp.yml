@@ -1,3 +1,4 @@
+# V2926 2026-10-24T06:14Z: one-time recovery of persisted owner Notebook; existing slug forces --recover-only. No repush, no submission.
 name: Kaggle V2.9.26 Route-Profile RealMLP T4 Single Experiment
 
 on:
