@@ -1,15 +1,15 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.34",
-  "stage": "pushing_kernel",
+  "stage": "kernel_queued",
   "preregistered_at": "2026-10-24",
   "hypothesis": "explicit_second_order_field_interactions_deepfm_on_champion_original37",
   "model_family": "PyTorch_DeepFM_Explicit_SecondOrder_T4",
   "feature_family": "v2915_original37_3_inner5fold_TE_no_extra_features",
   "intended_kernel": "mjw3177109/kas-v2934-explicit-secondorder-deepfm-t4-s6e10",
   "kernel": "mjw3177109/kas-v2934-explicit-secondorder-deepfm-t4-s6e10",
-  "notebook_created": false,
-  "training_started": false,
+  "notebook_created": true,
+  "training_started": true,
   "submitted": false,
   "submission_attempted": false,
   "baseline_features": 37,
@@ -96,5 +96,7 @@
     "rank_refresh_run_id": 40135599670
   },
   "reservation_at": "2026-10-24T22:22:42.248508+00:00",
-  "updated_at": "2026-10-24T22:22:42.248527+00:00"
+  "updated_at": "2026-10-24T22:22:45.945285+00:00",
+  "kernel_state": "kernel_queued",
+  "kernel_message": "mjw3177109/kas-v2934-explicit-secondorder-deepfm-t4-s6e10 has status \"KernelWorkerStatus.QUEUED\""
 }
