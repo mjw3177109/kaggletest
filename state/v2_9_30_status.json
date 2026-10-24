@@ -1,13 +1,13 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.30",
-  "stage": "preregistered_not_started",
+  "stage": "pushing_kernel",
   "preregistered_at": "2026-10-24",
   "hypothesis": "conditional_crossfit_supervised_category_te_realmlp",
   "model_family": "global_RealMLP_TD_T4",
   "feature_family": "v2915_37_features_plus_8_inner_crossfit_conditional_target_encodings",
   "intended_kernel": "mjw3177109/kas-v2930-conditional-crossfit-te-realmlp-t4-s6e10",
-  "kernel": "",
+  "kernel": "mjw3177109/kas-v2930-conditional-crossfit-te-realmlp-t4-s6e10",
   "notebook_created": false,
   "training_started": false,
   "submitted": false,
@@ -39,17 +39,19 @@
     "stage": "skipped_no_cv_gain",
     "standalone_cv": 0.9607552044022232,
     "full_cv": 0.9613230501945584,
-    "gain": 0.00003801026132488339,
+    "gain": 3.801026132488339e-05,
     "source_sha256": "845f1995556050ce10c23822557541f4885d1b96ba9ddbe1d8e5fdcedc4e59a8",
     "recovery_run_id": 40093005552
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 0.00005,
+    "min_gain_vs_v2915": 5e-05,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -0.00005
+    "worst_fold_strict_gt": -5e-05
   },
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "awaiting_trainer_verifier_tests_workflow_review",
-  "launch_blocker": "V2.8 challenger workflow active at preregistration; check live actions before any training"
+  "launch_blocker": "V2.8 challenger workflow active at preregistration; check live actions before any training",
+  "reservation_at": "2026-10-24T13:00:43.449414+00:00",
+  "updated_at": "2026-10-24T13:00:43.449432+00:00"
 }
