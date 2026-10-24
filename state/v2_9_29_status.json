@@ -1,15 +1,15 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.29",
-  "stage": "pushing_kernel",
+  "stage": "kernel_queued",
   "preregistered_at": "2026-10-24",
   "hypothesis": "full_service_ordinal_threshold_realmlp",
   "model_family": "global_RealMLP_TD_T4",
   "feature_family": "v2915_baseline_plus_13x5_service_ordinal_thresholds_plus_8_dual_service_cats",
   "intended_kernel": "mjw3177109/kas-v2929-fullservice-ordinal-realmlp-t4-s6e10",
   "kernel": "mjw3177109/kas-v2929-fullservice-ordinal-realmlp-t4-s6e10",
-  "notebook_created": false,
-  "training_started": false,
+  "notebook_created": true,
+  "training_started": true,
   "submitted": false,
   "submission_attempted": false,
   "outer_folds": 3,
@@ -60,5 +60,7 @@
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "awaiting_trainer_verifier_tests_workflow_review",
   "reservation_at": "2026-10-24T11:46:07.543737+00:00",
-  "updated_at": "2026-10-24T11:46:07.543756+00:00"
+  "updated_at": "2026-10-24T11:46:11.570688+00:00",
+  "kernel_state": "kernel_queued",
+  "kernel_message": "mjw3177109/kas-v2929-fullservice-ordinal-realmlp-t4-s6e10 has status \"KernelWorkerStatus.QUEUED\""
 }
