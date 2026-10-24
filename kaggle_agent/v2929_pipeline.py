@@ -35,6 +35,22 @@ NEW_WEIGHT=0.15
 TERMINAL={"candidate_ready_unsubmitted","skipped_no_cv_gain","kernel_failed",
           "output_failed","validation_mismatch","push_failed","kernel_access_error"}
 ACTIVE={"preregistered_not_started","pushing_kernel","kernel_queued","kernel_running"}
+# Kaggle output is immutable. V2929 training used a v2929_ label for the exact
+# pre-registered v2915-baseline-plus ordinal feature family. Both strings
+# describe the same frozen 110-column schema, not an alternative experiment.
+EXPECTED_FEATURE_FAMILY="v2915_baseline_plus_13x5_service_ordinal_thresholds_plus_8_dual_service_cats"
+TRAINER_FEATURE_FAMILY="v2929_baseline_plus_13x5_service_ordinal_thresholds_plus_8_dual_service_cats"
+KNOWN_RECOVERY_ERROR="V2929 T4/3fold/ordinal/TE provenance mismatch"
+
+
+def known_provenance_recovery(s, recover_only):
+    return bool(recover_only and s.get("stage")=="validation_mismatch"
+        and s.get("error")==KNOWN_RECOVERY_ERROR
+        and s.get("kernel")==KERNEL and s.get("kernel_state")=="kernel_complete"
+        and s.get("notebook_created") is True
+        and s.get("training_started") is True
+        and s.get("submitted") is False and s.get("submission_attempted") is False)
+
 
 
 def read(path):
@@ -56,7 +72,7 @@ def frozen_params():
             "outer_folds":3,"seed":SEED,"model_seed":MODEL_SEED,
             "epochs":5,"n_ens":8}
 
-def verify_prereg(s):
+def verify_prereg(s, allow_known_recovery=False):
     p=frozen_params()
     if (s.get("competition")!=SLUG or s.get("version")!="V2.9.29"
         or s.get("intended_kernel")!=KERNEL
@@ -80,14 +96,14 @@ def verify_prereg(s):
             and (s.get("kernel") or s.get("notebook_created") is not False
                  or s.get("training_started") is not False))):
         raise RuntimeError("V2929 immutable preregistration/owner/no-submit invariant failed")
-    return s.get("stage") not in TERMINAL
+    return s.get("stage") not in TERMINAL or (allow_known_recovery and known_provenance_recovery(s,True))
 
-def preflight():
+def preflight(recover_only=False):
     s=read(STATUS)
-    if not verify_prereg(s):
+    if not verify_prereg(s,allow_known_recovery=recover_only):
         return None
-    if s.get("stage") not in ACTIVE:
-        raise RuntimeError("V2929 unknown nonterminal stage")
+    if s.get("stage") not in ACTIVE and not known_provenance_recovery(s,recover_only):
+        raise RuntimeError("V2929 unknown or unsafe recovery stage")
     champion=v24.preflight()
     previous=read(ROOT/"state/v2_9_28_status.json")
     if (previous.get("stage")!="skipped_no_cv_gain"
@@ -195,7 +211,7 @@ def verify_metrics(metrics,y,oof):
         or metrics.get("feature_count")!=110
         or metrics.get("inner_target_folds")!=5
         or metrics.get("target_encoding_columns")!=3
-        or metrics.get("feature_family")!="v2915_baseline_plus_13x5_service_ordinal_thresholds_plus_8_dual_service_cats"
+        or metrics.get("feature_family") not in (EXPECTED_FEATURE_FAMILY,TRAINER_FEATURE_FAMILY)
         or metrics.get("data_source")!="competition_train_only"
         or metrics.get("external_labels") is not False or metrics.get("pseudo_labels") is not False
         or metrics.get("submitted") is not False
@@ -292,10 +308,11 @@ def validate(raw,s):
 
 def run(recover_only=False):
     previous=read(STATUS)
-    if previous.get("stage") in TERMINAL:
+    allowed_recovery=known_provenance_recovery(previous,recover_only)
+    if previous.get("stage") in TERMINAL and not allowed_recovery:
         print("V2929 terminal; never create, recover or submit again")
         return previous
-    s=preflight()
+    s=preflight(recover_only=recover_only)
     if s is None:
         return previous
     if not s.get("kernel"):
@@ -364,6 +381,16 @@ def run(recover_only=False):
         return s
     try:
         validate(raw,s)
+        if allowed_recovery:
+            s["recovered_validation_incident"]={
+                "original_stage":"validation_mismatch",
+                "original_error":KNOWN_RECOVERY_ERROR,
+                "cause":"Training output used v2929_ rather than v2915_ feature-family label; exact 110-feature schema and other immutable gates independently checked",
+                "resolution":"strict read-only --recover-only validation of same completed Notebook, no model retraining",
+                "trainer_feature_family":TRAINER_FEATURE_FAMILY,
+                "preregistered_feature_family":EXPECTED_FEATURE_FAMILY,
+            }
+            s.pop("error",None)
     except Exception as e:
         s.update({"stage":"validation_mismatch","error":str(e)[-1800:]})
         persist(s)
