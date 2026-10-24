@@ -1,8 +1,8 @@
 {
-  "at": "2026-10-24T07:56:56.774946+00:00",
+  "at": "2026-10-24T08:19:00.120415+00:00",
   "queue": {
     "queued": true,
-    "hours": 120.816,
+    "hours": 121.183,
     "tripped": true,
     "fallback": "recommend_cpu_or_gpu_experiment"
   },
