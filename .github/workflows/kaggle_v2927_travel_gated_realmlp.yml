@@ -1,3 +1,4 @@
+# V2927 2026-10-24T08:20Z: one-time safe revalidation after verified object-dtype NPZ error; --recover-only, no pickle, no repush.
 # V2927 2026-10-24T08:17Z: single safe existing-slug --recover-only status check; no new Notebook push or submission.
 # V2927 2026-10-24T07:57Z: fix stage-aware tests, run the first actual recover-only check for the same durable slug. No repush.
 # V2927 2026-10-24T07:56Z: one safe --recover-only check of persisted unique owner slug; never repush or submit.
@@ -74,13 +75,21 @@ jobs:
               timely=False
           owner="mjw3177109/kas-v2927-travel-gated-dual-realmlp-t4-s6e10"
           stored=s.get("kernel")
-          safe_state=s.get("stage") in {"preregistered_not_started","kernel_queued","kernel_running","pushing_kernel"}
+          safe_state=s.get("stage") in {"preregistered_not_started","kernel_queued","kernel_running","pushing_kernel","kernel_complete_pending_revalidation"}
           safe=(timely and ladder.get("active_competition")=="playground-series-s6e10"
             and s.get("competition")=="playground-series-s6e10"
             and s.get("version")=="V2.9.27"
             and s.get("intended_kernel")==owner
             and safe_state and s.get("stage") not in terminal
             and stored in ("",None,owner)
+            and (s.get("stage")!="kernel_complete_pending_revalidation" or
+                 (stored==owner and s.get("kernel_state")=="kernel_complete"
+                  and s.get("notebook_created") is True
+                  and s.get("training_started") is True
+                  and s.get("revalidation_attempts")==0
+                  and (s.get("validation_incident") or {}).get("cause")
+                       =="object_dtype_gate_serialization"
+                  and (s.get("validation_incident") or {}).get("no_pickle_unserialization") is True))
             and s.get("submitted") is False
             and s.get("submission_attempted") is False
             and s.get("external_labels") is False
