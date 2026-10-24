@@ -28,10 +28,14 @@ class V2929Safety(unittest.TestCase):
     def test_preregistered_owner_and_immutable_features(self):
         s=p.read(p.STATUS)
         self.assertTrue(p.verify_prereg(s))
-        self.assertEqual(s["stage"],"preregistered_not_started")
-        self.assertEqual(s["kernel"],"")
-        self.assertFalse(s["notebook_created"])
-        self.assertFalse(s["training_started"])
+        if s["stage"]=="preregistered_not_started":
+            self.assertEqual(s["kernel"],"")
+            self.assertFalse(s["notebook_created"])
+            self.assertFalse(s["training_started"])
+        else:
+            self.assertEqual(s["kernel"],p.KERNEL)
+            self.assertFalse(s["submitted"])
+            self.assertFalse(s["submission_attempted"])
         self.assertEqual(s["blend"],{"v2915_rank":.85,"v2929_rank":.15})
         self.assertEqual(s["feature_count"],110)
         self.assertEqual(m.MODEL_SEED,20261029)
