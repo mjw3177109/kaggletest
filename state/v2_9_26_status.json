@@ -1,0 +1,35 @@
+{
+  "competition": "playground-series-s6e10",
+  "version": "V2.9.26",
+  "stage": "preregistered_not_started",
+  "method": "fold_local_route_profile_realmlp_5epoch_t4",
+  "kernel": "",
+  "intended_kernel": "mjw3177109/kas-v2926-route-profile-realmlp-t4-s6e10",
+  "submitted": false,
+  "submission_attempted": false,
+  "notebook_created": false,
+  "training_started": false,
+  "preregistered_at": "2026-10-24",
+  "outer_folds": 3,
+  "seed": 20261018,
+  "model_seed": 20261026,
+  "epochs": 5,
+  "n_ens": 8,
+  "route_feature_count": 12,
+  "route_statistics_use_outer_train_only": true,
+  "external_labels": false,
+  "blend": {
+    "v2915_rank": 0.8,
+    "v2926_rank": 0.2
+  },
+  "baseline_cv": 0.9612850399332336,
+  "official_submission_id": 57446286,
+  "official_public_lb": 0.96099,
+  "promotion": {
+    "min_cv": 0.96125635576833,
+    "min_gain_vs_v2915": 0.00005,
+    "min_positive_folds": 2,
+    "worst_fold_strict_gt": -0.00005
+  },
+  "submission_policy": "evaluation_only_no_submission"
+}
