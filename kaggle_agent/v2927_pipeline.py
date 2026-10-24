@@ -53,7 +53,7 @@ def verify_prereg(s):
         or s.get("intended_kernel") != KERNEL
         or s.get("hypothesis") != "travel_type_gated_dual_realmlp_interaction_experts"
         or s.get("model_family") != "two_fold_local_RealMLP_TD_travel_experts"
-        or s.get("feature_family") != "v2916_service_delay_interactions_no_travel_gated"
+        or s.get("feature_family") != "v2916_service_delay_interactions_no_route_profile"
         or s.get("seed") != SEED or s.get("model_seed") != MODEL_SEED
         or s.get("outer_folds") != 3 or s.get("epochs") != 5
         or s.get("n_ens") != 8 or s.get("interaction_feature_count") != 9
@@ -198,7 +198,7 @@ def verify_metrics(metrics, y, oof, train, test):
         or metrics.get("route_feature_count") != 0
         or metrics.get("feature_count") != 46
         or metrics.get("experts") != experts
-        or metrics.get("feature_family") != "v2916_service_delay_interactions_no_travel_gated"
+        or metrics.get("feature_family") != "v2916_service_delay_interactions_no_route_profile"
         or metrics.get("external_labels") is not False
         or metrics.get("submitted") is not False
         or metrics.get("gpu_verified") is not True
