@@ -1,0 +1,102 @@
+name: Kaggle V2.9.30 Conditional Crossfit TE RealMLP T4 Single Experiment
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "One unique Notebook creation, or recover existing"
+        type: choice
+        required: false
+        default: run
+        options:
+          - run
+          - recover_only
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2930_conditional_crossfit_te_realmlp.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: kaggle-s6e10-v2930-one-notebook
+  cancel-in-progress: false
+
+jobs:
+  guarded-conditional-te-oofer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      GH_API_TOKEN: ${{ github.token }}
+      REQUESTED_MODE: ${{ inputs.mode || 'run' }}
+    steps:
+      - name: Checkout original feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Pin Kaggle CLI and scientific verification dependencies
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install numpy==2.4.6 pandas==3.0.6 scipy==1.17.1 scikit-learn==1.9.1
+      - name: Compile and test immutable fold-local supervised TE, no-submit invariants
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2930_conditional_te_realmlp_train.py kaggle_agent/v2930_pipeline.py kaggle_agent/v2930_actions_gate.py
+          python -m unittest discover -s tests -p 'test_v2930_conditional_te_realmlp.py' -v
+      - name: Fail-closed Kaggle owner, official submission, deadline and all Actions gate
+        id: gate
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          python kaggle_agent/v2930_actions_gate.py
+      - name: Create the sole authenticated Notebook once or recover only
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          if test "$MODE" = "recover_only"; then
+            python kaggle_agent/v2930_pipeline.py --recover-only
+          else
+            python kaggle_agent/v2930_pipeline.py
+          fi
+      - name: Persist exact canonical owner and independent OOF validation evidence
+        if: always() && steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          for file in state/v2_9_30_status.json state/v2_9_experiments.json reports/v2_9_30_result.md; do
+            if test -f "$file"; then git add -- "$file"; fi
+          done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: persist V2930 conditional TE single Notebook and verified 3fold OOF"
+          for attempt in 1 2 3 4; do
+            git fetch origin feature/v29-autonomous-evolution
+            git rebase origin/feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*2))"
+          done
+          exit 1
+      - name: Archive only compact status and result, never Kaggle train/test data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2930-conditional-te-realmlp-status
+          path: |
+            state/v2_9_30_status.json
+            reports/v2_9_30_result.md
+          if-no-files-found: ignore
