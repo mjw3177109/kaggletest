@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.27",
-  "stage": "validation_mismatch",
+  "stage": "kernel_complete_pending_revalidation",
   "preregistered_at": "2026-10-24T06:20:00Z",
   "hypothesis": "travel_type_gated_dual_realmlp_interaction_experts",
   "model_family": "two_fold_local_RealMLP_TD_travel_experts",
@@ -33,20 +33,34 @@
     "stage": "skipped_no_cv_gain",
     "standalone_cv": 0.9602205569678511,
     "full_cv": 0.9613072330727896,
-    "gain": 2.219313955609259e-05,
+    "gain": 0.00002219313955609259,
     "source_sha256": "1026cf4aa6990f7eb3fc9e9e5c21209cbe4ae8b6fd42e8398fb9f9a24853e2e2"
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 5e-05,
+    "min_gain_vs_v2915": 0.00005,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -5e-05
+    "worst_fold_strict_gt": -0.00005
   },
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "awaiting_reviewed_trainer_verifier_workflow_tests",
   "reservation_at": "2026-10-24T07:54:55.284429+00:00",
-  "updated_at": "2026-10-24T08:17:51.828273+00:00",
+  "updated_at": "2026-10-24T08:19:00+00:00",
   "kernel_state": "kernel_complete",
   "kernel_message": "mjw3177109/kas-v2927-travel-gated-dual-realmlp-t4-s6e10 has status \"KernelWorkerStatus.COMPLETE\"",
-  "error": "Object arrays cannot be loaded when allow_pickle=False"
+  "error": "Prior object-dtype gate validation failure preserved in validation_incident; pending one-time safe read-only revalidation",
+  "validation_incident": {
+    "source_run_id": 40077444649,
+    "source_job_id": 120823776779,
+    "original_stage": "validation_mismatch",
+    "cause": "object_dtype_gate_serialization",
+    "exception": "Object arrays cannot be loaded when allow_pickle=False",
+    "notebook_state": "kernel_complete",
+    "fix": "Read numeric NPZ entries with allow_pickle=False, inspect gate NPY header only, reconstruct gate membership from canonical competition input plus per-fold expert counts/AUC",
+    "no_pickle_unserialization": true,
+    "no_notebook_repush": true,
+    "no_training_restart": true,
+    "one_time_revalidation": true
+  },
+  "revalidation_attempts": 0
 }
