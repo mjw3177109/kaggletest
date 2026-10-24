@@ -181,8 +181,15 @@ class DeepFM(nn.Module):
         self.num_cols=list(num_cols)
         self.cat_lookup={name:i for i,name in enumerate(cat_cols)}
         self.num_lookup={name:i for i,name in enumerate(num_cols)}
-        self.cat_vectors=nn.ModuleList([nn.Embedding(card,EMBEDDING_DIM) for card in cards])
-        self.cat_linear=nn.ModuleList([nn.Embedding(card,1) for card in cards])
+        self.cat_vectors=nn.ModuleList([nn.Embedding(card,EMBEDDING_DIM,padding_idx=0) for card in cards])
+        self.cat_linear=nn.ModuleList([nn.Embedding(card,1,padding_idx=0) for card in cards])
+        # Stable small FM initialization; ID zero remains neutral for unseen/missing.
+        with torch.no_grad():
+            for emb in self.cat_vectors:
+                nn.init.normal_(emb.weight,mean=0.0,std=0.01)
+                emb.weight[0].zero_()
+            for emb in self.cat_linear:
+                nn.init.zeros_(emb.weight)
         self.num_vectors=nn.Parameter(torch.randn(len(num_cols),EMBEDDING_DIM)*0.01)
         self.num_linear=nn.Parameter(torch.zeros(len(num_cols)))
         self.bias=nn.Parameter(torch.zeros(()))
