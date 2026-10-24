@@ -156,11 +156,11 @@ def assert_preregistration():
         raise RuntimeError("Kaggle competition deadline gate blocked")
     if (p.get("stage")!="skipped_no_cv_gain" or p.get("submitted") is not False
         or p.get("kernel_state")!="kernel_complete"
-        or (p.get("source_artifacts") or {}).get("v2931",{}).get("sha256")
+        or (p.get("source_artifacts") or {}).get("v2932",{}).get("sha256")
            !="b2c9415e3239159eff5b670becca587e6652e49e54801c2f45c22ac489acf3fd"
         or abs(float((p.get("comparison") or {}).get("candidate_auc",0))
                -0.9611155305341598)>1e-12):
-        raise RuntimeError("V2931 terminal evidence mismatch")
+        raise RuntimeError("V2932 terminal evidence mismatch")
     if (c.get("candidate_test_hash")!=o.get("prediction_hash")
         or o.get("stage")!="complete" or o.get("submitted") is not True
         or str((o.get("submission") or {}).get("ref"))!="57446286"
