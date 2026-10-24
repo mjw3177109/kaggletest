@@ -81,6 +81,18 @@
     "worst_fold_strict_gt": -0.00005
   },
   "submission_policy": "evaluation_only_no_submission",
-  "implementation_status": "awaiting_independent_trainer_verifier_tests_workflow_review",
-  "preregistration_report": "reports/v2_9_34_preregistration.md"
+  "implementation_status": "trainer_validator_gate_workflow_14_cpu_tests_passed_prelaunch_blocked_rate_limit",
+  "preregistration_report": "reports/v2_9_34_preregistration.md",
+  "prelaunch_incident": {
+    "report": "reports/v2_9_34_prelaunch_safety_incident.md",
+    "last_gate_run_id": 40136252751,
+    "gate_reason": "authenticated_kaggle_cli_rate_limited_during_owned_kernel_status_audit",
+    "gate_category": "rate_limited",
+    "notebook_pushed": false,
+    "training_started": false,
+    "official_submission_attempted": false,
+    "latest_cpu_test_run_id": 40136161097,
+    "latest_cpu_test_passed": 14,
+    "rank_refresh_run_id": 40135599670
+  }
 }
