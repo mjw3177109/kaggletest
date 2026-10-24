@@ -1,0 +1,33 @@
+# V2.9.32 — original 37-feature FT-Transformer attention model (immutable pre-registration)
+
+Date: 2026-10-24 UTC. **Research proposal only. No V2932 Kaggle Notebook has been created, no training has started, and no submission has been attempted.** This document must precede implementation and all observed V2932 scores.
+
+## Verified champion and why V2931 was rejected
+
+The only submitted champion remains V2.9.15, official Kaggle submission **57446286**, authenticated Public LB **0.96099**, threefold CV **0.9612850399332336**, champion test prediction SHA256 **906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7**. Latest persisted authenticated Public rank **968/2884**, checked **2026-10-24 13:02:35 UTC**; this is not a current or final Private rank.
+
+V2.9.31 unique Notebook `mjw3177109/kas-v2931-foldlocal-mi-pruned-realmlp-t4-s6e10` was authenticated **COMPLETE** by strictly **--recover-only** GitHub Actions **#40110136011** at **2026-10-24 16:09:39 UTC**. Its independent 29-feature MI-pruned RealMLP threefold OOF CV is **0.959680626350906**. The one precommitted 85/15 rank fusion CV is **0.9612867596798029**, a gain of only **+0.0000017197465693730152**, paired fold gains **[+0.0000030939139116226144, -0.0000007308288288987441, +0.000002315871856173324]**. Two folds improved, but the full gain is below the mandatory +0.00005 threshold; V2931 is permanently `skipped_no_cv_gain`, **no submission or rerun**. Raw NPZ SHA256 **9c13ae6515dd1700a05a7b9edccc10ad610884bf9228ef990c57fbc35bf05320**; candidate OOF SHA256 **d28b514a3bd5357353efa8c552c12c99310074b339c2103f95410d450ff12dfb**; candidate test SHA256 **7eb61c34c216f6b151ae1f4935f57b12a96e85f0387c7b58a6d4559fdf9c7eca**. The original 37-feature MI selection independently removed the same eight features on all folds, including both delay columns, Gender, and Customer Type. This supports a hypothesis that marginal MI selection may miss conditional signal; it **does not prove causality**. Do not tune feature count or rerun V2931.
+
+Historical failures include additional PCA, route profiles, ordinal thresholds, conditional TE, travel-gated experts, extra-feature RealMLP, tree models and MI pruning. Do not repeat failed feature families or search post-hoc blend weights.
+
+## Distinct V2932 hypothesis: attention architecture, not feature selection or augmentation
+
+Change **model architecture**, not the champion's feature set. Train a compact **FT-Transformer** with feature-wise tokenization and a learnable CLS token on the **same canonical 37 V2915 engineered columns** (including its original three leakage-safe inner-fivefold TE columns). No new features, no feature pruning, no route profiles, PCA, threshold expansion, conditional TE, subgroup specialists, sample weighting, external labels or pseudo-labels. This is not a RealMLP/TabM/LightGBM/CatBoost/XGBoost rerun.
+
+Implement in **PyTorch** (no unverified third-party FT-Transformer import). Each numeric feature is train-fold mean/std standardized, projected independently to a 64-dimensional token; each categorical feature gets a train-fold-only vocabulary with a dedicated unknown/missing ID and a 64-dimensional embedding. Three original TE features are continuous tokens. Keep canonical 37-column order and categorical masks fixed. A learned CLS token attends to 37 feature tokens through exactly **2 pre-norm Transformer encoder blocks**, **4 attention heads**, **d_model=64**, **FFN hidden dimension=128**, **dropout=0.10**; final CLS binary logit head. No post-hoc architecture, hyperparameter, seed or feature search.
+
+Freeze training: `StratifiedKFold(n_splits=3, shuffle=True, random_state=20261018)`, 699635 train / 299844 test IDs identical to champion, **4 epochs**, batch size **512**, `AdamW(lr=0.001, weight_decay=0.0001)`, `BCEWithLogitsLoss`, no early stopping, no auxiliary losses, `MODEL_SEED=20261101+fold`, no ensembles or checkpoint selection. GPU must be an authenticated **NVIDIA T4**; pin and record exact Kaggle environment/PyTorch/CUDA/numpy/pandas/sklearn versions, refuse unverified hardware or changed architecture. Budget one unique Notebook and no concurrent GPU experiment. Validate memory/runtime with local dry-run first; deterministic bugs must be fixed before launch, without changing frozen scientific parameters.
+
+**Leakage safety:** outer training fold alone fits all categorical vocabularies, numeric scaling and target encoders. For its training rows, the three original TE features use **inner-fivefold cross-fitting**; outer validation and test use mappings fitted only on that outer training fold. Do not fit normalization, category vocabularies or supervised encodings on held-out labels. Save fold membership, exact selected/ordered 37 names, token types, per-fold AUC, OOF/test IDs, full OOF/test predictions, source SHA256, model config, seeds, runtime and GPU provenance.
+
+## Frozen candidate and hard promotion gates
+
+Unique **reserved, not yet created** Notebook: `mjw3177109/kas-v2932-attention-baseline37-t4-s6e10`.
+
+Only one precommitted fusion: **0.85 * rank(V2915 champion) + 0.15 * rank(V2932 FT-Transformer)** for both OOF and test, using the exact established rank convention. No weight tuning, no alternative seed, architecture or epochs after seeing results.
+
+Promote to *consider* a separate one-shot submission only if full paired 3-fold candidate CV **>= 0.96125635576833**, gain over V2915 **>= +0.00005**, **at least 2** positive paired folds, and worst paired fold gain **strictly > -0.00005**. All gates must pass together. Validate complete threefold OOF and AUC replay, fold membership, train/test ID alignment, original champion SHA, candidate SHA, model source SHA, hardware and pinned environment. The evaluator **must never submit**. A promoted result still needs a separate durable one-shot submission reservation, prediction SHA, official Kaggle submission history dedup, quota, and official submission ID recovery. **CV is not Kaggle Public LB or rank.**
+
+## Launch/recovery controls
+
+First implement independent trainer, fail-closed validator, tests, persistent unique owner reservation and Actions workflow. Verify actual branch HEAD, global Actions in_progress/queued/waiting/requested/pending, authenticated Kaggle owner/submissions/other active Notebooks and competition deadline **2026-10-31 23:59 UTC** before creating the sole Notebook. If slug exists, **--recover-only**, never a second push or training. Do not accept Kaggle rules on the user's behalf, leak tokens, bypass a gate or retry terminal failed candidates. If V2932 fails, record evidence and preregister a genuinely different direction before further GPU spend.
