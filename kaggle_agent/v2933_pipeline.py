@@ -110,9 +110,9 @@ def preflight():
         or prev.get("kernel_state")!="kernel_complete"
         or abs(float((prev.get("comparison") or {}).get("candidate_auc",0))
                -0.9611155305341598)>1e-12
-        or (prev.get("source_artifacts") or {}).get("v2931",{}).get("sha256")
+        or (prev.get("source_artifacts") or {}).get("v2932",{}).get("sha256")
            !="b2c9415e3239159eff5b670becca587e6652e49e54801c2f45c22ac489acf3fd"):
-        raise RuntimeError("V2931 terminal evidence changed")
+        raise RuntimeError("V2932 terminal evidence changed")
     if champ.get("candidate_test_hash")!="906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7":
         raise RuntimeError("V2915 official champion prediction SHA changed")
     return s
