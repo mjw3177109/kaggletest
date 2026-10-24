@@ -1,0 +1,36 @@
+name: Kaggle V2.9.33 RankNet CPU Dry-Run and Safety Tests Only
+# This workflow NEVER accesses Kaggle credentials, creates a Notebook, or submits.
+# Frozen V2933 preflight only; NO Kaggle credentials or Notebook push.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2933_preflight_tests.yml"
+permissions:
+  contents: read
+concurrency:
+  group: kaggle-s6e10-v2933-cpu-preflight
+  cancel-in-progress: false
+jobs:
+  ranknet-preflight-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned CPU-only scientific test dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1 PyYAML==6.0.2
+          python -m pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+      - name: Syntax-check all three new modules and dry-run 11 safety tests
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2933_ranknet_train.py kaggle_agent/v2933_pipeline.py kaggle_agent/v2933_actions_gate.py
+          python -m unittest discover -s tests -p 'test_v2933_ranknet.py' -v
