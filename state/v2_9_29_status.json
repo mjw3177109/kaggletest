@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.29",
-  "stage": "kernel_queued",
+  "stage": "validation_mismatch",
   "preregistered_at": "2026-10-24",
   "hypothesis": "full_service_ordinal_threshold_realmlp",
   "model_family": "global_RealMLP_TD_T4",
@@ -60,7 +60,8 @@
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "awaiting_trainer_verifier_tests_workflow_review",
   "reservation_at": "2026-10-24T11:46:07.543737+00:00",
-  "updated_at": "2026-10-24T11:46:11.570688+00:00",
-  "kernel_state": "kernel_queued",
-  "kernel_message": "mjw3177109/kas-v2929-fullservice-ordinal-realmlp-t4-s6e10 has status \"KernelWorkerStatus.QUEUED\""
+  "updated_at": "2026-10-24T12:11:16.517166+00:00",
+  "kernel_state": "kernel_complete",
+  "kernel_message": "mjw3177109/kas-v2929-fullservice-ordinal-realmlp-t4-s6e10 has status \"KernelWorkerStatus.COMPLETE\"",
+  "error": "V2929 T4/3fold/ordinal/TE provenance mismatch"
 }
