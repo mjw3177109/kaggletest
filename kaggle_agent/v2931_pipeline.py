@@ -20,7 +20,7 @@ import v2924_pipeline as v24
 ROOT=Path(__file__).resolve().parents[1]
 SLUG="playground-series-s6e10"
 BRANCH="feature/v29-autonomous-evolution"
-KERNEL="mjw3177109/kas-v2931-mi_pruned-crossfit-te-realmlp-t4-s6e10"
+KERNEL="mjw3177109/kas-v2931-foldlocal-mi-pruned-realmlp-t4-s6e10"
 STATUS=ROOT/"state/v2_9_30_status.json"
 REPORT=ROOT/"reports/v2_9_30_result.md"
 WORKDIR=ROOT/"competitions"/SLUG/"kaggle_gpu_v2931_mi_pruned"
@@ -70,7 +70,7 @@ def verify_prereg(s,allow_known_recovery=False):
         or any(s.get(k)!=v for k,v in frozen.items())
         or any(s.get(k) is not False for k in (
             "external_labels","pseudo_labels","route_features","pca_features",
-            "ordinal_threshold_features","travel_gated_experts"))
+            "ordinal_threshold_features","travel_gated_experts","new_conditional_te_features"))
         or s.get("blend")!={"v2915_rank":0.85,"v2931_rank":NEW_WEIGHT}
         or s.get("baseline_cv")!=BASELINE
         or s.get("promotion")!={"min_cv":FLOOR,"min_gain_vs_v2915":MIN_GAIN,
@@ -78,6 +78,9 @@ def verify_prereg(s,allow_known_recovery=False):
         or s.get("submission_policy")!="evaluation_only_no_submission"
         or s.get("submitted") is not False or s.get("submission_attempted") is not False
         or s.get("kernel") not in ("",None,KERNEL)
+        or (s.get("stage") not in ACTIVE and s.get("stage") not in TERMINAL)
+        or (s.get("stage")!="preregistered_not_started" and s.get("stage") not in TERMINAL
+            and s.get("kernel")!=KERNEL)
         or (s.get("stage")=="preregistered_not_started"
             and (s.get("kernel") or s.get("notebook_created") is not False
                  or s.get("training_started") is not False))):
