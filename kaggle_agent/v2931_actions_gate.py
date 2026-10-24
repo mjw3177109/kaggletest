@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-KERNEL = "mjw3177109/kas-v2931-conditional-crossfit-te-realmlp-t4-s6e10"
+KERNEL = "mjw3177109/kas-v2931-foldlocal-mi-pruned-realmlp-t4-s6e10"
 COMPETITION = "playground-series-s6e10"
 ACTIVE = ("in_progress", "queued", "waiting", "requested", "pending")
 
