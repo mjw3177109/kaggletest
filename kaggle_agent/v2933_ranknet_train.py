@@ -37,7 +37,7 @@ DUAL=["Age","Flight Distance","Inflight wifi service","Online boarding",
 PAIRS=[("Class","Type of Travel","Gender"),
        ("Inflight wifi service","Online boarding"),
        ("Class","Customer Type","Online boarding")]
-FEATURE_FAMILY="v2915_original_37_features_with_3_inner5fold_te_no_new_features"
+FEATURE_FAMILY="v2915_original37_3_inner5fold_TE_no_extra_features"
 FEATURE_COUNT=37
 EMBEDDING_DIM=16
 HIDDEN_LAYERS=(256,128)
