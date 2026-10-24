@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 import numpy as np
@@ -247,14 +248,56 @@ def verify_metrics(metrics, y, oof, train, test):
             raise ValueError("V2927 group AUC failed independent replay")
 
 
+def safe_read_prediction_npz(path):
+    """Never unpickle Kaggle output. Read numeric OOF/ID data only.
+
+    The original Notebook wrote travel gate strings with pandas.astype(str).to_numpy(),
+    which creates object-dtype NPY arrays. These cannot be loaded with
+    allow_pickle=False. Check their NPY header/shape without deserializing the
+    pickle payload, and independently reconstruct all gate memberships from
+    the canonical competition input and recorded per-fold subgroup metrics.
+    """
+    numeric = {"train_id", "target", "oof_gated_realmlp",
+               "test_id", "pred_gated_realmlp"}
+    gates = {"train_travel_type": 699635, "test_travel_type": 299844}
+    with np.load(path, allow_pickle=False) as saved:
+        if not numeric.union(gates).issubset(saved.files):
+            raise ValueError("Missing required canonical V2927 NPZ keys")
+        arrays = {key: np.asarray(saved[key]).copy() for key in numeric}
+        if (not np.issubdtype(arrays["oof_gated_realmlp"].dtype, np.number)
+            or not np.issubdtype(arrays["pred_gated_realmlp"].dtype, np.number)):
+            raise ValueError("V2927 OOF/test predictions must be numeric")
+        for key, n in (("train_id", 699635), ("target", 699635),
+                       ("oof_gated_realmlp", 699635),
+                       ("test_id", 299844), ("pred_gated_realmlp", 299844)):
+            if arrays[key].shape != (n,):
+                raise ValueError(f"V2927 unexpected shape for {key}")
+        with zipfile.ZipFile(path, "r") as archive:
+            gate_mode = {}
+            for key, n in gates.items():
+                with archive.open(key + ".npy", "r") as stream:
+                    version = np.lib.format.read_magic(stream)
+                    if version == (1, 0):
+                        shape, fortran, dtype = np.lib.format.read_array_header_1_0(stream)
+                    elif version == (2, 0):
+                        shape, fortran, dtype = np.lib.format.read_array_header_2_0(stream)
+                    else:
+                        raise ValueError("Unsupported travel gate NPY header version")
+                if shape != (n,) or fortran or dtype.kind not in {"O", "U", "S"}:
+                    raise ValueError("V2927 unsafe travel gate NPY shape/type")
+                if dtype.kind == "O":
+                    # Object payload is deliberately NEVER loaded/unpickled.
+                    gate_mode[key] = "opaque_object_header_only"
+                else:
+                    gate_mode[key] = "safe_unicode"
+                    arrays[key] = np.asarray(saved[key]).astype(str)
+    return arrays, gate_mode
+
+
 def validate(raw, s):
     newfile = v24.v23.unique(raw, "v2927_realmlp_oof.npz")
     metrics = read(v24.v23.unique(raw, "v2927_metrics.json"))
-    with np.load(newfile, allow_pickle=False) as f:
-        keys = {"train_id", "target", "oof_gated_realmlp", "test_id", "pred_gated_realmlp", "train_travel_type", "test_travel_type"}
-        if not keys.issubset(f.files):
-            raise ValueError("Missing canonical V2927 train/test OOF keys")
-        arrays = {k: np.asarray(f[k]).copy() for k in keys}
+    arrays, gate_mode = safe_read_prediction_npz(newfile)
     champion = v24.preflight()
     with tempfile.TemporaryDirectory(prefix="kas_v2927_immutable_") as temporary:
         train, test, train_id, test_id, y, champion_oof, champion_test, sources = \
@@ -264,12 +307,21 @@ def validate(raw, s):
             arrays, "oof_gated_realmlp", "pred_gated_realmlp",
             train_id, test_id, y, "V2927",
         )
-        if not np.array_equal(arrays["train_travel_type"].astype(str),
-                              train["Type of Travel"].astype(str).to_numpy()):
-            raise ValueError("V2927 saved training travel gate differs from canonical competition")
-        if not np.array_equal(arrays["test_travel_type"].astype(str),
-                              test["Type of Travel"].astype(str).to_numpy()):
-            raise ValueError("V2927 saved test travel gate differs from canonical competition")
+        for gate_key, column in (("train_travel_type", train), ("test_travel_type", test)):
+            canonical = column["Type of Travel"].astype(str).to_numpy()
+            if gate_mode[gate_key] == "safe_unicode":
+                if not np.array_equal(arrays[gate_key], canonical):
+                    raise ValueError("V2927 saved travel gate differs from canonical competition")
+            elif gate_mode[gate_key] != "opaque_object_header_only":
+                raise ValueError("Unknown V2927 travel gate serialization")
+        # Object payload cannot be authenticated without unsafe pickle. Fail
+        # closed on unexpected category counts/row IDs via verify_metrics.
+        s["travel_gate_provenance"] = {
+            "serialization": gate_mode,
+            "membership_validation": "canonical_input_IDs_plus_per_fold_expert_row_counts_and_AUC",
+            "object_pickle_loaded": False,
+            "limitation": "original object-dtype gate payload not deserialized",
+        }
         verify_metrics(metrics, y, new_oof, train, test)
         source_digest = v24.v23.audit.sha256(newfile)
         if len(source_digest) != 64:
@@ -336,9 +388,22 @@ def run(recover_only=False):
     if previous.get("stage") in TERMINAL:
         print("V2927 terminal; no Notebook creation, recovery or submission")
         return previous
+    if previous.get("stage") == "kernel_complete_pending_revalidation":
+        if not recover_only or previous.get("revalidation_attempts", 0) != 0:
+            print("V2927 pending safe revalidation: only one recover-only attempt is allowed")
+            return previous
     s = preflight()
     if s is None:
         return previous
+    if s.get("stage") == "kernel_complete_pending_revalidation":
+        if (s.get("kernel") != KERNEL or s.get("kernel_state") != "kernel_complete"
+            or s.get("notebook_created") is not True
+            or s.get("training_started") is not True
+            or (s.get("validation_incident") or {}).get("cause")
+                != "object_dtype_gate_serialization"):
+            raise RuntimeError("V2927 revalidation provenance gate failed")
+        s["revalidation_attempts"] = 1
+        persist(s)
     if not s.get("kernel"):
         if recover_only:
             print("RECOVERY ONLY: refusing to create unrecorded Kaggle Notebook")
