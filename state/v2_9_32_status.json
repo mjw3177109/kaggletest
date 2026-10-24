@@ -1,15 +1,15 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.32",
-  "stage": "pushing_kernel",
+  "stage": "kernel_running",
   "preregistered_at": "2026-10-24T16:11:00Z",
   "hypothesis": "feature_token_attention_original_champion_37_features",
   "model_family": "FT_Transformer_PyTorch_T4",
   "feature_family": "v2915_original_37_features_with_3_inner5fold_te_no_new_features",
   "intended_kernel": "mjw3177109/kas-v2932-attention-baseline37-t4-s6e10",
   "kernel": "mjw3177109/kas-v2932-attention-baseline37-t4-s6e10",
-  "notebook_created": false,
-  "training_started": false,
+  "notebook_created": true,
+  "training_started": true,
   "submitted": false,
   "submission_attempted": false,
   "baseline_features": 37,
@@ -77,5 +77,7 @@
   "implementation_status": "awaiting_independent_trainer_verifier_tests_workflow_review",
   "preregistration_report": "reports/v2_9_32_preregistration.md",
   "reservation_at": "2026-10-24T17:11:37.977960+00:00",
-  "updated_at": "2026-10-24T17:11:37.977977+00:00"
+  "updated_at": "2026-10-24T17:16:50.800679+00:00",
+  "kernel_state": "kernel_running",
+  "kernel_message": "mjw3177109/kas-v2932-attention-baseline37-t4-s6e10 has status \"KernelWorkerStatus.RUNNING\""
 }
