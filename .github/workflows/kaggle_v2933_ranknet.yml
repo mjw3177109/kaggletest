@@ -2,6 +2,7 @@ name: Kaggle V2.9.33 Pairwise RankNet MLP T4 Unique Notebook
 # V2933 frozen 37-feature pairwise RankNet. CPU safety 11/11 passed in Actions #40127014398.
 # Unique Notebook push only after authenticated global Actions/Kaggle owner gates.
 # Never submit predictions; persisted owner always --recover-only.
+# 2026-10-24T20:10Z guarded recovery poll: owner persisted; gate must choose recover_only, no second Notebook push.
 on:
   workflow_dispatch:
     inputs:
