@@ -729,6 +729,85 @@
       ],
       "experiment_id": "e2bfa907d5d62b111589d329c6d0a1f4f407e8b163249d4b25646a5af460eb4c",
       "created_at": "2026-10-24T12:14:24.939285+00:00"
+    },
+    {
+      "competition": "playground-series-s6e10",
+      "candidate": "v2930_conditional_te_realmlp",
+      "validation": "StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)",
+      "seed": 20261018,
+      "parameters": {
+        "model_seed": 20261030,
+        "model_parameters": {
+          "baseline_features": 37,
+          "new_crossfit_te_features": 8,
+          "feature_count": 45,
+          "inner_folds": 5,
+          "smoothing_prior_weight": 50,
+          "outer_folds": 3,
+          "seed": 20261018,
+          "model_seed": 20261030,
+          "epochs": 5,
+          "n_ens": 8
+        },
+        "conditional_keys": [
+          [
+            "Customer Type",
+            "Type of Travel",
+            "Class"
+          ],
+          [
+            "Class",
+            "Gender",
+            "AgeBand"
+          ],
+          [
+            "Type of Travel",
+            "AgeBand",
+            "Customer Type"
+          ],
+          [
+            "Class",
+            "DepartureDelayBand",
+            "Customer Type"
+          ],
+          [
+            "Type of Travel",
+            "ArrivalDelayBand",
+            "Class"
+          ],
+          [
+            "Customer Type",
+            "Seat comfort",
+            "Type of Travel"
+          ],
+          [
+            "Class",
+            "Online boarding",
+            "Customer Type"
+          ],
+          [
+            "Type of Travel",
+            "Inflight wifi service",
+            "Class"
+          ]
+        ],
+        "inner_folds": 5,
+        "smoothing_prior_weight": 50,
+        "fusion_weights": {
+          "v2915_rank": 0.85,
+          "v2930_rank": 0.15
+        },
+        "min_gain": 5e-05
+      },
+      "status": "skipped_no_cv_gain",
+      "cv": 0.9613286615476094,
+      "completed_at": "2026-10-24T14:50:24.561168+00:00",
+      "gpu_seconds": 915.4,
+      "kernel_sources": [
+        "mjw3177109/kas-v2930-conditional-crossfit-te-realmlp-t4-s6e10"
+      ],
+      "experiment_id": "127a003125061ed55555fd0eb0736ad7ee39f99e27ffbbdac39fc6f30639fc35",
+      "created_at": "2026-10-24T14:50:24.561563+00:00"
     }
   ]
 }
