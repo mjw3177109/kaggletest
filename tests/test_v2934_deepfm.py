@@ -3,6 +3,7 @@ import ast
 import os
 import sys
 import unittest
+from types import SimpleNamespace
 from pathlib import Path
 from unittest.mock import patch
 
@@ -229,6 +230,30 @@ class V2934Safety(unittest.TestCase):
             with patch.object(gate,"kaggle",side_effect=fake_kaggle):
                 with self.assertRaises(RuntimeError):
                     gate.assert_kaggle_idle_and_official()
+
+    def test_kaggle_cli_pacing_keeps_all_status_reads(self):
+        seen=[]
+        def fake_run(argv, **kwargs):
+            seen.append(argv)
+            return SimpleNamespace(returncode=0,stdout="KernelWorkerStatus.COMPLETE",stderr="")
+        with patch.object(gate.time,"monotonic",side_effect=[10.0,10.5,13.0]), \
+             patch.object(gate.time,"sleep") as sleep, \
+             patch.object(gate.subprocess,"run",side_effect=fake_run):
+            gate._last_kaggle_call_at=None
+            self.assertIn("COMPLETE",gate.kaggle(["kernels","status","owner/first"]))
+            self.assertIn("COMPLETE",gate.kaggle(["kernels","status","owner/second"]))
+            sleep.assert_called_once()
+            self.assertAlmostEqual(sleep.call_args.args[0],2.5)
+            self.assertEqual(len(seen),2)
+        gate._last_kaggle_call_at=None
+
+    def test_kaggle_cli_429_fails_closed(self):
+        with patch.object(gate.subprocess,"run",return_value=SimpleNamespace(
+                returncode=1,stdout="",stderr="HTTP 429 Too Many Requests")):
+            gate._last_kaggle_call_at=None
+            with self.assertRaisesRegex(RuntimeError,"rate_limited"):
+                gate.kaggle(["kernels","status","owner/blocked"])
+        gate._last_kaggle_call_at=None
 
     def test_no_submission_pickle_or_workflow_bypass(self):
         paths=[ROOT/"kaggle_agent/v2934_deepfm_train.py",
