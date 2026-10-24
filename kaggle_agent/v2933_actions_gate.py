@@ -101,7 +101,7 @@ def assert_kaggle_idle_and_official():
 
 
 def assert_preregistration():
-    s=read("state/v2_9_32_status.json")
+    s=read("state/v2_9_33_status.json")
     p=read("state/v2_9_32_status.json")
     c=read("state/v2_9_15_status.json")
     o=read("state/v2_9_15_submission.json")
