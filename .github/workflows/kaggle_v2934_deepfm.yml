@@ -84,7 +84,7 @@ jobs:
           set -euo pipefail
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
-          for file in state/v2_9_33_status.json state/v2_9_experiments.json reports/v2_9_33_result.md; do
+          for file in state/v2_9_34_status.json state/v2_9_experiments.json reports/v2_9_34_result.md; do
             if test -f "$file"; then git add -- "$file"; fi
           done
           if git diff --cached --quiet; then exit 0; fi
@@ -102,6 +102,6 @@ jobs:
         with:
           name: v2934-deepfm-status
           path: |
-            state/v2_9_33_status.json
-            reports/v2_9_33_result.md
+            state/v2_9_34_status.json
+            reports/v2_9_34_result.md
           if-no-files-found: ignore
