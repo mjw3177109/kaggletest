@@ -82,18 +82,18 @@ class V2927FrozenSafety(unittest.TestCase):
               patch.object(m, "make_model", return_value=FakeModel()) as model,
               patch.dict(sys.modules, {"torch": fake_torch})):
             val_idx, test_idx, pv, pt, result = m.fit_expert(
-                train, test, targets, np.arange(600), np.arange(600, 800),
+                train, test, targets, np.r_[0:300, 400:700], np.r_[300:400, 700:800],
                 fold=0, expert_index=1, group="Business travel")
         self.assertEqual(len(val_idx), 100)
         self.assertTrue(np.all(val_idx >= 600))
         self.assertTrue(np.all(val_idx < 800))
         self.assertEqual(len(test_idx), 120)
         self.assertTrue(np.all(test_idx >= 120))
-        self.assertEqual(result["train_rows"], 200)
+        self.assertEqual(result["train_rows"], 300)
         self.assertEqual(result["validation_rows"], 100)
         self.assertEqual(result["features"], 46)
         self.assertEqual(result["model_seed"], 20261028)
-        self.assertEqual(seen, [("fit", 200, 200)])
+        self.assertEqual(seen, [("fit", 300, 300)])
         self.assertEqual(model.call_count, 1)
         self.assertTrue(np.isfinite(pv).all() and np.isfinite(pt).all())
 
