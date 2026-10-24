@@ -21,8 +21,8 @@ ROOT=Path(__file__).resolve().parents[1]
 SLUG="playground-series-s6e10"
 BRANCH="feature/v29-autonomous-evolution"
 KERNEL="mjw3177109/kas-v2931-foldlocal-mi-pruned-realmlp-t4-s6e10"
-STATUS=ROOT/"state/v2_9_30_status.json"
-REPORT=ROOT/"reports/v2_9_30_result.md"
+STATUS=ROOT/"state/v2_9_31_status.json"
+REPORT=ROOT/"reports/v2_9_31_result.md"
 WORKDIR=ROOT/"competitions"/SLUG/"kaggle_gpu_v2931_mi_pruned"
 OUTDIR=ROOT/"competitions"/SLUG/"results_v2931_mi_pruned"
 LEDGER=ROOT/"state/v2_9_experiments.json"
@@ -114,7 +114,7 @@ def persist(s):
     m=s.get("metrics") or {}
     REPORT.parent.mkdir(parents=True,exist_ok=True)
     REPORT.write_text(
-        "# V2.9.31 mi_pruned crossfit TE RealMLP-TD threefold OOF\n\n"
+        "# V2.9.31 fold-local MI pruned RealMLP-TD threefold OOF\n\n"
         +f"- UTC: {s['updated_at']}\n"
         +f"- Stage: {s.get('stage')}\n"
         +f"- Unique Notebook: https://www.kaggle.com/code/{KERNEL}\n"
