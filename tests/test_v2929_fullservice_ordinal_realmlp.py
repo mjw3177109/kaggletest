@@ -27,7 +27,12 @@ def frame(n,seed=1):
 class V2929Safety(unittest.TestCase):
     def test_preregistered_owner_and_immutable_features(self):
         s=p.read(p.STATUS)
-        self.assertTrue(p.verify_prereg(s))
+        if s["stage"]=="validation_mismatch":
+            self.assertFalse(p.verify_prereg(s))
+            self.assertTrue(p.known_provenance_recovery(s,True))
+            self.assertTrue(p.verify_prereg(s,allow_known_recovery=True))
+        else:
+            self.assertTrue(p.verify_prereg(s))
         if s["stage"]=="preregistered_not_started":
             self.assertEqual(s["kernel"],"")
             self.assertFalse(s["notebook_created"])
@@ -91,6 +96,24 @@ class V2929Safety(unittest.TestCase):
         pd.testing.assert_frame_equal(a,c)
         self.assertTrue(a.columns.equals(d.columns))
         self.assertFalse(np.array_equal(b["ordinal_ge5_inflight_wifi_service"],b2["ordinal_ge5_inflight_wifi_service"]))
+
+    def test_exact_provenance_alias_and_no_terminal_bypass(self):
+        self.assertEqual(p.EXPECTED_FEATURE_FAMILY,
+            "v2915_baseline_plus_13x5_service_ordinal_thresholds_plus_8_dual_service_cats")
+        self.assertEqual(p.TRAINER_FEATURE_FAMILY,
+            "v2929_baseline_plus_13x5_service_ordinal_thresholds_plus_8_dual_service_cats")
+        s=p.read(p.STATUS)
+        if s.get("stage")=="validation_mismatch":
+            self.assertTrue(p.known_provenance_recovery(s,True))
+            self.assertFalse(p.known_provenance_recovery(s,False))
+            bad=dict(s,error="unrelated mismatch")
+            self.assertFalse(p.known_provenance_recovery(bad,True))
+            bad=dict(s,kernel_state="kernel_running")
+            self.assertFalse(p.known_provenance_recovery(bad,True))
+            bad=dict(s,submitted=True)
+            self.assertFalse(p.known_provenance_recovery(bad,True))
+        else:
+            self.assertFalse(p.known_provenance_recovery(s,True))
 
     def test_no_submit_recovery_only_and_fold_oof(self):
         src=(ROOT/"kaggle_agent/v2929_pipeline.py").read_text(encoding="utf-8")
