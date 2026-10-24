@@ -1,3 +1,4 @@
+# 2026-10-24 UTC: strictly read-only recovery of already reserved V2934 slug; no Notebook push or retrain. Fail-closed full owner audit.
 name: Kaggle V2.9.34 Explicit Second-Order DeepFM T4 Unique Notebook
 # 2026-10-24 22:18 UTC: retry once after 16/16 CPU tests and paced authenticated full-owner audit; fail closed on 429 or active work.
 # 2026-10-24 21:54 UTC: 14/14 CPU safety checks passed; cancellation acknowledged twice for historical unrelated Notebook; launch only if gate passes.
