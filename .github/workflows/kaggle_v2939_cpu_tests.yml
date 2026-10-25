@@ -1,0 +1,39 @@
+# V2939 CPU-only offline safety CI. No Kaggle authentication, data access, training or submission.
+name: Kaggle V2939 Read-only Median Safety Tests
+on:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2939_cpu_tests.yml"
+      - "kaggle_agent/v2939_actions_gate.py"
+      - "kaggle_agent/v2939_readonly_median.py"
+      - "tests/test_v2939_readonly_median.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-scientific-and-safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned offline scientific dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1
+      - name: Compile independent gate and read-only evaluator
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2939_actions_gate.py kaggle_agent/v2939_readonly_median.py
+      - name: Run 21 offline scientific and safety tests
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_v2939_readonly_median.py' -v
