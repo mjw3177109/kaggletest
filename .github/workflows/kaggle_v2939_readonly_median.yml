@@ -1,0 +1,113 @@
+# V2939 one-shot read-only CPU median OOF. No Notebook push, fitting or Kaggle submission.
+name: Kaggle V2939 Immutable Read-only Median
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2939_readonly_median.yml"
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: kaggle-s6e10-v2939-exclusive-readonly
+  cancel-in-progress: false
+
+jobs:
+  guarded-median-oof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      GH_API_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout immutable feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Kaggle CLI and pinned scientific verification environment
+        run: |
+          set -euo pipefail
+          python -m pip install -r requirements.txt
+          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1
+      - name: Compile and pass 23 offline safety and scientific tests
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2939_actions_gate.py kaggle_agent/v2939_readonly_median.py
+          python -m unittest discover -s tests -p 'test_v2939_readonly_median.py' -v
+      - name: Authenticated owner-wide Kaggle and global Actions safety gate
+        id: gate
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REPOSITORY}" = "mjw3177109/kaggletest"
+          test "${KAGGLE_USERNAME}" = "mjw3177109"
+          test -n "${KAGGLE_API_TOKEN}"
+          python kaggle_agent/v2939_actions_gate.py
+      - name: Reserve this unique read-only GitHub run before any source downloads
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          V2939_GATE_PASSED: "true"
+        run: |
+          set -euo pipefail
+          python kaggle_agent/v2939_actions_gate.py --reserve
+      - name: Durably persist exclusive run reservation
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/v2_9_39_status.json
+          git diff --cached --quiet && { echo "Missing exclusive reservation"; exit 1; }
+          git commit -m "bot: reserve unique V2939 read-only run ${GITHUB_RUN_ID}"
+          git push origin HEAD:feature/v29-autonomous-evolution
+      - name: Reverify durable remote reservation and global idle
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          V2939_GATE_PASSED: "true"
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, "kaggle_agent")
+          import v2939_actions_gate as g
+          g.preregistration(allow_reserved=True)
+          g.source_gate.common.assert_no_other_actions()
+          g.source_gate.assert_remote_head()
+          print("Exclusive V2939 reservation confirmed; no other active Actions")
+          PY
+      - name: Evaluate exactly one frozen median candidate, no fit and no submission
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          V2939_GATE_PASSED: "true"
+        run: |
+          set -euo pipefail
+          python kaggle_agent/v2939_readonly_median.py
+      - name: Persist terminal audited OOF result without submitting
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          test -f reports/v2_9_39_readonly_result.md
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/v2_9_39_status.json reports/v2_9_39_readonly_result.md
+          git diff --cached --quiet && { echo "No verified terminal result"; exit 1; }
+          git commit -m "bot: persist V2939 immutable median OOF; no submission"
+          git push origin HEAD:feature/v29-autonomous-evolution
+      - name: Archive immutable source SHA and OOF audit only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2939-readonly-median-evidence
+          path: |
+            v2939_readonly_evidence.json
+            state/v2_9_39_status.json
+            reports/v2_9_39_readonly_result.md
+          if-no-files-found: ignore
