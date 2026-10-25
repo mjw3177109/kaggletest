@@ -8,6 +8,10 @@ on:
       - state/v2_9_42_status.json
       - reports/v2_9_42_preregistration.md
       - tests/test_v2942_prereg_safety.py
+      - kaggle_agent/v24_rank_tracker.py
+      - tests/test_v24_rank_tracker.py
+      - tests/test_v24_rank_tracker_safety.py
+      - .github/workflows/kaggle_v299_rank_refresh.yml
       - .github/workflows/kaggle_v2942_prereg_safety.yml
   workflow_dispatch:
 permissions:
@@ -30,3 +34,5 @@ jobs:
         run: |
           set -euo pipefail
           python -m unittest discover -s tests -p 'test_v2942_prereg_safety.py' -v
+          python -m unittest discover -s tests -p 'test_v24_rank_tracker.py' -v
+          python -m unittest discover -s tests -p 'test_v24_rank_tracker_safety.py' -v
