@@ -1,0 +1,58 @@
+{
+  "competition": "playground-series-s6e10",
+  "version": "V2.9.39",
+  "stage": "preregistered_not_started",
+  "preregistered_at": "2026-10-25",
+  "hypothesis": "conservative_order_statistic_median_of_champion_v2916_v2930_ranks",
+  "model_family": "read_only_robust_three_source_median_no_fit",
+  "execution": "guarded_one_shot_readonly_cpu",
+  "notebook_created": false,
+  "training_started": false,
+  "submitted": false,
+  "submission_attempted": false,
+  "evaluation_only": true,
+  "no_new_model_fit": true,
+  "cpu_only": true,
+  "run_reservation_id": null,
+  "outer_folds": 3,
+  "seed": 20261018,
+  "train_rows": 699635,
+  "test_rows": 299844,
+  "rank_method": "scipy.stats.rankdata(method=average)/n",
+  "median_rule": "np.median(np.stack([r0,r16,r30],axis=0),axis=0)",
+  "candidate_formula": "r0+0.15*(median(r0,r16,r30)-r0)",
+  "fixed_shrinkage": 0.15,
+  "baseline_cv": 0.9612850399332336,
+  "official_public_lb": 0.96099,
+  "official_submission_id": 57446286,
+  "source_sha256": {
+    "v2915_npz": "46ad63f08537cd8d61c4c8e8698efc20bb3c8fbad4eb0d94ecd7c993b2d894b9",
+    "v2915_test": "906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7",
+    "v2916_npz": "05facb3098732f1348928c8de62cefae3ecb64b5b1fabdb3a7a84342b7bfe0d7",
+    "v2930_npz": "45e96e595676ec91a1e6c8eea98f975e63c9c0762412b898fe549c0636107362"
+  },
+  "previous_v2938": {
+    "stage": "skipped_no_cv_gain",
+    "run_id": 40164585333,
+    "standalone_cv": 0.9574607832211844,
+    "full_cv": 0.9611212529755768,
+    "gain": -0.0001637869576567308,
+    "fold_gain": [
+      -0.00018233594862138158,
+      -0.0001240216634323943,
+      -0.00018664582521299433
+    ],
+    "submitted": false
+  },
+  "promotion": {
+    "min_cv": 0.96125635576833,
+    "min_gain_vs_v2915": 0.00005,
+    "min_positive_folds": 2,
+    "worst_fold_strict_gt": -0.00005
+  },
+  "submission_policy": "evaluation_only_no_submission",
+  "implementation_status": "awaiting_independent_readonly_evaluator_tests_and_guarded_workflow",
+  "preregistration_report": "reports/v2_9_39_preregistration.md",
+  "failure_diagnostic": "reports/v2_9_38_failure_diagnostic.md",
+  "next_action": "Implement independent label-free median evaluator, strict SHA/ID/fold verification, safety tests and one-shot read-only Actions gate; no training or submission."
+}
