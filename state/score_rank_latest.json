@@ -1,11 +1,11 @@
 {
   "competition": "playground-series-s6e10",
-  "checked_at": "2026-10-25T10:11:48.382630+00:00",
+  "checked_at": "2026-10-25T11:15:12.248810+00:00",
   "ranking_type": "Public",
-  "rank": 993,
+  "rank": 996,
   "rank_verified": true,
   "rank_source": "kaggle_authenticated_userRank",
-  "ranked_teams": 2974,
+  "ranked_teams": 2979,
   "score": {
     "source": "v2_5_status.json",
     "model": "V2.5 blend_rank",
