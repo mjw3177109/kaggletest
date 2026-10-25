@@ -1,3 +1,4 @@
+# 2026-10-25 02:30 UTC: authenticated read-only V2936 status recheck; never push Kaggle Notebook, train, or submit.
 # V2936 read-only Kaggle missing-slug diagnostic. No Notebook push, GPU or submission.
 name: Kaggle V2.9.36 Read-only Owner Status Diagnostic
 on:
