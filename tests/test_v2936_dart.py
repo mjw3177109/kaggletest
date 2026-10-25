@@ -104,13 +104,13 @@ class FrozenDart(unittest.TestCase):
         self.assertIn("enc.transform(te_val)",source)
         self.assertNotIn("y[iva]",source.split("model.fit(")[0])
     def test_16_owner_rate_limit_fails_closed(self):
-        import v2936_actions_gate as safety
-        with patch.object(safety,"kaggle",side_effect=RuntimeError("rate_limited")):
+        from types import SimpleNamespace
+        with patch.object(p.subprocess,"run",return_value=SimpleNamespace(returncode=1,stderr="HTTP 429 rate limit",stdout="")):
             with self.assertRaises(RuntimeError):
                 p.checked_owner_exists()
     def test_17_owner_status_present_never_push(self):
-        import v2936_actions_gate as safety
-        with patch.object(safety,"kaggle",return_value="KernelWorkerStatus.QUEUED"):
+        from types import SimpleNamespace
+        with patch.object(p.subprocess,"run",return_value=SimpleNamespace(returncode=0,stderr="",stdout="KernelWorkerStatus.QUEUED")):
             self.assertTrue(p.checked_owner_exists())
     def test_18_exact_denial_and_owner_absence(self):
         from types import SimpleNamespace
