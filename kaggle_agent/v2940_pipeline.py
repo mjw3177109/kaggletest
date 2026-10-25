@@ -15,8 +15,8 @@ import v2940_monotone_train as train
 import v2940_actions_gate as gate
 
 ROOT=Path(__file__).resolve().parents[1]
-STATUS=ROOT/"state/v2_9_38_status.json"
-REPORT=ROOT/"reports/v2_9_38_result.md"
+STATUS=ROOT/"state/v2_9_40_status.json"
+REPORT=ROOT/"reports/v2_9_40_result.md"
 BASELINE=0.9612850399332336
 MIN_GAIN=0.00005
 MIN_CV=0.96125635576833
@@ -72,7 +72,7 @@ def load_candidate(folder):
     return artifact,metrics,data
 
 def validate(folder):
-    s=gate.read("state/v2_9_38_status.json")
+    s=gate.read("state/v2_9_40_status.json")
     if (s.get("stage")!="run_reserved" or str(s.get("run_reservation_id"))!=os.getenv("GITHUB_RUN_ID")
         or s.get("run_reservation_sha256")!=gate.fingerprint(s)):
         raise RuntimeError("V2940 one-shot reservation invalid at validation")
@@ -177,7 +177,7 @@ if __name__=="__main__":
     try:validate(args.output_directory)
     except Exception as exc:
         # Record only a clear failure, never a fabricated CV.
-        s=gate.read("state/v2_9_38_status.json")
+        s=gate.read("state/v2_9_40_status.json")
         if s.get("stage")=="run_reserved":
             s.update(stage="validation_mismatch",error=str(exc)[-2000:],
                      submitted=False,updated_at=datetime.now(timezone.utc).isoformat())
