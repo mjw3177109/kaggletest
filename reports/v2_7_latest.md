@@ -23,8 +23,8 @@
 ## 当前冠军分数对应的官方名次
 
 - 此名次关联的 Public LB：0.96035
-- 当前 Public 排名：**第 1017 名 / 3027 支队伍**
-- 排名核验 UTC：2026-10-25T17:53:53.923561+00:00
+- 当前 Public 排名：**第 1022 名 / 3031 支队伍**
+- 排名核验 UTC：2026-10-25T18:56:19.610775+00:00
 - 排名证据：kaggle_authenticated_userRank
 - 官方排行榜：https://www.kaggle.com/competitions/playground-series-s6e10/leaderboard
 
