@@ -1,0 +1,109 @@
+{
+  "competition": "playground-series-s6e10",
+  "version": "V2.9.42",
+  "stage": "preregistered_not_started",
+  "preregistered_at": "2026-10-25",
+  "hypothesis": "foldsafe_original37_numeric23_random_fourier_rbf_interactions_cpu",
+  "execution": "guarded_one_shot_github_actions_cpu_not_implemented",
+  "notebook_created": false,
+  "training_started": false,
+  "submitted": false,
+  "submission_attempted": false,
+  "run_reservation_id": null,
+  "model_family": "sklearn_1_6_1_RBFSampler128_numeric23_plus_linear_numeric23_OHE14_logistic",
+  "train_rows": 699635,
+  "test_rows": 299844,
+  "baseline_features": 37,
+  "categorical_inputs": 14,
+  "numeric_inputs": 23,
+  "protected_target_encoded_features": 3,
+  "outer_folds": 3,
+  "outer_seed": 20261018,
+  "inner_target_folds": 5,
+  "target_encoder": {
+    "target_type": "binary",
+    "smooth": "auto",
+    "cv": 5,
+    "shuffle": true,
+    "random_state": "20261018+fold",
+    "train_inner_oof_only": true
+  },
+  "ohe": {
+    "handle_unknown": "infrequent_if_exist",
+    "max_categories": 32,
+    "sparse_output": true
+  },
+  "numeric": {
+    "imputer": "outer_train_median",
+    "scaler": "StandardScaler",
+    "parallel_linear_and_rff": true
+  },
+  "rff": {
+    "gamma": 0.043478260869565216,
+    "n_components": 128,
+    "random_state": "20261109+fold",
+    "fit_on": "outer_train_only"
+  },
+  "column_transformer": {
+    "branches": [
+      "categorical",
+      "numeric_linear",
+      "numeric_rff"
+    ],
+    "sparse_threshold": 1
+  },
+  "model_parameters": {
+    "penalty": "l2",
+    "C": 0.25,
+    "solver": "lbfgs",
+    "max_iter": 300,
+    "tol": 0.0001,
+    "fit_intercept": true,
+    "class_weight": null
+  },
+  "environment": {
+    "python": "3.11",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "scipy": "1.15.3",
+    "sklearn": "1.6.1",
+    "device": "cpu",
+    "omp_num_threads": 4
+  },
+  "blend": {
+    "v2915_rank": 0.85,
+    "v2942_rank": 0.15,
+    "rank_method": "average",
+    "oof_and_test_ranked_separately": true
+  },
+  "baseline_cv": 0.9612850399332336,
+  "champion_test_prediction_sha256": "906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7",
+  "official_submission_id": 57446286,
+  "official_public_lb": 0.96099,
+  "last_persisted_authenticated_public_rank": {
+    "rank": 984,
+    "ranked_teams": 2931,
+    "checked_at": "2026-10-25T02:44:10.521814+00:00",
+    "freshness": "historical_not_current"
+  },
+  "previous_v2941": {
+    "stage": "blocked_prelaunch_no_training",
+    "first_launch_run_id": "40185504849",
+    "run_reservation_id": null,
+    "training_started": false,
+    "submitted": false,
+    "retry_prohibited": true
+  },
+  "promotion": {
+    "min_cv": 0.96125635576833,
+    "min_gain_vs_v2915": 0.00005,
+    "min_positive_folds": 2,
+    "worst_fold_strict_gt": -0.00005
+  },
+  "submission_policy": "evaluation_only_no_submission",
+  "implementation_status": "awaiting_independent_trainer_validator_safety_tests_and_guarded_workflow",
+  "kaggle_authenticated_owner_state_currently_verified": false,
+  "prelaunch_allowed": false,
+  "preregistration_report": "reports/v2_9_42_preregistration.md",
+  "next_action": "Implement and offline-test independent V2942 code; authenticate all Kaggle owner kernels and official submission evidence, verify all five GitHub Actions activity states and pinned synthetic fit before any single authorized run. No V2941 retrigger."
+}
