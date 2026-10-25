@@ -83,7 +83,7 @@ class TestV2942Preregistration(unittest.TestCase):
         self.assertEqual(self.s["last_persisted_authenticated_public_rank"]["freshness"], "historical_not_current")
 
     def test_preregistration_no_launch_permission(self):
-        self.assertIn("not authorization to launch", self.report)
+        self.assertIn("**not** authorization to launch", self.report)
         self.assertIn(">=3 seconds", self.report)
         self.assertIn("429", self.report)
         self.assertIn("No implicit Kaggle rule acceptance", self.report)
