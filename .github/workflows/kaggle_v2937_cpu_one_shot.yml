@@ -1,7 +1,13 @@
+# 2026-10-25: 20/20 CPU safety PASS Actions #40157853975; zero global active Actions; guarded first one-shot launch only. Owner-wide Kaggle checks remain mandatory.
 # V2937 immutable one-shot CPU GOSS. Initially dispatch-only; never retrain a reserved run.
 name: Kaggle V2937 GOSS One-Shot CPU
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2937_cpu_one_shot.yml"
 permissions:
   contents: write
   actions: read
