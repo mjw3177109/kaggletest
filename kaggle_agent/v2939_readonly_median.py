@@ -51,9 +51,10 @@ def median_consensus(champion, source16, source30):
     return candidate, disagree
 
 def evaluate():
-    s = gate.preregistration()
-    if s.get("stage") != "preregistered_not_started":
-        raise RuntimeError("V2939 already evaluated; no repeat")
+    s = gate.preregistration(allow_reserved=True)
+    if s.get("stage") != "run_reserved":
+        raise RuntimeError("V2939 not exclusively reserved; no evaluation")
+    gate.source_gate.common.assert_no_other_actions()
     gate.source_gate.assert_remote_head()
     with tempfile.TemporaryDirectory(prefix="kas_v2939_median_readonly_") as td:
         temp = Path(td)
