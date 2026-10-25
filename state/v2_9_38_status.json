@@ -1,13 +1,13 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.38",
-  "stage": "run_reserved",
+  "stage": "skipped_no_cv_gain",
   "preregistered_at": "2026-10-25",
   "hypothesis": "cpu_catboost_ordered_original37_no_native_ctr",
   "model_family": "CatBoost_1_2_8_Ordered_CPU_original37",
   "execution": "guarded_one_shot_github_actions_cpu",
   "notebook_created": false,
-  "training_started": false,
+  "training_started": true,
   "submitted": false,
   "submission_attempted": false,
   "run_reservation_id": "40164585333",
@@ -80,5 +80,70 @@
   "failure_diagnostic": "reports/v2_9_37_failure_diagnostic.md",
   "next_action": "Implement pinned CPU-only Ordered CatBoost preflight, independent trainer/validator, exclusive one-shot reservation and safety tests. No training before guards.",
   "run_reservation_sha256": "7d31c590d542aa5dd583c720a4eb5243c47864ca13280e410c3ec0233ff01148",
-  "updated_at": "2026-10-25T05:20:37.321874+00:00"
+  "updated_at": "2026-10-25T05:38:57.406215+00:00",
+  "full_cv": 0.9611212529755768,
+  "standalone_cv": 0.9574607832211844,
+  "gain_vs_champion": -0.0001637869576567308,
+  "fold_auc": [
+    0.956927336181431,
+    0.9579525828087327,
+    0.9575212936232009
+  ],
+  "fold_gain": [
+    -0.00018233594862138158,
+    -0.0001240216634323943,
+    -0.00018664582521299433
+  ],
+  "positive_folds": 0,
+  "promotable": false,
+  "source_npz_sha256": "c07d9f19e0d45eb9706174554cbfaf3d94089217f66da2d1e6ffa61303b509ef",
+  "candidate_oof_sha256": "455dd333ea3f76afcb4088a8475139f4b8ab8fdc3e79cecd1837d5b4bfe4631a",
+  "candidate_test_sha256": "b080b9ba5bc36cdb81dcb7db981401089b74712dda13ec53f6e9cbefbe711448",
+  "champion_prediction_sha256": "906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7",
+  "verified_source_artifacts": {
+    "v25": {
+      "notebook": "mjw3177109/kas-v25-gpu-te-playground-series-s6e10",
+      "sha256": "f86ad876ac279865c059d4466ce76a7f7cfcae1a11a5ed45f68092136bdd5a74",
+      "submission_sha256": "adb4b48b917f7e8e86ba4fb5a723069e185b27a0dfe5f7ed814beaf01af0c92f"
+    },
+    "v28": {
+      "notebook": "mjw3177109/kas-v28-catboost-playground-series-s6e10",
+      "sha256": "06170ae706973234a7b97c2dc3e18ca6bd0f3b72a0e48f605ab4b9d0313e8691",
+      "submission_sha256": "22bc466b10bb8944cb8296ee47c7231fc780310aee4d1c12cecd33932a7f41af"
+    },
+    "v296": {
+      "notebook": "mjw3177109/kas-v296-realmlp-full-s6e10",
+      "sha256": "ee849ba5ae5aafa57998df48c5c612eaf0227461100def5aabc4c9096314a598"
+    },
+    "v297": {
+      "notebook": "mjw3177109/kas-v297-conditional-cpu-s6e10",
+      "sha256": "92a92e1ad0e5a44d27aba6ea7d3c5fad779d01f799f9b838911c3c03cea6c3a8"
+    },
+    "v294": {
+      "notebook": "mjw3177109/kas-v294-original-route-playground-series-s6e10",
+      "sha256": "9de31b2f509e4f1973f5df9f560200d2e71344d7b4f9ce4a1145f4e53f4797fe",
+      "submission_sha256": "1db97da7c58789d6bffbf7f2bcea67ba134239bbab4e647109262e03e97de48a"
+    },
+    "v2913": {
+      "notebook": "mjw3177109/kas-v2913-realmlp-ens8-t4-s6e10",
+      "sha256": "a809ebf41f9ff1784d3be300e70b367a4f174a2d7eefd75b9f1c1ddf8e0ea800"
+    },
+    "v2914": {
+      "notebook": "mjw3177109/kas-v2914-dual-numeric-realmlp-t4-s6e10",
+      "sha256": "350571c8b41e7647089c92b16fbd7f298a6de6a8154a0cc869cc7c4342e6bd20"
+    },
+    "v2915": {
+      "notebook": "mjw3177109/kas-v2915-realmlp-5epoch-t4-s6e10",
+      "sha256": "46ad63f08537cd8d61c4c8e8698efc20bb3c8fbad4eb0d94ecd7c993b2d894b9"
+    }
+  },
+  "environment_versions": {
+    "catboost": "1.2.8",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "scipy": "1.15.3",
+    "sklearn": "1.6.1",
+    "python": "3.11.17",
+    "device": "cpu"
+  }
 }
