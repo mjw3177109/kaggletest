@@ -83,6 +83,31 @@ class TestV2942(unittest.TestCase):
         s=json.loads((ROOT/"state/v2_9_41_status.json").read_text())
         self.assertTrue(s["retry_prohibited"])
         self.assertEqual(s["stage"],"blocked_prelaunch_no_training")
+    def test_synthetic_full_fold_with_inner_te(self):
+        import numpy as np
+        import pandas as pd
+        rng=np.random.default_rng(2942)
+        rows=300
+        raw={}
+        for col in m.CANONICAL[:21]:
+            if col in m.CATS:
+                raw[col]=rng.choice(["A","B","C"],size=rows)
+            else:
+                raw[col]=rng.normal(size=rows)
+        frame=pd.DataFrame(raw)
+        frame.insert(0,"id",np.arange(rows,dtype=np.int64))
+        y=np.array([0,1]*150,dtype=np.int8)
+        itr=np.arange(200,dtype=np.int64)
+        iva=np.arange(200,300,dtype=np.int64)
+        pv,pt,info=m.fit_fold(frame,frame.iloc[:24].copy(),y,itr,iva,0)
+        self.assertEqual(pv.shape,(100,))
+        self.assertEqual(pt.shape,(24,))
+        self.assertEqual(info["features"],37)
+        self.assertEqual(info["feature_order"],m.CANONICAL)
+        for key in ("rff_weights_sha256","numeric_linear_median_sha256",
+                    "numeric_linear_scaler_sha256","numeric_rff_median_sha256",
+                    "numeric_rff_scaler_sha256","validation_index_sha256"):
+            self.assertEqual(len(info[key]),64)
     def test_original_data_guards(self):
         s=(ROOT/"kaggle_agent/v2942_rff_train.py").read_text()
         for x in ("Duplicate official IDs","Original 21 raw train columns changed","np.isin(y,[0,1])"):self.assertIn(x,s)
