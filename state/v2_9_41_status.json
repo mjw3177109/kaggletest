@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.41",
-  "stage": "preregistered_not_started",
+  "stage": "blocked_prelaunch_no_training",
   "preregistered_at": "2026-10-25",
   "hypothesis": "foldsafe_spline_additive_logistic_cpu_original37",
   "model_family": "sklearn_1_6_1_spline_additive_logistic",
@@ -92,8 +92,14 @@
     "worst_fold_strict_gt": -0.00005
   },
   "submission_policy": "evaluation_only_no_submission",
-  "implementation_status": "awaiting_independent_trainer_validator_safety_tests_and_guarded_workflow",
+  "implementation_status": "implemented_pinned_synthetic_tested_first_launch_blocked",
   "preregistration_report": "reports/v2_9_41_preregistration.md",
   "failure_diagnostic": "reports/v2_9_40_failure_diagnostic.md",
-  "next_action": "Implement pinned CPU spline-additive logistic trainer, synthetic preflight, strict independent threefold OOF validator, owner-wide gate and durable one-shot run reservation. Do not train before guards."
+  "next_action": "Do not re-trigger or train V2941. Preserve failed run; independently preregister and safety-review genuinely different V2942 before any new first launch.",
+  "first_launch_run_id": "40185504849",
+  "first_launch_conclusion": "failure_before_kaggle_gate_and_reservation",
+  "first_launch_at": "2026-10-25T10:36:59Z",
+  "retry_prohibited": true,
+  "prelaunch_incident_report": "reports/v2_9_41_prelaunch_safety_incident.md",
+  "updated_at": "2026-10-25T10:57:29Z"
 }
