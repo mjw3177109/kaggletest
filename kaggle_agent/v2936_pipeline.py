@@ -141,25 +141,32 @@ def persist(s):
 
 
 def checked_owner_exists():
-    """Authenticated paced owner check. Any 429/unknown response fails closed."""
+    """Exact owner-slug missing check; permission-denied alone is NEVER proof."""
+    import time
     import v2936_actions_gate as gate
-    try:
-        status=gate.kaggle(["kernels","status",KERNEL],timeout=90)
-    except LookupError:
-        status=None
-    if status is not None:
-        if "KernelWorkerStatus." in status:
+    probe=subprocess.run(["kaggle","kernels","status",KERNEL],
+                         capture_output=True,text=True,timeout=90)
+    if probe.returncode==0:
+        if "KernelWorkerStatus." in (probe.stdout or ""):
             return True
-        raise RuntimeError("V2936 owner status ambiguous; refuse Notebook push")
+        raise RuntimeError("Authenticated V2936 owner status ambiguous")
+    diagnostic=(probe.stderr or "")+"\n"+(probe.stdout or "")
+    expected=("Cannot access kernel '"+KERNEL+
+              "' (Permission 'kernels.get' was denied).")
+    if expected not in diagnostic or "wrong kernel slug" not in diagnostic:
+        raise RuntimeError("Unknown V2936 owner status; fail closed (no Notebook push)")
+    # Authenticated status alone is ambiguous; require a separate owned-list
+    # absence AND an authenticated known COMPLETE owner witness.
+    time.sleep(3.2)
     listing=gate.kaggle(["kernels","list","--mine","--search",
                           KERNEL.split("/",1)[1],"--page-size","50","-v"],timeout=120)
     if KERNEL.lower() in listing.lower():
         return True
     if listing.strip().lower()!="not found":
-        raise RuntimeError("Kaggle Notebook listing ambiguous; refuse push")
+        raise RuntimeError("Kaggle owner list ambiguous; refuse Notebook push")
     witness=gate.kaggle(["kernels","status",v24.v23.v15.KERNEL],timeout=90)
     if "KernelWorkerStatus.COMPLETE" not in witness:
-        raise RuntimeError("Kaggle owner witness failed; refuse push")
+        raise RuntimeError("Kaggle champion owner witness failed")
     return False
 
 

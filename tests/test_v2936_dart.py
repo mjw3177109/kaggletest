@@ -112,6 +112,23 @@ class FrozenDart(unittest.TestCase):
         import v2936_actions_gate as safety
         with patch.object(safety,"kaggle",return_value="KernelWorkerStatus.QUEUED"):
             self.assertTrue(p.checked_owner_exists())
+    def test_18_exact_denial_and_owner_absence(self):
+        from types import SimpleNamespace
+        import v2936_actions_gate as safety
+        err=("Cannot access kernel '"+p.KERNEL+
+             "' (Permission 'kernels.get' was denied). The most likely cause is a wrong kernel slug.")
+        with patch.object(p.subprocess,"run",return_value=SimpleNamespace(returncode=1,stderr=err,stdout="")):
+            with patch("time.sleep"):
+                with patch.object(safety,"kaggle",side_effect=["Not found","KernelWorkerStatus.COMPLETE"]) as call:
+                    self.assertFalse(p.checked_owner_exists())
+                    self.assertEqual(call.call_count,2)
+    def test_19_unknown_denial_stays_blocked(self):
+        from types import SimpleNamespace
+        import v2936_actions_gate as safety
+        with patch.object(p.subprocess,"run",return_value=SimpleNamespace(returncode=1,stderr="HTTP 429 rate limit",stdout="")):
+            with patch.object(safety,"kaggle",side_effect=AssertionError("must not query owner list")):
+                with self.assertRaises(RuntimeError):
+                    p.checked_owner_exists()
     def test_15_own_slug_only(self):
         self.assertEqual(p.KERNEL,g.KERNEL)
         self.assertEqual(p.KERNEL,"mjw3177109/kas-v2936-original37-xgboost-dart-t4-s6e10")

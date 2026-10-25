@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.36",
-  "stage": "kernel_access_error",
+  "stage": "preregistered_not_started",
   "preregistered_at": "2026-10-25",
   "hypothesis": "original37_dropout_regularized_dart_boosted_trees_distinct_from_v2920_routeprofile_hist",
   "model_family": "XGBoost_DART_T4_original37",
@@ -67,11 +67,11 @@
   "previous_v2935": {
     "stage": "skipped_no_cv_gain",
     "full_cv": 0.9613302676316021,
-    "gain": 4.5227698368566216e-05,
+    "gain": 0.000045227698368566216,
     "fold_gain": [
-      4.092221121243522e-05,
-      5.26677619130389e-05,
-      4.112783554610644e-05
+      0.00004092221121243522,
+      0.0000526677619130389,
+      0.00004112783554610644
     ],
     "recovery_run_id": 40145587441,
     "candidate_oof_sha256": "e3b7b0cc288e995393c8ab688bfa7e2683f3eb1643ad05fa8dfd0e18d34d9b32"
@@ -80,18 +80,28 @@
     "stage": "skipped_no_cv_gain",
     "model": "XGBoost hist depth6 route-profile TE23 3fold seeded",
     "fixed_fusion_cv": 0.9612378193529525,
-    "gain": -4.722058028105991e-05
+    "gain": -0.00004722058028105991
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 5e-05,
+    "min_gain_vs_v2915": 0.00005,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -5e-05
+    "worst_fold_strict_gt": -0.00005
   },
   "submission_policy": "evaluation_only_no_submission",
-  "implementation_status": "awaiting_independent_trainer_validator_safety_tests_and_guarded_actions",
+  "implementation_status": "independent_trainer_validator_19_cpu_safety_tests_and_guarded_actions_ready; prelaunch_absence_repaired",
   "preregistration_report": "reports/v2_9_36_preregistration.md",
   "failure_diagnostic": "reports/v2_9_35_failure_diagnostic.md",
-  "error": "Authenticated read-only Kaggle CLI unavailable; category=unknown; exit=1",
-  "updated_at": "2026-10-25T01:21:38.348551+00:00"
+  "updated_at": "2026-10-25T01:21:38.348551+00:00",
+  "prelaunch_incidents": [
+    {
+      "at": "2026-10-25T01:21:38Z",
+      "stage": "kernel_access_error",
+      "diagnostic": "Kaggle missing unique slug status returns kernels.get permission denied; authenticated owner list Not found and champion COMPLETE witness in read-only Actions #40150393528",
+      "notebook_created": false,
+      "training_started": false,
+      "resolved_by": "exact error matching plus independent owner absence and champion witness; unknown/429 remain fail-closed"
+    }
+  ],
+  "last_prelaunch_repair": "2026-10-25T01:23:19Z"
 }
