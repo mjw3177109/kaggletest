@@ -43,7 +43,7 @@ def assert_preregistration():
     if s.get("stage")!="preregistered_not_started":
         raise RuntimeError("V2941 already reserved or terminal; never train again")
     if (s.get("model_parameters")!=FROZEN or s.get("environment")!=ENV
-        or s.get("version")!="V2.9.40" or s.get("competition")!=COMPETITION
+        or s.get("version")!="V2.9.41" or s.get("competition")!=COMPETITION
         or s.get("outer_seed")!=20261018
         or s.get("outer_folds")!=3 or s.get("inner_target_folds")!=5
         or s.get("baseline_features")!=37 or s.get("protected_target_encoded_features")!=3

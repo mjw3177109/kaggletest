@@ -54,14 +54,14 @@ jobs:
           python kaggle_agent/v2941_actions_gate.py reserve
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
-          git add state/v2_9_40_status.json
+          git add state/v2_9_41_status.json
           git commit -m "bot: reserve unique V2941 CPU run ${GITHUB_RUN_ID} before training"
           git fetch origin feature/v29-autonomous-evolution
           test "$(git rev-parse origin/feature/v29-autonomous-evolution)" = "$(git rev-parse HEAD~1)"
           git push origin HEAD:feature/v29-autonomous-evolution
           git fetch origin feature/v29-autonomous-evolution
           test "$(git rev-parse origin/feature/v29-autonomous-evolution)" = "$(git rev-parse HEAD)"
-          test "$(git show origin/feature/v29-autonomous-evolution:state/v2_9_40_status.json | sha256sum | cut -d' ' -f1)" = "$(sha256sum state/v2_9_40_status.json | cut -d' ' -f1)"
+          test "$(git show origin/feature/v29-autonomous-evolution:state/v2_9_41_status.json | sha256sum | cut -d' ' -f1)" = "$(sha256sum state/v2_9_41_status.json | cut -d' ' -f1)"
       - name: Reverify durable reservation and owner-wide idle before training
         run: |
           set -euo pipefail
@@ -88,7 +88,7 @@ jobs:
       - name: Run exactly one immutable CPU threefold spline logistic fit
         run: |
           set -euo pipefail
-          export V2941_RESERVED_RUN_ID="$(python -c 'import json;print(json.load(open("state/v2_9_40_status.json"))["run_reservation_id"])')"
+          export V2941_RESERVED_RUN_ID="$(python -c 'import json;print(json.load(open("state/v2_9_41_status.json"))["run_reservation_id"])')"
           python kaggle_agent/v2941_spline_train.py --official-directory "$RUNNER_TEMP/v2941_official" --output-directory "$RUNNER_TEMP/v2941_output"
       - name: Strict independent champion reconstruction and complete OOF validation
         run: |
@@ -104,10 +104,10 @@ jobs:
           import json,os,subprocess
           from datetime import datetime,timezone
           from pathlib import Path
-          local=Path("state/v2_9_40_status.json")
+          local=Path("state/v2_9_41_status.json")
           state=json.loads(local.read_text())
           if state.get("stage")!="run_reserved":raise SystemExit(0)
-          remote=json.loads(subprocess.check_output(["git","show","origin/feature/v29-autonomous-evolution:state/v2_9_40_status.json"],text=True))
+          remote=json.loads(subprocess.check_output(["git","show","origin/feature/v29-autonomous-evolution:state/v2_9_41_status.json"],text=True))
           if str(remote.get("run_reservation_id"))!=os.environ["GITHUB_RUN_ID"]:
               raise SystemExit(0)
           state.update(stage="training_failed",submitted=False,submission_attempted=False,
@@ -121,7 +121,7 @@ jobs:
           set -euo pipefail
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
-          for f in state/v2_9_40_status.json reports/v2_9_40_result.md; do
+          for f in state/v2_9_41_status.json reports/v2_9_40_result.md; do
             if test -f "$f"; then git add -- "$f"; fi
           done
           if git diff --cached --quiet; then exit 0; fi
@@ -135,7 +135,7 @@ jobs:
         with:
           name: v2941-one-shot-evidence
           path: |
-            state/v2_9_40_status.json
+            state/v2_9_41_status.json
             reports/v2_9_40_result.md
             ${{ runner.temp }}/v2941_output/v2941_metrics.json
             ${{ runner.temp }}/v2941_output/v2941_spline_oof.npz
