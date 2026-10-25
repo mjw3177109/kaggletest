@@ -47,6 +47,9 @@ jobs:
                         "429","rate limit","403","forbidden","invalid","error","usage:"]
               print("CHECK",i,"exit",p.returncode,"chars",len(raw),
                     "flags",{q:q in low for q in patterns if q in low},flush=True)
+              if i==0:
+                  match=re.search(r"KernelWorkerStatus\\.([A-Z_]+)",raw)
+                  print("V2936_AUTHENTICATED_STATUS",match.group(1) if match else "UNVERIFIED",flush=True)
               # Only print the missing-slug error after removing credential values and URLs.
               if i==0 and p.returncode:
                   clean=raw.replace(os.environ["KAGGLE_API_TOKEN"],"[REDACTED]")
