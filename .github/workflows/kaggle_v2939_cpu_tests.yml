@@ -28,7 +28,7 @@ jobs:
       - name: Install pinned offline scientific dependencies
         run: |
           set -euo pipefail
-          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1
+          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1 PyYAML==6.0.3
       - name: Compile independent gate and read-only evaluator
         run: |
           set -euo pipefail
