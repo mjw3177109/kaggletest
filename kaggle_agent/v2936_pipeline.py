@@ -141,22 +141,25 @@ def persist(s):
 
 
 def checked_owner_exists():
-    q=v24.cmd(["kaggle","kernels","status",KERNEL],timeout=90,check=False)
-    if q.returncode==0 and "KernelWorkerStatus." in (q.stdout or ""):
+    """Authenticated paced owner check. Any 429/unknown response fails closed."""
+    import v2936_actions_gate as gate
+    try:
+        status=gate.kaggle(["kernels","status",KERNEL],timeout=90)
+    except LookupError:
+        status=None
+    if status is not None:
+        if "KernelWorkerStatus." in status:
+            return True
+        raise RuntimeError("V2936 owner status ambiguous; refuse Notebook push")
+    listing=gate.kaggle(["kernels","list","--mine","--search",
+                          KERNEL.split("/",1)[1],"--page-size","50","-v"],timeout=120)
+    if KERNEL.lower() in listing.lower():
         return True
-    mine=v24.cmd(["kaggle","kernels","list","--mine","--search",
-                  KERNEL.split("/",1)[1],"--page-size","50","-v"],
-                 timeout=120,check=False)
-    if mine.returncode:
-        raise RuntimeError("Kaggle owner listing unavailable: refuse push")
-    if KERNEL.lower() in (mine.stdout or "").lower():
-        return True
-    if (mine.stdout or "").strip().lower()!="not found":
-        raise RuntimeError("Kaggle Notebook listing ambiguous: refuse push")
-    witness=v24.cmd(["kaggle","kernels","status",v24.v23.v15.KERNEL],
-                    timeout=90,check=False)
-    if witness.returncode or "KernelWorkerStatus.COMPLETE" not in (witness.stdout or ""):
-        raise RuntimeError("Kaggle owner witness failed: refuse push")
+    if listing.strip().lower()!="not found":
+        raise RuntimeError("Kaggle Notebook listing ambiguous; refuse push")
+    witness=gate.kaggle(["kernels","status",v24.v23.v15.KERNEL],timeout=90)
+    if "KernelWorkerStatus.COMPLETE" not in witness:
+        raise RuntimeError("Kaggle owner witness failed; refuse push")
     return False
 
 

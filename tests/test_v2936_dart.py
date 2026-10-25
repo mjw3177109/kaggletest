@@ -103,6 +103,15 @@ class FrozenDart(unittest.TestCase):
         self.assertIn("enc.fit_transform(te_train,y[itr])",source)
         self.assertIn("enc.transform(te_val)",source)
         self.assertNotIn("y[iva]",source.split("model.fit(")[0])
+    def test_16_owner_rate_limit_fails_closed(self):
+        import v2936_actions_gate as safety
+        with patch.object(safety,"kaggle",side_effect=RuntimeError("rate_limited")):
+            with self.assertRaises(RuntimeError):
+                p.checked_owner_exists()
+    def test_17_owner_status_present_never_push(self):
+        import v2936_actions_gate as safety
+        with patch.object(safety,"kaggle",return_value="KernelWorkerStatus.QUEUED"):
+            self.assertTrue(p.checked_owner_exists())
     def test_15_own_slug_only(self):
         self.assertEqual(p.KERNEL,g.KERNEL)
         self.assertEqual(p.KERNEL,"mjw3177109/kas-v2936-original37-xgboost-dart-t4-s6e10")
