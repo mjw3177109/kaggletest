@@ -1,0 +1,141 @@
+name: Kaggle V2942 RFF Logistic One-Shot CPU
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: kaggle-s6e10-v2942-unique-cpu-run
+  cancel-in-progress: false
+jobs:
+  guarded-one-shot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    env:
+      OMP_NUM_THREADS: '4'
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      GH_API_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Kaggle CLI first, then immutable pinned CPU environment
+        run: |
+          set -euo pipefail
+          python -m pip install -r requirements.txt
+          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1
+          python - <<'PY'
+          import numpy,pandas,scipy,sklearn
+          assert (numpy.__version__,pandas.__version__,scipy.__version__,sklearn.__version__)==("2.2.6","2.2.3","1.15.3","1.6.1")
+          PY
+      - name: Compile and run all 20 V2942 CPU safety tests
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2942_rff_train.py kaggle_agent/v2942_actions_gate.py kaggle_agent/v2942_pipeline.py
+          python -m unittest discover -s tests -p 'test_v2942_rff.py' -v
+      - name: Pinned environment and synthetic rff logistic fit (no official data)
+        run: |
+          set -euo pipefail
+          python -c "import sys;sys.path.insert(0,'kaggle_agent');import v2942_actions_gate as g;g.prove_cpu_synthetic_preflight()"
+      - name: Authenticated owner-wide preflight and global Actions gate
+        run: |
+          set -euo pipefail
+          python kaggle_agent/v2942_actions_gate.py preflight
+      - name: Prepare immutable reservation before any data access or fitting
+        run: |
+          set -euo pipefail
+          python kaggle_agent/v2942_actions_gate.py reserve
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add state/v2_9_41_status.json
+          git commit -m "bot: reserve unique V2942 CPU run ${GITHUB_RUN_ID} before training"
+          git fetch origin feature/v29-autonomous-evolution
+          test "$(git rev-parse origin/feature/v29-autonomous-evolution)" = "$(git rev-parse HEAD~1)"
+          git push origin HEAD:feature/v29-autonomous-evolution
+          git fetch origin feature/v29-autonomous-evolution
+          test "$(git rev-parse origin/feature/v29-autonomous-evolution)" = "$(git rev-parse HEAD)"
+          test "$(git show origin/feature/v29-autonomous-evolution:state/v2_9_41_status.json | sha256sum | cut -d' ' -f1)" = "$(sha256sum state/v2_9_41_status.json | cut -d' ' -f1)"
+      - name: Reverify durable reservation and owner-wide idle before training
+        run: |
+          set -euo pipefail
+          sleep 60
+          python kaggle_agent/v2942_actions_gate.py verify
+      - name: Download official Kaggle competition data (no Notebook)
+        run: |
+          set -euo pipefail
+          sleep 3
+          mkdir -p "$RUNNER_TEMP/v2942_official"
+          kaggle competitions download -c playground-series-s6e10 -p "$RUNNER_TEMP/v2942_official"
+          python - <<'PY'
+          import os,zipfile
+          from pathlib import Path
+          folder=Path(os.environ["RUNNER_TEMP"])/"v2942_official"
+          zips=list(folder.glob("*.zip"))
+          if len(zips)!=1:raise RuntimeError("Expected one official Kaggle competition archive")
+          with zipfile.ZipFile(zips[0]) as z:
+              names=z.namelist()
+              if len(names)!=len(set(names)) or any(".." in Path(n).parts or Path(n).is_absolute() for n in names):
+                  raise RuntimeError("Unsafe competition archive")
+              z.extractall(folder)
+          PY
+      - name: Run exactly one immutable CPU threefold rff logistic fit
+        run: |
+          set -euo pipefail
+          export V2942_RESERVED_RUN_ID="$(python -c 'import json;print(json.load(open("state/v2_9_41_status.json"))["run_reservation_id"])')"
+          python kaggle_agent/v2942_rff_train.py --official-directory "$RUNNER_TEMP/v2942_official" --output-directory "$RUNNER_TEMP/v2942_output"
+      - name: Strict independent champion reconstruction and complete OOF validation
+        run: |
+          set -euo pipefail
+          sleep 3
+          python kaggle_agent/v2942_pipeline.py --output-directory "$RUNNER_TEMP/v2942_output"
+      - name: Terminalize failed reserved run without retrying or fabricating CV
+        if: failure()
+        run: |
+          set -euo pipefail
+          git fetch origin feature/v29-autonomous-evolution
+          python - <<'PY'
+          import json,os,subprocess
+          from datetime import datetime,timezone
+          from pathlib import Path
+          local=Path("state/v2_9_41_status.json")
+          state=json.loads(local.read_text())
+          if state.get("stage")!="run_reserved":raise SystemExit(0)
+          remote=json.loads(subprocess.check_output(["git","show","origin/feature/v29-autonomous-evolution:state/v2_9_41_status.json"],text=True))
+          if str(remote.get("run_reservation_id"))!=os.environ["GITHUB_RUN_ID"]:
+              raise SystemExit(0)
+          state.update(stage="training_failed",submitted=False,submission_attempted=False,
+             error="One-shot CPU training or validation failed; inspect this GitHub Actions run logs; no CV certified",
+             updated_at=datetime.now(timezone.utc).isoformat())
+          local.write_text(json.dumps(state,indent=2)+"\\n")
+          PY
+      - name: Persist audited terminal V2942 result, never submit
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          for f in state/v2_9_41_status.json reports/v2_9_41_result.md; do
+            if test -f "$f"; then git add -- "$f"; fi
+          done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: persist V2942 verified OOF or terminal error; no submission"
+          git fetch origin feature/v29-autonomous-evolution
+          git rebase origin/feature/v29-autonomous-evolution
+          git push origin HEAD:feature/v29-autonomous-evolution
+      - name: Archive V2942 immutable evidence (no raw training data)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2942-one-shot-evidence
+          path: |
+            state/v2_9_41_status.json
+            reports/v2_9_41_result.md
+            ${{ runner.temp }}/v2942_output/v2942_metrics.json
+            ${{ runner.temp }}/v2942_output/v2942_rff_oof.npz
+            ${{ runner.temp }}/v2942_output/v2942_candidate_unsubmitted.csv
+          if-no-files-found: ignore
