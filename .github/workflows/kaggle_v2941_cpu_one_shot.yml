@@ -1,8 +1,13 @@
-# V2941 not launched: dispatch-only pending independent review of CI and gates.
+# V2941 first one-shot launch after 18/18 pinned CPU tests SUCCESS (#40185447221); owner-wide authenticated preflight and exclusive reservation still mandatory.
 # V2941 immutable one-shot CPU Spline Logistic. Initially dispatch-only; never retrain a reserved run.
 name: Kaggle V2941 Spline Logistic One-Shot CPU
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2941_cpu_one_shot.yml"
 permissions:
   contents: write
   actions: read
