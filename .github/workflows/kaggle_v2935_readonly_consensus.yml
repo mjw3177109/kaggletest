@@ -1,0 +1,86 @@
+# V2935 preregistered, read-only CPU agreement gate; no Kaggle kernel push/training/submission.
+name: Kaggle V2.9.35 Immutable Read-only Three-source Consensus
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2935_readonly_consensus.yml"
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: kaggle-s6e10-v2935-immutable-readonly
+  cancel-in-progress: false
+
+jobs:
+  guarded-three-source-oof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      GH_API_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout immutable feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned CPU verification and Kaggle CLI
+        run: |
+          set -euo pipefail
+          python -m pip install -r requirements.txt
+          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1
+      - name: Compile and run 20 offline scientific and safety tests
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2935_actions_gate.py kaggle_agent/v2935_readonly_consensus.py
+          python -m unittest discover -s tests -p 'test_v2935_readonly_consensus.py' -v
+      - name: Verify exact GitHub HEAD, global Actions, Kaggle owner and all source Notebooks
+        id: gate
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REPOSITORY}" = "mjw3177109/kaggletest"
+          test "${KAGGLE_USERNAME}" = "mjw3177109"
+          test -n "${KAGGLE_API_TOKEN}"
+          python kaggle_agent/v2935_actions_gate.py
+      - name: Replay original official champion and two frozen OOF sources without any training
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          V2935_GATE_PASSED: "true"
+        run: |
+          set -euo pipefail
+          python kaggle_agent/v2935_readonly_consensus.py
+      - name: Persist only immutable CPU evaluation result and SHA evidence
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/v2_9_35_status.json reports/v2_9_35_readonly_result.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: persist V2935 immutable read-only threefold consensus audit"
+          for attempt in 1 2 3; do
+            git fetch origin feature/v29-autonomous-evolution
+            git rebase origin/feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*3))"
+          done
+          exit 1
+      - name: Archive SHA and complete OOF audit only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2935-readonly-consensus-evidence
+          path: |
+            v2935_readonly_evidence.json
+            state/v2_9_35_status.json
+            reports/v2_9_35_readonly_result.md
+          if-no-files-found: ignore
