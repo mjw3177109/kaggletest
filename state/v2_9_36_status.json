@@ -1,15 +1,15 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.36",
-  "stage": "pushing_kernel",
+  "stage": "kernel_queued",
   "preregistered_at": "2026-10-25",
   "hypothesis": "original37_dropout_regularized_dart_boosted_trees_distinct_from_v2920_routeprofile_hist",
   "model_family": "XGBoost_DART_T4_original37",
   "feature_family": "v2915_original37_3_inner5fold_TE_no_extra_features",
   "intended_kernel": "mjw3177109/kas-v2936-original37-xgboost-dart-t4-s6e10",
   "kernel": "mjw3177109/kas-v2936-original37-xgboost-dart-t4-s6e10",
-  "notebook_created": false,
-  "training_started": false,
+  "notebook_created": true,
+  "training_started": true,
   "submitted": false,
   "submission_attempted": false,
   "baseline_features": 37,
@@ -92,7 +92,7 @@
   "implementation_status": "independent_trainer_validator_19_cpu_safety_tests_and_guarded_actions_ready; prelaunch_absence_repaired",
   "preregistration_report": "reports/v2_9_36_preregistration.md",
   "failure_diagnostic": "reports/v2_9_35_failure_diagnostic.md",
-  "updated_at": "2026-10-25T01:30:37.526486+00:00",
+  "updated_at": "2026-10-25T01:30:41.281545+00:00",
   "prelaunch_incidents": [
     {
       "at": "2026-10-25T01:21:38Z",
@@ -104,5 +104,7 @@
     }
   ],
   "last_prelaunch_repair": "2026-10-25T01:23:19Z",
-  "reservation_at": "2026-10-25T01:30:37.526468+00:00"
+  "reservation_at": "2026-10-25T01:30:37.526468+00:00",
+  "kernel_state": "kernel_queued",
+  "kernel_message": "mjw3177109/kas-v2936-original37-xgboost-dart-t4-s6e10 has status \"KernelWorkerStatus.QUEUED\""
 }
