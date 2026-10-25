@@ -14,12 +14,36 @@ import os
 import re
 import subprocess
 import tempfile
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 STATE = ROOT / "state" / "score_rank_latest.json"
 REPORT = ROOT / "reports" / "score_rank_latest.md"
+
+# All Kaggle CLI calls in this process use one serialized, monotonic gate.
+# No external Kaggle request is allowed to bypass this wrapper.
+KAGGLE_MIN_INTERVAL_SECONDS = 3.1
+_last_kaggle_request_at = None
+
+def rate_limited_kaggle_subprocess(command, *, timeout):
+    global _last_kaggle_request_at
+    if not command or command[0] != "kaggle":
+        raise RuntimeError("Refuse non-Kaggle command in Kaggle request gate")
+    now = time.monotonic()
+    if _last_kaggle_request_at is not None:
+        delay = KAGGLE_MIN_INTERVAL_SECONDS - (now - _last_kaggle_request_at)
+        if delay > 0:
+            time.sleep(delay)
+    _last_kaggle_request_at = time.monotonic()
+    return subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=timeout)
+
+def is_kaggle_rate_limit(error):
+    value = str(error).lower()
+    return ("429" in value or "too many requests" in value or
+            "rate limit" in value or "ratelimit" in value)
+
 
 
 def read(path):
@@ -170,8 +194,7 @@ def candidates_for(slug):
 
 
 def kaggle_json(args):
-    p = subprocess.run(["kaggle", "competitions", "list", *args, "--format", "json"],
-                       cwd=ROOT, capture_output=True, text=True, timeout=120)
+    p = rate_limited_kaggle_subprocess(["kaggle", "competitions", "list", *args, "--format", "json"], timeout=120)
     if p.returncode:
         raise RuntimeError((p.stderr or p.stdout)[-1400:])
     payload = json.loads(p.stdout)
@@ -180,7 +203,7 @@ def kaggle_json(args):
     for key in ("results", "items", "competitions", "data"):
         if isinstance(payload.get(key), list):
             return payload[key]
-    return []
+    raise RuntimeError("Unrecognized Kaggle competitions list payload; fail closed")
 
 
 def norm_slug(row):
@@ -266,10 +289,9 @@ def read_leaderboard_csv(csv_text, username):
 def leaderboard_lookup(slug, username):
     """Full raw CSV is read in temp storage and NEVER committed to GitHub."""
     with tempfile.TemporaryDirectory(prefix="kaggle-lb-") as folder:
-        p = subprocess.run(
+        p = rate_limited_kaggle_subprocess(
             ["kaggle", "competitions", "leaderboard", slug, "--download",
-             "--path", folder, "--quiet"],
-            cwd=ROOT, capture_output=True, text=True, timeout=180)
+             "--path", folder, "--quiet"], timeout=180)
         if p.returncode:
             raise RuntimeError((p.stderr or p.stdout)[-1200:])
         files=sorted(Path(folder).glob("*.csv"))
@@ -292,6 +314,8 @@ def best_rank(slug, username):
         try:
             rows.extend(kaggle_json(args))
         except (RuntimeError, ValueError, json.JSONDecodeError) as err:
+            if is_kaggle_rate_limit(err):
+                raise RuntimeError("Kaggle 429/rate limit; abort without persisting rank") from err
             warnings.append(str(err)[-350:])
     rank=direct_rank(rows,slug)
     if rank["rank"] is not None:
@@ -307,6 +331,8 @@ def best_rank(slug, username):
             if other.get("unverified_candidate_rank"):
                 warnings.append("Only same-name team found, membership not authenticated; omitted rank")
     except (OSError, RuntimeError, ValueError, UnicodeError, subprocess.TimeoutExpired) as err:
+        if is_kaggle_rate_limit(err):
+            raise RuntimeError("Kaggle 429/rate limit; abort without persisting rank") from err
         warnings.append("Public leaderboard lookup unavailable: "+str(err)[-500:])
     return rank,warnings
 
@@ -401,6 +427,11 @@ def main():
     if not username:
         raise RuntimeError("No verified Kaggle account username")
     snapshot=create_snapshot(slug,username)
+    if (not snapshot.get("rank_verified") or
+        snapshot.get("rank_source") not in
+        ("kaggle_authenticated_userRank", "leaderboard_verified_member_username") or
+        not snapshot.get("score")):
+        raise RuntimeError("Fresh authenticated Public rank unavailable; preserve last trusted snapshot")
     save(STATE,snapshot)
     REPORT.parent.mkdir(parents=True,exist_ok=True)
     REPORT.write_text(render(snapshot),encoding="utf-8")
