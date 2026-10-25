@@ -150,5 +150,5 @@ class TestV2942(unittest.TestCase):
         self.assertEqual(len(matches),1)
         expression=ast.parse(matches[0]).body[0].value.args[0]
         self.assertIsInstance(expression,ast.BinOp)
-        self.assertEqual(expression.right.value,"\\n")
+        self.assertEqual(expression.right.value,"\n")
 if __name__=="__main__":unittest.main()
