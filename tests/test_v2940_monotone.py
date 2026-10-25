@@ -11,8 +11,8 @@ import v2940_monotone_train as m
 
 class FrozenMonotoneHGB(unittest.TestCase):
     def test_01_frozen_preregistration(self):
-        s=json.loads((ROOT/"state/v2_9_38_status.json").read_text())
-        self.assertEqual(s["version"],"V2.9.38")
+        s=json.loads((ROOT/"state/v2_9_40_status.json").read_text())
+        self.assertEqual(s["version"],"V2.9.40")
         self.assertEqual(s["model_parameters"],m.PARAMS)
         self.assertEqual(s["model_seed"],m.MODEL_SEED)
         self.assertEqual(s["outer_seed"],m.SEED)
@@ -103,7 +103,7 @@ class FrozenMonotoneHGB(unittest.TestCase):
         original=g.read
         def altered(name):
             s=original(name)
-            if name=="state/v2_9_38_status.json":
+            if name=="state/v2_9_40_status.json":
                 s["run_reservation_id"]="another-run"
             return s
         with patch.dict("os.environ",{"GITHUB_REF_NAME":g.BRANCH,"GITHUB_RUN_ID":"123456"}):
@@ -123,7 +123,7 @@ class FrozenMonotoneHGB(unittest.TestCase):
             with self.assertRaises(RuntimeError):g.assert_owner_idle()
     def test_17_reservation_fingerprint_changes_on_code(self):
         import v2940_actions_gate as g
-        s=g.read("state/v2_9_38_status.json")
+        s=g.read("state/v2_9_40_status.json")
         original=g.fingerprint(s)
         self.assertEqual(len(original),64)
         s["model_seed"]+=1
