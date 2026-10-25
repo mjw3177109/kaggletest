@@ -141,4 +141,14 @@ class TestV2942(unittest.TestCase):
     def test_original_data_guards(self):
         s=(ROOT/"kaggle_agent/v2942_rff_train.py").read_text()
         for x in ("Duplicate official IDs","Original 21 raw train columns changed","np.isin(y,[0,1])"):self.assertIn(x,s)
+    def test_terminal_failure_json_newline_is_valid(self):
+        # Guard the one-shot failure terminalizer: literal backslash-n corrupts JSON.
+        import ast
+        workflow=(ROOT/".github/workflows/kaggle_v2942_cpu_one_shot.yml").read_text()
+        matches=[line.strip() for line in workflow.splitlines()
+                 if "local.write_text(json.dumps(state,indent=2)+" in line]
+        self.assertEqual(len(matches),1)
+        expression=ast.parse(matches[0]).body[0].value.args[0]
+        self.assertIsInstance(expression,ast.BinOp)
+        self.assertEqual(expression.right.value,"\\n")
 if __name__=="__main__":unittest.main()
