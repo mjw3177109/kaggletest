@@ -90,6 +90,26 @@ jobs:
           set -euo pipefail
           sleep 3
           python kaggle_agent/v2937_pipeline.py --output-directory "$RUNNER_TEMP/v2937_output"
+      - name: Terminalize failed reserved run without retrying or fabricating CV
+        if: failure()
+        run: |
+          set -euo pipefail
+          git fetch origin feature/v29-autonomous-evolution
+          python - <<'PY'
+          import json,os,subprocess
+          from datetime import datetime,timezone
+          from pathlib import Path
+          local=Path("state/v2_9_37_status.json")
+          state=json.loads(local.read_text())
+          if state.get("stage")!="run_reserved":raise SystemExit(0)
+          remote=json.loads(subprocess.check_output(["git","show","origin/feature/v29-autonomous-evolution:state/v2_9_37_status.json"],text=True))
+          if str(remote.get("run_reservation_id"))!=os.environ["GITHUB_RUN_ID"]:
+              raise SystemExit(0)
+          state.update(stage="training_failed",submitted=False,submission_attempted=False,
+             error="One-shot CPU training or validation failed; inspect this GitHub Actions run logs; no CV certified",
+             updated_at=datetime.now(timezone.utc).isoformat())
+          local.write_text(json.dumps(state,indent=2)+"\\n")
+          PY
       - name: Persist audited terminal V2937 result, never submit
         if: always()
         run: |
