@@ -8,7 +8,7 @@ from pathlib import Path
 import v2936_actions_gate as inherited
 
 ROOT=Path(__file__).resolve().parents[1]
-STATUS=ROOT/"state/v2_9_41_status.json"
+STATUS=ROOT/"state/v2_9_42_status.json"
 BRANCH="feature/v29-autonomous-evolution"
 COMPETITION="playground-series-s6e10"
 ACTIVE=("in_progress","queued","waiting","requested","pending")
@@ -115,7 +115,7 @@ def reserve():
     return s
 
 def verify_reserved():
-    s=read("state/v2_9_41_status.json")
+    s=read("state/v2_9_42_status.json")
     if (s.get("stage")!="run_reserved"
         or str(s.get("run_reservation_id"))!=os.getenv("GITHUB_RUN_ID")
         or s.get("run_reservation_sha256")!=fingerprint(s)
