@@ -90,4 +90,59 @@ class FrozenGoss(unittest.TestCase):
                     "source_code_sha256","environment_versions","train_id","test_id"):
             self.assertIn(key,source)
 
+    def test_13_gate_frozen_prereg_and_branch(self):
+        import v2937_actions_gate as g
+        with patch.dict("os.environ",{"GITHUB_REF_NAME":g.BRANCH,"GITHUB_RUN_ID":"123456"}):
+            s=g.assert_preregistration()
+        self.assertEqual(s["stage"],"preregistered_not_started")
+        self.assertEqual(s["model_parameters"],g.FROZEN)
+    def test_14_gate_fails_on_existing_reservation(self):
+        import v2937_actions_gate as g
+        original=g.read
+        def altered(name):
+            s=original(name)
+            if name=="state/v2_9_37_status.json":
+                s["run_reservation_id"]="another-run"
+            return s
+        with patch.dict("os.environ",{"GITHUB_REF_NAME":g.BRANCH,"GITHUB_RUN_ID":"123456"}):
+            with patch.object(g,"read",side_effect=altered):
+                with self.assertRaises(RuntimeError):g.assert_preregistration()
+    def test_15_owner_scan_includes_v2936(self):
+        import v2937_actions_gate as g
+        with patch.object(g.inherited,"assert_kaggle_idle_and_official") as scan:
+            with patch.object(g.inherited,"kaggle",return_value="KernelWorkerStatus.ERROR") as status:
+                g.assert_owner_idle()
+        scan.assert_called_once()
+        self.assertEqual(g.inherited.KERNEL,"__V2937_NO_KERNEL_TO_EXCLUDE__")
+        self.assertEqual(status.call_args.args[0],["kernels","status",g.TERMINAL36])
+    def test_16_owner_unknown_fails_closed(self):
+        import v2937_actions_gate as g
+        with patch.object(g.inherited,"assert_kaggle_idle_and_official",side_effect=RuntimeError("429")):
+            with self.assertRaises(RuntimeError):g.assert_owner_idle()
+    def test_17_reservation_fingerprint_changes_on_code(self):
+        import v2937_actions_gate as g
+        s=g.read("state/v2_9_37_status.json")
+        original=g.fingerprint(s)
+        self.assertEqual(len(original),64)
+        s["model_seed"]+=1
+        self.assertNotEqual(original,g.fingerprint(s))
+    def test_18_validator_never_submits(self):
+        txt=(ROOT/"kaggle_agent/v2937_pipeline.py").read_text()
+        for forbidden in ("competitions submit","kernels push","early_stopping_rounds"):
+            self.assertNotIn(forbidden,txt)
+        self.assertIn("old.baseline_arrays(td,champion)",txt)
+        self.assertIn("rate_limited_kaggle_subprocess()",txt)
+        self.assertIn("validation_index_sha256",txt)
+    def test_19_no_training_in_gate(self):
+        txt=(ROOT/"kaggle_agent/v2937_actions_gate.py").read_text()
+        self.assertNotIn("model.fit(",txt)
+        self.assertNotIn("competitions submit",txt)
+        self.assertNotIn("kernels push",txt)
+        self.assertIn("assert_no_other_actions",txt)
+        self.assertIn("assert_kaggle_idle_and_official",txt)
+    def test_20_reservation_cannot_start_unreserved(self):
+        import v2937_actions_gate as g
+        with patch.dict("os.environ",{"GITHUB_RUN_ID":"123456"}):
+            with self.assertRaises(RuntimeError):g.verify_reserved()
+
 if __name__=="__main__":unittest.main()
