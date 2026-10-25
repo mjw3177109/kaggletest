@@ -17,3 +17,9 @@ Read-only GitHub verification: branch HEAD `d86b44e4aae8a0de26d7ee886aa3e2b73da6
 No Kaggle authenticated owner-wide Notebook or submission query was performed in this audit. No official competition data downloaded, no training, no Kaggle Notebook pushed, and no submission attempted. **V2942 remains preregistered and unlaunched.** V2941's permanent no-retry protection remains intact. This audit is not authorization to launch.
 
 Evidence: https://github.com/mjw3177109/kaggletest/actions/runs/40190954608
+
+## Offline regression verification
+
+- GitHub Actions #40197443992 completed SUCCESS on 2026-10-25 13:24 UTC, with 25/25 pinned CPU safety tests passing, including absent/incomplete/stale launch-authorization cases and the corrected report-path check.
+- GitHub Actions #40197443994 completed SUCCESS for the repository evolution audit. These are offline checks, **not** authenticated Kaggle Notebook or submission evidence.
+- V2942 remains unlaunched; do not dispatch until fresh authenticated owner-wide verification and explicit launch authorization are durably recorded.

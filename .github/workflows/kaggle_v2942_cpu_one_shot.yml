@@ -33,7 +33,7 @@ jobs:
           import numpy,pandas,scipy,sklearn
           assert (numpy.__version__,pandas.__version__,scipy.__version__,sklearn.__version__)==("2.2.6","2.2.3","1.15.3","1.6.1")
           PY
-      - name: Compile and run all 24 V2942 CPU safety tests
+      - name: Compile and run all 25 V2942 CPU safety tests
         run: |
           set -euo pipefail
           python -m py_compile kaggle_agent/v2942_rff_train.py kaggle_agent/v2942_actions_gate.py kaggle_agent/v2942_pipeline.py
