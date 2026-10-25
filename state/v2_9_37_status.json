@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.37",
-  "stage": "preregistered_not_started",
+  "stage": "run_reserved",
   "preregistered_at": "2026-10-25",
   "hypothesis": "original37_cpu_lightgbm_goss_gradient_one_side_sampling_distinct_from_v2923_v2928",
   "model_family": "LightGBM_4_6_0_GOSS_CPU_original37",
@@ -10,8 +10,8 @@
   "training_started": false,
   "submitted": false,
   "submission_attempted": false,
-  "run_reservation_id": null,
-  "run_reservation_sha256": null,
+  "run_reservation_id": "40157906219",
+  "run_reservation_sha256": "d9cc0778839e2ff0169bdc61cb232e28bc6332034089602ec47c92dc60411cef",
   "source_downloaded": false,
   "outer_folds": 3,
   "inner_target_folds": 5,
@@ -78,13 +78,14 @@
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 0.00005,
+    "min_gain_vs_v2915": 5e-05,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -0.00005
+    "worst_fold_strict_gt": -5e-05
   },
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "awaiting_independent_cpu_trainer_validator_guard_and_tests",
   "preregistration_report": "reports/v2_9_37_preregistration.md",
   "failure_diagnostic": "reports/v2_9_36_failure_diagnostic.md",
-  "next_action": "Implement independent pinned CPU trainer, full OOF verifier, exclusive run reservation, authenticated owner-wide gate, CPU safety tests and guarded workflow; do not train until all checks pass."
+  "next_action": "Implement independent pinned CPU trainer, full OOF verifier, exclusive run reservation, authenticated owner-wide gate, CPU safety tests and guarded workflow; do not train until all checks pass.",
+  "updated_at": "2026-10-25T03:30:56.293053+00:00"
 }
