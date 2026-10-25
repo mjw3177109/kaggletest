@@ -1,7 +1,7 @@
 # V2.9.36 frozen explicit second-order DART original37 threefold OOF
 
-- UTC: 2026-10-25T01:21:38.348551+00:00
-- Stage: kernel_access_error
+- UTC: 2026-10-25T01:30:37.526486+00:00
+- Stage: pushing_kernel
 - Unique Kaggle Notebook: https://www.kaggle.com/code/mjw3177109/kas-v2936-original37-xgboost-dart-t4-s6e10
 - Official V2915 champion CV: 0.9612850399332336
 - Independent DART threefold CV: pending
@@ -9,4 +9,3 @@
 - Gain: pending
 - Fold gains: pending
 - Evaluation only: no Kaggle submission. CV is not Public LB.
-- Error: Authenticated read-only Kaggle CLI unavailable; category=unknown; exit=1
