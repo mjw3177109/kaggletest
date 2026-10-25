@@ -1,0 +1,36 @@
+name: Kaggle V2937 CPU GOSS Safety Tests
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - "kaggle_agent/v2937_goss_train.py"
+      - "tests/test_v2937_goss.py"
+      - ".github/workflows/kaggle_v2937_cpu_tests.yml"
+permissions:
+  contents: read
+concurrency:
+  group: kaggle-s6e10-v2937-cpu-tests
+  cancel-in-progress: false
+jobs:
+  safety-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install frozen CPU dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install lightgbm==4.6.0 numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1
+      - name: Compile and run V2937 safety tests (no Kaggle credentials)
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2937_goss_train.py tests/test_v2937_goss.py
+          python -m unittest discover -s tests -p 'test_v2937_goss.py' -v
