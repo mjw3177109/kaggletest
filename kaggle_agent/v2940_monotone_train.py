@@ -1,4 +1,4 @@
-"""V2940 immutable CPU-only HGB Monotone HGB original37 threefold OOF.
+"""V2940 immutable CPU-only sklearn monotone-constrained histogram boosting original37 threefold OOF.
 No Notebook, no submission, no tuning. Outer-fold-only encoders and TE. Exactly 37 numeric-encoded features.
 """
 from __future__ import annotations
@@ -45,7 +45,7 @@ def prove_environment():
         raise RuntimeError("V2940 OMP_NUM_THREADS must equal 4")
     if not os.getenv("GITHUB_RUN_ID") or os.getenv("V2940_RESERVED_RUN_ID")!=os.getenv("GITHUB_RUN_ID"):
         raise RuntimeError("V2940 durable GitHub run reservation missing")
-    return dict(actual,python=platform.python_version(),device="cpu")
+    return dict(actual,python=platform.python_version(),device="cpu",omp_num_threads=4)
 
 def synthetic_preflight():
     """Pinned sklearn 1.6.1 synthetic CPU monotonic HGB fit, no official data."""
