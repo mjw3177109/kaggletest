@@ -16,17 +16,10 @@ name: Kaggle Latest Authenticated Public Rank Refresh
 # 2026-10-23 12:40 UTC: read-only authenticated rank refresh after two-hour interval; no training or submission.
 # 2026-10-22: one authenticated read-only rank refresh; no submission action.
 
+# 2026-10-25 safety freeze: dispatch-only. No push-triggered authenticated
+# Kaggle API access while pacing and fail-closed protections are under review.
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/v29-autonomous-evolution
-    paths:
-      - ".github/workflows/kaggle_v299_rank_refresh.yml"
-      - "kaggle_agent/v24_rank_tracker.py"
-      - "tests/test_v299_rank_refresh.py"
-      - "tests/test_v2915_rank_refresh.py"
-      - "state/v2_9_15_submission.json"
 
 permissions:
   contents: write
