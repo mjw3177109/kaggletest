@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.38",
-  "stage": "preregistered_not_started",
+  "stage": "run_reserved",
   "preregistered_at": "2026-10-25",
   "hypothesis": "cpu_catboost_ordered_original37_no_native_ctr",
   "model_family": "CatBoost_1_2_8_Ordered_CPU_original37",
@@ -10,7 +10,7 @@
   "training_started": false,
   "submitted": false,
   "submission_attempted": false,
-  "run_reservation_id": null,
+  "run_reservation_id": "40164585333",
   "train_rows": 699635,
   "test_rows": 299844,
   "baseline_features": 37,
@@ -60,23 +60,25 @@
     "run_id": 40157906219,
     "standalone_cv": 0.9590691263361465,
     "full_cv": 0.9612406974032877,
-    "gain": -0.00004434252994589549,
+    "gain": -4.434252994589549e-05,
     "fold_gain": [
-      -0.00003999940810672786,
-      -0.00006150032053287013,
-      -0.000033381965860113105
+      -3.999940810672786e-05,
+      -6.150032053287013e-05,
+      -3.3381965860113105e-05
     ],
     "submitted": false
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 0.00005,
+    "min_gain_vs_v2915": 5e-05,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -0.00005
+    "worst_fold_strict_gt": -5e-05
   },
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "awaiting_independent_trainer_validator_gate_and_cpu_tests",
   "preregistration_report": "reports/v2_9_38_preregistration.md",
   "failure_diagnostic": "reports/v2_9_37_failure_diagnostic.md",
-  "next_action": "Implement pinned CPU-only Ordered CatBoost preflight, independent trainer/validator, exclusive one-shot reservation and safety tests. No training before guards."
+  "next_action": "Implement pinned CPU-only Ordered CatBoost preflight, independent trainer/validator, exclusive one-shot reservation and safety tests. No training before guards.",
+  "run_reservation_sha256": "7d31c590d542aa5dd583c720a4eb5243c47864ca13280e410c3ec0233ff01148",
+  "updated_at": "2026-10-25T05:20:37.321874+00:00"
 }
