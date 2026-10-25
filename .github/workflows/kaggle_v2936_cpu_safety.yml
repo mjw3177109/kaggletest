@@ -1,0 +1,36 @@
+name: Kaggle V2.9.36 XGBoost DART CPU Safety Only
+# No Kaggle credentials, Notebook push, training or competition submission in this workflow.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2936_cpu_safety.yml"
+      - "kaggle_agent/v2936_dart_train.py"
+      - "kaggle_agent/v2936_pipeline.py"
+      - "kaggle_agent/v2936_actions_gate.py"
+      - "tests/test_v2936_dart.py"
+permissions:
+  contents: read
+jobs:
+  cpu-only-safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install isolated CPU verification dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1 PyYAML==6.0.2
+          python -m pip install xgboost==3.0.5
+      - name: Compile and run frozen V2936 safety suite
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2936_dart_train.py kaggle_agent/v2936_pipeline.py kaggle_agent/v2936_actions_gate.py
+          python -m unittest discover -s tests -p 'test_v2936_dart.py' -v
