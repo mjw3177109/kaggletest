@@ -151,5 +151,15 @@ class TestV2939(unittest.TestCase):
         self.assertEqual(state["previous_v2938"]["run_id"], 40164585333)
         self.assertFalse(state["previous_v2938"]["submitted"])
 
+    def test_reserved_requires_run_id(self):
+        with patch.dict("os.environ", {"GITHUB_RUN_ID": ""}):
+            with self.assertRaisesRegex(RuntimeError, "run identity"):
+                gate.preregistration(allow_reserved=True)
+
+    def test_reserve_requires_authenticated_gate(self):
+        with patch.dict("os.environ", {"V2939_GATE_PASSED": ""}):
+            with self.assertRaisesRegex(RuntimeError, "not passed"):
+                gate.reserve()
+
 if __name__ == "__main__":
     unittest.main()
