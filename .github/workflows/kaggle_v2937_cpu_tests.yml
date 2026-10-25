@@ -6,6 +6,8 @@ on:
       - feature/v29-autonomous-evolution
     paths:
       - "kaggle_agent/v2937_goss_train.py"
+      - "kaggle_agent/v2937_actions_gate.py"
+      - "kaggle_agent/v2937_pipeline.py"
       - "tests/test_v2937_goss.py"
       - ".github/workflows/kaggle_v2937_cpu_tests.yml"
 permissions:
@@ -32,5 +34,5 @@ jobs:
       - name: Compile and run V2937 safety tests (no Kaggle credentials)
         run: |
           set -euo pipefail
-          python -m py_compile kaggle_agent/v2937_goss_train.py tests/test_v2937_goss.py
+          python -m py_compile kaggle_agent/v2937_goss_train.py kaggle_agent/v2937_actions_gate.py kaggle_agent/v2937_pipeline.py tests/test_v2937_goss.py
           python -m unittest discover -s tests -p 'test_v2937_goss.py' -v
