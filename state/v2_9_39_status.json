@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.39",
-  "stage": "run_reserved",
+  "stage": "skipped_no_cv_gain",
   "preregistered_at": "2026-10-25",
   "hypothesis": "conservative_order_statistic_median_of_champion_v2916_v2930_ranks",
   "model_family": "read_only_robust_three_source_median_no_fit",
@@ -54,6 +54,40 @@
   "implementation_status": "awaiting_independent_readonly_evaluator_tests_and_guarded_workflow",
   "preregistration_report": "reports/v2_9_39_preregistration.md",
   "failure_diagnostic": "reports/v2_9_38_failure_diagnostic.md",
-  "next_action": "Implement independent label-free median evaluator, strict SHA/ID/fold verification, safety tests and one-shot read-only Actions gate; no training or submission.",
-  "reserved_at": "2026-10-25T06:52:08.052801+00:00"
+  "next_action": "Terminal: below frozen promotion gate, never submit.",
+  "reserved_at": "2026-10-25T06:52:08.052801+00:00",
+  "checked_at": "2026-10-25T06:52:53.527086+00:00",
+  "full_cv": 0.9613234154717458,
+  "gain_vs_champion": 3.8375538512269713e-05,
+  "fold_auc": [
+    0.960841441665085,
+    0.9616188440138298,
+    0.9615340534152381
+  ],
+  "fold_gain": [
+    3.4442885625041164e-05,
+    4.4273529253402444e-05,
+    3.5628966834733156e-05
+  ],
+  "fold_validation_index_sha256": [
+    "9aa890b20ec4a4851d63376c2f1ba1e9ecbb9351f4d7e38759d30aae2bdfe44a",
+    "fcf94432902901d0d4c45a730918d9487a01c89bb0d48bfa325294f7966b8c1f",
+    "17465e5cf16d3e5289ee4ee6d58fb36ee30930f4b00e34bea68a0c3bab827ece"
+  ],
+  "positive_folds": 3,
+  "promotable": false,
+  "median_disagreement_fraction_oof": 0.19979274907630407,
+  "median_disagreement_fraction_test": 0.1684442576806606,
+  "candidate_oof_sha256": "6481e374da5e505a165e8449454004a356bd6cec43b8b36b8ad47cb93a966433",
+  "candidate_test_sha256": "c47102e8a45f53b93cf32089ceb46167874dd5c8692c73888d0a23fed12aa3bb",
+  "verified_source_notebooks": [
+    "mjw3177109/kas-v2915-realmlp-5epoch-t4-s6e10",
+    "mjw3177109/kas-v2916-interaction-realmlp-ens8-t4-s6e10",
+    "mjw3177109/kas-v2930-conditional-crossfit-te-realmlp-t4-s6e10"
+  ],
+  "source_metrics": {
+    "v2916_full_oof_auc": 0.9605256772889429,
+    "v2930_full_oof_auc": 0.9606450272778854
+  },
+  "updated_at": "2026-10-25T06:52:53.527086+00:00"
 }
