@@ -1,0 +1,22 @@
+# V2.9.39 — preregistered conservative order-statistic rank consensus (read-only CPU)
+
+Preregistered on **2026-10-25 UTC**, strictly after the verified terminal V2938 result and **before** any V2939 implementation, candidate calculation, or submission. This is a **single new, label-free, read-only CPU hypothesis**, not a retrial of any V2925–V2938 model, Notebook, or training run. The outcome is unknown.
+
+## Distinct hypothesis
+
+The V2938 Ordered CatBoost blend lost `0.0001637869576567308` CV and is permanently terminal. V2935's agreement-gated **arithmetic correction** improved CV by `0.000045227698368566216` but missed the frozen `+0.00005` promotion gate. V2939 tests a different, **robust order-statistic** aggregation, not V2935's arithmetic average: when both frozen independent sources move the champion rank in the same direction, use the **closer** of the two source ranks (the median of three) as a conservative target. This caps the correction to the smaller displacement, rather than summing both displacements. No label, subgroup, fitted gate, threshold search, or weight search is used. This mechanism is mathematically distinct from V2935 and V2925.
+
+## Frozen source provenance and exact single candidate
+
+- Champion V2915 full 699635-row OOF and 299844-row test, CV `0.9612850399332336`, official Public LB `0.96099`, submission ID `57446286`, NPZ SHA256 `46ad63f08537cd8d61c4c8e8698efc20bb3c8fbad4eb0d94ecd7c993b2d894b9`, champion test vector SHA256 `906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7`.
+- V2916 original interaction RealMLP full threefold OOF/test, authenticated Notebook COMPLETE, NPZ SHA256 `05facb3098732f1348928c8de62cefae3ecb64b5b1fabdb3a7a84342b7bfe0d7`.
+- V2930 conditional cross-fit RealMLP full threefold OOF/test, authenticated Notebook COMPLETE, NPZ SHA256 `45e96e595676ec91a1e6c8eea98f975e63c9c0762412b898fe549c0636107362`.
+- The only rank definition is `rank(x)=scipy.stats.rankdata(np.asarray(x,dtype=float64),method="average")/len(x)`. Compute ranks **separately** over full OOF and test; never use targets for a decision.
+- Let `r0=rank(V2915)`, `r16=rank(V2916)`, `r30=rank(V2930)`. Define the rowwise **order-statistic** `m=np.median(np.stack([r0,r16,r30],axis=0),axis=0)`. The **one and only** candidate is `r0 + 0.15*(m-r0)`. If source corrections disagree or tie the champion, the median is exactly `r0`, so the champion rank is unchanged. If both sources agree, the median is the nearer source rank. Freeze shrinkage `0.15`, median/tie method, no alternative formulas, seeds, thresholds, weights, calibration, pseudo-labels, external labels, feature fitting, or post-hoc changes.
+- Full threefold evaluation uses the exact champion `StratifiedKFold(n_splits=3,shuffle=True,random_state=20261018)` membership. Labels are used **only after** the candidate is frozen, to compute full/fold AUC. Record OOF/test little-endian float64 SHA256, fold membership SHA, source artifact SHA, train/test ID and target alignment, per-fold AUC, source Notebook COMPLETE states, and environment versions.
+
+## One-shot safety, independent audit and decision
+
+Implement an independent V2939 read-only evaluator and offline tests; do not call or mutate V2935's terminal evaluator. The guarded GitHub Actions workflow must first check actual remote HEAD, all five global active Actions statuses, owner-wide Kaggle Notebook idle/terminal evidence, authenticated official submission history, frozen source Notebook COMPLETE, all source SHA/IDs/target/folds, and competition deadline. Kaggle calls >=3 seconds apart, 429 or unknown states fail closed. **No Kaggle Notebook push/create, model fit, retraining, Kaggle submission, or repeated evaluation of a terminal V2939.** Only one guarded read-only evaluation; persist terminal state and immutable evidence.
+
+Promotion may be considered only if all hold: full blended CV `>=0.96125635576833`, gain versus V2915 `>=+0.00005`, at least 2/3 folds positive, and worst fold gain strictly `>-0.00005`. The evaluator must **never submit**. A passing candidate would still require a separate durable one-shot submission reservation, candidate test SHA, quota/deadline check, official submission-history deduplication and submission-ID recovery. CV is not official Public LB. Deadline: **2026-10-31 23:59 UTC**. Do not accept competition rules automatically, leak credentials, or promise a top-three result.
