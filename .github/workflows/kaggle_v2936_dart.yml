@@ -1,0 +1,105 @@
+# V2936 preregistered immutable original37 XGBoost DART; only one guarded Notebook.
+# CPU safety verified 17/17 in Actions #40149907653. Never submit in evaluator.
+# If durable slug exists, gate forces recover_only; 429/unknown owner state fails closed.
+name: Kaggle V2.9.36 XGBoost DART T4 Unique Notebook
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "First guarded launch or strictly read-only recovery"
+        type: choice
+        required: false
+        default: run
+        options:
+          - run
+          - recover_only
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2936_dart.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: kaggle-s6e10-v2936-unique-notebook
+  cancel-in-progress: false
+
+jobs:
+  guarded-dart-oofer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+      GH_API_TOKEN: ${{ github.token }}
+      REQUESTED_MODE: ${{ inputs.mode || 'run' }}
+    steps:
+      - name: Checkout immutable feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned CPU verification dependencies and Kaggle CLI
+        run: |
+          set -euo pipefail
+          python -m pip install -r requirements.txt
+          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1 PyYAML==6.0.2 xgboost==3.0.5
+      - name: Compile and repeat V2936 17 safety tests
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2936_dart_train.py kaggle_agent/v2936_pipeline.py kaggle_agent/v2936_actions_gate.py
+          python -m unittest discover -s tests -p 'test_v2936_dart.py' -v
+      - name: Fail-closed owner, official submission, deadline and all Actions gate
+        id: gate
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          python kaggle_agent/v2936_actions_gate.py
+      - name: Create sole V2936 Notebook once or recover only
+        if: steps.gate.outputs.allowed == 'true'
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: |
+          set -euo pipefail
+          test "$KAGGLE_USERNAME" = "mjw3177109"
+          test -n "$KAGGLE_API_TOKEN"
+          if test "$MODE" = "recover_only"; then
+            python kaggle_agent/v2936_pipeline.py --recover-only
+          else
+            python kaggle_agent/v2936_pipeline.py
+          fi
+      - name: Persist unique owner and audited OOF
+        if: always() && steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          for file in state/v2_9_36_status.json state/v2_9_experiments.json reports/v2_9_36_result.md; do
+            if test -f "$file"; then git add -- "$file"; fi
+          done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "bot: persist V2936 sole DART Notebook and verified OOF"
+          for attempt in 1 2 3 4; do
+            git fetch origin feature/v29-autonomous-evolution
+            git rebase origin/feature/v29-autonomous-evolution
+            if git push origin HEAD:feature/v29-autonomous-evolution; then exit 0; fi
+            sleep "$((attempt*2))"
+          done
+          exit 1
+      - name: Archive only compact V2936 status and result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2936-dart-status
+          path: |
+            state/v2_9_36_status.json
+            reports/v2_9_36_result.md
+          if-no-files-found: ignore
