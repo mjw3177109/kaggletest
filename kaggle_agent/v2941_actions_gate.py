@@ -16,7 +16,7 @@ CHAMPION_SHA="906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7"
 TERMINAL36="mjw3177109/kas-v2936-original37-xgboost-dart-t4-s6e10"
 FROZEN={"penalty":"l2","C":0.5,"solver":"lbfgs","max_iter":400,
  "tol":0.0001,"fit_intercept":True,"class_weight":None}
-ENV={"python":"3.11","scikit_learn":"1.6.1","numpy":"2.2.6","pandas":"2.2.3",
+ENV={"python":"3.11","sklearn":"1.6.1","numpy":"2.2.6","pandas":"2.2.3",
      "scipy":"1.15.3","device":"cpu","omp_num_threads":4}
 
 def read(name):
