@@ -1,8 +1,13 @@
-# V2938 preregistered CPU Ordered: dispatch-only until pinned synthetic preflight and CI are verified.
+# V2938 first one-shot launch authorized after 21/21 pinned synthetic CPU tests PASS (#40164505569); guarded preflight must still prove all owner Kaggle kernels idle.
 # V2938 immutable one-shot CPU Ordered. Initially dispatch-only; never retrain a reserved run.
 name: Kaggle V2938 Ordered One-Shot CPU
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2938_cpu_one_shot.yml"
 permissions:
   contents: write
   actions: read
