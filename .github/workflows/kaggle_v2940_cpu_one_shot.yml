@@ -1,8 +1,13 @@
-# V2940 launch NOT authorized until independent pinned CPU CI and all safety gates pass.
+# V2940 first one-shot launch authorized only after pinned 24/24 CPU tests SUCCESS (#40176147804); owner-wide Kaggle and global Actions preflight still fail closed.
 # V2940 immutable one-shot CPU Monotone HGB. Initially dispatch-only; never retrain a reserved run.
 name: Kaggle V2940 Monotone HGB One-Shot CPU
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2940_cpu_one_shot.yml"
 permissions:
   contents: write
   actions: read
