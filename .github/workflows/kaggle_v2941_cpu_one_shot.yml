@@ -1,13 +1,7 @@
-# V2941 first one-shot launch after 18/18 pinned CPU tests SUCCESS (#40185447221); owner-wide authenticated preflight and exclusive reservation still mandatory.
-# V2941 immutable one-shot CPU Spline Logistic. Initially dispatch-only; never retrain a reserved run.
+# V2941 preflight attempt #40185504849 failed before reservation; dispatch-only fail-closed.\n# V2941 immutable one-shot CPU Spline Logistic. Dispatch-only; never retrain a reserved run.
 name: Kaggle V2941 Spline Logistic One-Shot CPU
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/v29-autonomous-evolution
-    paths:
-      - ".github/workflows/kaggle_v2941_cpu_one_shot.yml"
 permissions:
   contents: write
   actions: read
@@ -40,7 +34,7 @@ jobs:
           import numpy,pandas,scipy,sklearn
           assert (numpy.__version__,pandas.__version__,scipy.__version__,sklearn.__version__)==("2.2.6","2.2.3","1.15.3","1.6.1")
           PY
-      - name: Compile and run all 24 V2941 CPU safety tests
+      - name: Compile and run all 18 V2941 CPU safety tests
         run: |
           set -euo pipefail
           python -m py_compile kaggle_agent/v2941_spline_train.py kaggle_agent/v2941_actions_gate.py kaggle_agent/v2941_pipeline.py
@@ -126,7 +120,7 @@ jobs:
           set -euo pipefail
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
-          for f in state/v2_9_41_status.json reports/v2_9_40_result.md; do
+          for f in state/v2_9_41_status.json reports/v2_9_41_result.md; do
             if test -f "$f"; then git add -- "$f"; fi
           done
           if git diff --cached --quiet; then exit 0; fi
@@ -141,7 +135,7 @@ jobs:
           name: v2941-one-shot-evidence
           path: |
             state/v2_9_41_status.json
-            reports/v2_9_40_result.md
+            reports/v2_9_41_result.md
             ${{ runner.temp }}/v2941_output/v2941_metrics.json
             ${{ runner.temp }}/v2941_output/v2941_spline_oof.npz
             ${{ runner.temp }}/v2941_output/v2941_candidate_unsubmitted.csv
