@@ -1,0 +1,40 @@
+name: Kaggle V2942 CPU RFF Logistic Safety Tests
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - "kaggle_agent/v2942_rff_train.py"
+      - "kaggle_agent/v2942_actions_gate.py"
+      - "kaggle_agent/v2942_pipeline.py"
+      - "tests/test_v2942_rff.py"
+      - ".github/workflows/kaggle_v2942_cpu_tests.yml"
+permissions:
+  contents: read
+concurrency:
+  group: kaggle-s6e10-v2942-cpu-tests
+  cancel-in-progress: false
+jobs:
+  safety-only:
+    runs-on: ubuntu-latest
+    env:
+      OMP_NUM_THREADS: '4'
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install frozen CPU dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.6.1
+      - name: Compile and run V2942 safety tests (no Kaggle credentials)
+        run: |
+          set -euo pipefail
+          python -m py_compile kaggle_agent/v2942_rff_train.py kaggle_agent/v2942_actions_gate.py kaggle_agent/v2942_pipeline.py tests/test_v2942_rff.py
+          python -m unittest discover -s tests -p 'test_v2942_rff.py' -v
