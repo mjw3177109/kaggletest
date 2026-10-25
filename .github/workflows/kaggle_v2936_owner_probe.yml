@@ -1,0 +1,55 @@
+# V2936 read-only Kaggle missing-slug diagnostic. No Notebook push, GPU or submission.
+name: Kaggle V2.9.36 Read-only Owner Status Diagnostic
+on:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - ".github/workflows/kaggle_v2936_owner_probe.yml"
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME || 'mjw3177109' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v29-autonomous-evolution
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -r requirements.txt
+      - name: Authenticated read-only owner and missing-slug status probe
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os,re,subprocess,time
+          slug="mjw3177109/kas-v2936-original37-xgboost-dart-t4-s6e10"
+          assert os.environ.get("KAGGLE_USERNAME")=="mjw3177109"
+          assert os.environ.get("KAGGLE_API_TOKEN")
+          checks=[
+              ["kernels","status",slug],
+              ["kernels","list","--mine","--search",slug.split("/",1)[1],"--page-size","50","-v"],
+              ["kernels","status","mjw3177109/kas-v2915-realmlp-5epoch-t4-s6e10"],
+          ]
+          for i,args in enumerate(checks):
+              if i: time.sleep(3.2)
+              p=subprocess.run(["kaggle",*args],capture_output=True,text=True,timeout=120)
+              raw=(p.stderr or "")+"\n"+(p.stdout or "")
+              low=raw.lower()
+              patterns=["404","not found","notfound","could not find","no such","does not exist",
+                        "kernel not found","kernelworkerstatus.complete","kernelworkerstatus.queued",
+                        "429","rate limit","403","forbidden","invalid","error","usage:"]
+              print("CHECK",i,"exit",p.returncode,"chars",len(raw),
+                    "flags",{q:q in low for q in patterns if q in low},flush=True)
+              # Only print the missing-slug error after removing credential values and URLs.
+              if i==0 and p.returncode:
+                  clean=raw.replace(os.environ["KAGGLE_API_TOKEN"],"[REDACTED]")
+                  clean=re.sub(r"https?://\S+","[URL]",clean)
+                  clean=re.sub(r"(?i)(token|key|authorization)\s*[:=]\s*\S+",r"\1=[REDACTED]",clean)
+                  print("MISSING_SLUG_ERROR",repr(clean[:450]),flush=True)
+          PY
