@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import os
+import json
+import sys
 from datetime import datetime, timezone
 
 import v2935_actions_gate as source_gate
@@ -50,10 +52,16 @@ FROZEN = {
     "failure_diagnostic": "reports/v2_9_38_failure_diagnostic.md",
 }
 
-def preregistration():
+def preregistration(allow_reserved=False):
     read = source_gate.common.read
     state = read("state/v2_9_39_status.json")
-    if any(state.get(key) != value for key, value in FROZEN.items()):
+    expected = dict(FROZEN)
+    if allow_reserved:
+        run_id = os.environ.get("GITHUB_RUN_ID")
+        if not run_id or not run_id.isdigit():
+            raise RuntimeError("No durable current run identity")
+        expected.update(stage="run_reserved", run_reservation_id=run_id)
+    if any(state.get(key) != value for key, value in expected.items()):
         raise RuntimeError("V2939 frozen preregistration or source SHA mismatch")
     if state.get("full_cv") is not None or state.get("promotable") is not None:
         raise RuntimeError("V2939 already evaluated; never evaluate twice")
@@ -95,6 +103,21 @@ def preregistration():
         raise RuntimeError("Competition deadline reached or ambiguous")
     return state
 
+def reserve():
+    if os.environ.get("V2939_GATE_PASSED") != "true":
+        raise RuntimeError("Authenticated V2939 gate not passed")
+    state = preregistration()
+    source_gate.common.assert_no_other_actions()
+    source_gate.assert_remote_head()
+    run_id = os.environ.get("GITHUB_RUN_ID")
+    if not run_id or not run_id.isdigit():
+        raise RuntimeError("No GitHub run ID for reservation")
+    state.update(stage="run_reserved", run_reservation_id=run_id,
+                 reserved_at=datetime.now(timezone.utc).isoformat())
+    (ROOT / "state/v2_9_39_status.json").write_text(
+        json.dumps(state, indent=2, ensure_ascii=False) + "\\n".replace("\\n", "\n"), encoding="utf-8")
+    print("V2939 unique read-only run reserved; no training or submission")
+
 def main():
     if os.environ.get("GITHUB_REPOSITORY") != "mjw3177109/kaggletest":
         raise RuntimeError("Wrong GitHub repository")
@@ -109,4 +132,9 @@ def main():
     print("V2939 authenticated read-only gate passed; no Notebook, training or submission")
 
 if __name__ == "__main__":
-    main()
+    if sys.argv[1:] == ["--reserve"]:
+        reserve()
+    elif not sys.argv[1:]:
+        main()
+    else:
+        raise SystemExit("Unsupported V2939 mode")
