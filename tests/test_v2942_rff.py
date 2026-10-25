@@ -7,12 +7,12 @@ sys.path.insert(0,str(ROOT/"kaggle_agent"))
 import v2942_rff_train as m
 class TestV2942(unittest.TestCase):
     def test_frozen_status(self):
-        s=json.loads((ROOT/"state/v2_9_41_status.json").read_text())
+        s=json.loads((ROOT/"state/v2_9_42_status.json").read_text())
         self.assertEqual(s["model_parameters"],m.PARAMS)
         self.assertFalse(s["prelaunch_allowed"])
         self.assertEqual(s["stage"],"preregistered_not_started")
     def test_schema(self):
-        self.assertEqual((len(m.CANONICAL),len(m.CAT_ORDER),len(m.SERVICE),len(m.NUM_ORDER)),(37,14,23))
+        self.assertEqual((len(m.CANONICAL),len(m.CAT_ORDER),len(m.NUM_ORDER)),(37,14,23))
         self.assertEqual(len(m.frozen_schema(m.CANONICAL)),64)
     def test_no_reorder(self):
         a=m.CANONICAL.copy();a.reverse()
@@ -44,7 +44,7 @@ class TestV2942(unittest.TestCase):
         old=g.read
         def alter(name):
             s=old(name)
-            if name=="state/v2_9_41_status.json":s["run_reservation_id"]="prior"
+            if name=="state/v2_9_42_status.json":s["run_reservation_id"]="prior"
             return s
         with patch.dict("os.environ",{"GITHUB_REF_NAME":g.BRANCH,"GITHUB_RUN_ID":"12345"}):
             with patch.object(g,"read",side_effect=alter):
@@ -55,7 +55,7 @@ class TestV2942(unittest.TestCase):
             with self.assertRaises(RuntimeError):g.assert_owner_idle()
     def test_fingerprint(self):
         import v2942_actions_gate as g
-        s=g.read("state/v2_9_41_status.json")
+        s=g.read("state/v2_9_42_status.json")
         a=g.fingerprint(s);s["outer_seed"]+=1
         self.assertNotEqual(a,g.fingerprint(s))
     def test_never_train_in_gate(self):
