@@ -37,7 +37,7 @@ TPU 线单独验证，不覆盖 V2.1 树模型。
 
 - 此名次关联的 Public LB：0.96035
 - 当前 Public 排名：**第 982 名 / 2925 支队伍**
-- 排名核验 UTC：2026-10-25T01:18:51.380069+00:00
+- 排名核验 UTC：2026-10-25T01:19:26.429008+00:00
 - 排名证据：kaggle_authenticated_userRank
 - 官方排行榜：https://www.kaggle.com/competitions/playground-series-s6e10/leaderboard
 
