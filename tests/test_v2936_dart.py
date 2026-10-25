@@ -16,9 +16,20 @@ import v2936_actions_gate as g
 class FrozenDart(unittest.TestCase):
     def test_01_preregistration_immutable(self):
         s=p.read(p.STATUS)
-        self.assertTrue(p.verify_prereg(s))
-        self.assertEqual(s["stage"],"preregistered_not_started")
-        self.assertEqual(s["notebook_created"],False)
+        self.assertEqual(s["intended_kernel"],p.KERNEL)
+        self.assertFalse(s["submitted"])
+        self.assertFalse(s["submission_attempted"])
+        self.assertEqual(s["model_parameters"],p.frozen_params()["model_parameters"])
+        if s["stage"] in p.TERMINAL:
+            self.assertFalse(p.verify_prereg(s))
+        else:
+            self.assertTrue(p.verify_prereg(s))
+            if s["stage"]=="preregistered_not_started":
+                self.assertIsNone(s["kernel"])
+                self.assertFalse(s["notebook_created"])
+            else:
+                self.assertEqual(s["kernel"],p.KERNEL)
+                self.assertTrue(s["notebook_created"] or s["stage"]=="pushing_kernel")
     def test_02_parameters_match(self):
         self.assertEqual(m.PARAMS,p.frozen_params()["model_parameters"])
         self.assertEqual(m.PARAMS["booster"],"dart")
@@ -72,10 +83,15 @@ class FrozenDart(unittest.TestCase):
         txt=(ROOT/"kaggle_agent/v2936_pipeline.py").read_text()
         self.assertNotIn('["kaggle","competitions","submit"',txt)
     def test_09_recover_only_refuses_unreserved(self):
-        with patch.object(p,"preflight",return_value=p.read(p.STATUS)):
-            with patch.object(p,"read",return_value=p.read(p.STATUS)):
+        # Synthetic pristine state; never mutate the real durable reservation.
+        state=p.read(p.STATUS)
+        state.update(stage="preregistered_not_started",kernel=None,
+                     notebook_created=False,training_started=False)
+        with patch.object(p,"preflight",return_value=state):
+            with patch.object(p,"read",return_value=state):
                 result=p.run(recover_only=True)
         self.assertEqual(result["stage"],"preregistered_not_started")
+        self.assertIsNone(result["kernel"])
     def test_10_terminal_never_reruns(self):
         s=p.read(p.STATUS)
         s["stage"]="skipped_no_cv_gain"
@@ -83,13 +99,25 @@ class FrozenDart(unittest.TestCase):
             result=p.run()
         self.assertEqual(result["stage"],"skipped_no_cv_gain")
     def test_11_guard_preflight_frozen(self):
-        with patch.object(g,"read",side_effect=lambda f:p.read(p.ROOT/f)):
-            with patch.object(g,"datetime") as clock:
-                from datetime import datetime,timezone
-                clock.now.return_value=datetime(2026,10,25,tzinfo=timezone.utc)
-                clock.fromisoformat=datetime.fromisoformat
-                mode=g.assert_preregistration()
-        self.assertEqual(mode,"run")
+        # Check both synthetic preregistration and actual persisted lifecycle.
+        current=p.read(p.STATUS)
+        pristine=dict(current,stage="preregistered_not_started",kernel=None,
+                      notebook_created=False,training_started=False)
+        def source(path,active):
+            return active if path=="state/v2_9_36_status.json" else p.read(p.ROOT/path)
+        with patch.object(g,"datetime") as clock:
+            from datetime import datetime,timezone
+            clock.now.return_value=datetime(2026,10,25,tzinfo=timezone.utc)
+            clock.fromisoformat=datetime.fromisoformat
+            with patch.object(g,"read",side_effect=lambda path:source(path,pristine)):
+                self.assertEqual(g.assert_preregistration(),"run")
+            with patch.object(g,"read",side_effect=lambda path:source(path,current)):
+                if current["stage"] in p.TERMINAL:
+                    with self.assertRaises(RuntimeError):
+                        g.assert_preregistration()
+                else:
+                    self.assertEqual(g.assert_preregistration(),
+                                     "recover_only" if current.get("kernel") else "run")
     def test_12_immutable_legacy_sources(self):
         s=p.read(p.STATUS)
         self.assertEqual(s["previous_v2935"]["stage"],"skipped_no_cv_gain")
