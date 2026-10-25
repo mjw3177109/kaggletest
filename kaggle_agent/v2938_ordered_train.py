@@ -1,4 +1,4 @@
-"""V2938 immutable CPU-only LightGBM Ordered original37 threefold OOF.
+"""V2938 immutable CPU-only CatBoost Ordered original37 threefold OOF.
 No Notebook, no submission, no tuning. Outer-fold-only encoders and TE. Exactly 37 numeric-encoded features.
 """
 from __future__ import annotations
@@ -37,6 +37,22 @@ def prove_environment():
     if not os.getenv("GITHUB_RUN_ID") or os.getenv("V2938_RESERVED_RUN_ID")!=os.getenv("GITHUB_RUN_ID"):
         raise RuntimeError("V2938 durable GitHub run reservation missing")
     return dict(actual,python=platform.python_version(),device="cpu")
+
+def synthetic_preflight():
+    """Verify pinned Python/CPU dependencies and 5-tree Ordered fit on synthetic data only."""
+    actual={"catboost":catboost.__version__,"numpy":np.__version__,"pandas":pd.__version__,
+            "scipy":scipy.__version__,"sklearn":sklearn.__version__}
+    if actual!=VERSIONS or platform.python_version_tuple()[:2]!=("3","11"):
+        raise RuntimeError("V2938 pinned CPU synthetic environment mismatch: "+repr(actual))
+    rng=np.random.default_rng(20261106)
+    x=rng.normal(size=(128,37)).astype("float32")
+    y=(x[:,0]+x[:,1]>0).astype("int8")
+    model=CatBoostClassifier(**dict(PARAMS,iterations=5),random_seed=20261106)
+    model.fit(x,y)
+    pred=model.predict_proba(x[:8])[:,1]
+    if model.tree_count_!=5 or not np.isfinite(pred).all():
+        raise RuntimeError("V2938 Ordered CPU synthetic fit failed")
+    print("V2938 pinned CPU Ordered synthetic preflight PASS")
 
 def _categorical(train, validation, name, left, right):
     fit = left.astype("string").fillna("__NA__")

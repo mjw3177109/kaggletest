@@ -36,23 +36,9 @@ def fingerprint(state):
 
 
 def prove_cpu_synthetic_preflight():
-    """Version + frozen Ordered fitting capability, using synthetic data only."""
-    import platform, catboost, numpy, pandas, scipy, sklearn
-    actual={"python":".".join(platform.python_version_tuple()[:2]),
-        "catboost":catboost.__version__,"numpy":numpy.__version__,
-        "pandas":pandas.__version__,"scipy":scipy.__version__,"sklearn":sklearn.__version__}
-    if actual!=ENV:
-        raise RuntimeError("V2938 pinned CPU environment mismatch: "+repr(actual))
-    from catboost import CatBoostClassifier
-    rng=numpy.random.default_rng(20261106)
-    x=rng.normal(size=(128,37)).astype("float32")
-    y=(x[:,0]+x[:,1]>0).astype("int8")
-    model=CatBoostClassifier(**dict(FROZEN,iterations=5),random_seed=20261106)
-    model.fit(x,y)
-    pred=model.predict_proba(x[:8])[:,1]
-    if model.tree_count_!=5 or not numpy.isfinite(pred).all():
-        raise RuntimeError("V2938 Ordered CPU synthetic fit failed")
-    print("V2938 pinned CPU Ordered synthetic preflight PASS")
+    """Synthetic preflight only: delegate to trainer, never fit competition data."""
+    import v2938_ordered_train as train
+    train.synthetic_preflight()
 
 def assert_preregistration():
     s=read("state/v2_9_38_status.json")
