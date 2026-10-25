@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.35",
-  "stage": "preregistered_not_started",
+  "stage": "skipped_no_cv_gain",
   "preregistered_at": "2026-10-24",
   "hypothesis": "label_free_agreement_gated_frozen_v2916_v2930_rank_corrections",
   "model_family": "read_only_three_source_consensus_gate_no_fit",
@@ -39,23 +39,58 @@
     "stage": "skipped_no_cv_gain",
     "standalone_cv": 0.9576654181929295,
     "fixed_fusion_cv": 0.9611890304161783,
-    "gain": -0.00009600951705523997,
+    "gain": -9.600951705523997e-05,
     "fold_gain": [
       -0.00011359596350091206,
-      -0.00008333370608548663,
-      -0.00008974255795546338
+      -8.333370608548663e-05,
+      -8.974255795546338e-05
     ],
     "recovery_run_id": 40142698555,
     "source_npz_sha256": "e0a3b343c4aad51f9ca80130e0f7f41dc69298b625778686db37a7cf9ef07d79"
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 0.00005,
+    "min_gain_vs_v2915": 5e-05,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -0.00005
+    "worst_fold_strict_gt": -5e-05
   },
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "awaiting_readonly_evaluator_tests_and_guarded_workflow",
   "preregistration_report": "reports/v2_9_35_preregistration.md",
-  "failure_diagnostic": "reports/v2_9_34_failure_diagnostic.md"
+  "failure_diagnostic": "reports/v2_9_34_failure_diagnostic.md",
+  "checked_at": "2026-10-25T00:15:15.782117+00:00",
+  "full_cv": 0.9613302676316021,
+  "gain_vs_champion": 4.5227698368566216e-05,
+  "fold_auc": [
+    0.9608479209906724,
+    0.9616272382464894,
+    0.9615395522839495
+  ],
+  "fold_gain": [
+    4.092221121243522e-05,
+    5.26677619130389e-05,
+    4.112783554610644e-05
+  ],
+  "fold_validation_index_sha256": [
+    "9aa890b20ec4a4851d63376c2f1ba1e9ecbb9351f4d7e38759d30aae2bdfe44a",
+    "fcf94432902901d0d4c45a730918d9487a01c89bb0d48bfa325294f7966b8c1f",
+    "17465e5cf16d3e5289ee4ee6d58fb36ee30930f4b00e34bea68a0c3bab827ece"
+  ],
+  "positive_folds": 3,
+  "promotable": false,
+  "agreement_fraction_oof": 0.8002072509236959,
+  "agreement_fraction_test": 0.8315557423193394,
+  "candidate_oof_sha256": "e3b7b0cc288e995393c8ab688bfa7e2683f3eb1643ad05fa8dfd0e18d34d9b32",
+  "candidate_test_sha256": "98215a0373ad071f4192ecdecdf9f33a548c5e7fb6e5dab9858770413f4f105c",
+  "verified_source_notebooks": [
+    "mjw3177109/kas-v2915-realmlp-5epoch-t4-s6e10",
+    "mjw3177109/kas-v2916-interaction-realmlp-ens8-t4-s6e10",
+    "mjw3177109/kas-v2930-conditional-crossfit-te-realmlp-t4-s6e10"
+  ],
+  "source_metrics": {
+    "v2916_full_oof_auc": 0.9605256772889429,
+    "v2930_full_oof_auc": 0.9606450272778854
+  },
+  "updated_at": "2026-10-25T00:15:15.782117+00:00",
+  "next_action": "Terminal: insufficient preregistered gain, never submit."
 }
