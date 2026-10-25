@@ -108,6 +108,36 @@ class TestV2942(unittest.TestCase):
                     "numeric_linear_scaler_sha256","numeric_rff_median_sha256",
                     "numeric_rff_scaler_sha256","validation_index_sha256"):
             self.assertEqual(len(info[key]),64)
+    def test_prelaunch_permission_blocks_before_kaggle(self):
+        import v2942_actions_gate as g
+        with patch.dict("os.environ",{"GITHUB_REF_NAME":g.BRANCH,"GITHUB_RUN_ID":"safe-test"}):
+            with patch.object(g,"assert_global_idle") as actions, patch.object(g,"assert_owner_idle") as owner:
+                with self.assertRaisesRegex(RuntimeError,"launch blocked"):
+                    g.reserve()
+                actions.assert_not_called()
+                owner.assert_not_called()
+    def test_approval_without_authenticated_evidence_rejected(self):
+        import v2942_actions_gate as g
+        s=g.read("state/v2_9_42_status.json")
+        s["prelaunch_allowed"]=True
+        with self.assertRaisesRegex(RuntimeError,"evidence incomplete"):
+            g.assert_launch_authorized(s)
+    def test_expired_launch_approval_rejected(self):
+        import v2942_actions_gate as g
+        s=g.read("state/v2_9_42_status.json")
+        s["prelaunch_allowed"]=True
+        s["launch_authorization"]={
+            "authenticated_owner_notebooks_verified":True,
+            "official_submissions_verified":True,
+            "official_deadline_verified":True,
+            "champion_test_sha256":g.CHAMPION_SHA,
+            "verified_at_utc":"2026-01-01T00:00:00Z"}
+        with self.assertRaisesRegex(RuntimeError,"stale"):
+            g.assert_launch_authorized(s)
+    def test_workflow_persists_v2942_report_only(self):
+        workflow=(ROOT/".github/workflows/kaggle_v2942_cpu_one_shot.yml").read_text()
+        self.assertIn("reports/v2_9_42_result.md",workflow)
+        self.assertNotIn("reports/v2_9_41_result.md",workflow)
     def test_original_data_guards(self):
         s=(ROOT/"kaggle_agent/v2942_rff_train.py").read_text()
         for x in ("Duplicate official IDs","Original 21 raw train columns changed","np.isin(y,[0,1])"):self.assertIn(x,s)

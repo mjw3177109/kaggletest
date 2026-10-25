@@ -53,7 +53,7 @@ def assert_preregistration():
       "blend":{"v2915_rank":0.85,"v2942_rank":0.15,"rank_method":"average","oof_and_test_ranked_separately":True},
       "promotion":{"min_cv":0.96125635576833,"min_gain_vs_v2915":0.00005,
                    "min_positive_folds":2,"worst_fold_strict_gt":-0.00005},
-      "submission_policy":"evaluation_only_no_submission","prelaunch_allowed":False}
+      "submission_policy":"evaluation_only_no_submission"}
     if any(s.get(k)!=v for k,v in frozen.items()):
         raise RuntimeError("V2942 immutable preregistration mismatch")
     if any(s.get(k) is not False for k in ("notebook_created","training_started","submitted","submission_attempted")):
@@ -87,6 +87,26 @@ def assert_preregistration():
         raise RuntimeError("Wrong branch or absent GitHub run identity")
     return s
 
+def assert_launch_authorized(state):
+    """Preregistration and offline tests never authorize a real-data launch."""
+    if state.get("prelaunch_allowed") is not True:
+        raise RuntimeError("V2942 launch blocked: authenticated prelaunch approval absent")
+    approval=state.get("launch_authorization")
+    required=("authenticated_owner_notebooks_verified",
+              "official_submissions_verified","official_deadline_verified")
+    if (not isinstance(approval,dict)
+        or any(approval.get(k) is not True for k in required)
+        or approval.get("champion_test_sha256")!=CHAMPION_SHA):
+        raise RuntimeError("V2942 launch authorization evidence incomplete")
+    try:
+        verified=datetime.fromisoformat(str(approval["verified_at_utc"]).replace("Z","+00:00"))
+    except (KeyError,TypeError,ValueError) as exc:
+        raise RuntimeError("V2942 launch authorization timestamp invalid") from exc
+    age=(datetime.now(timezone.utc)-verified).total_seconds() if verified.tzinfo else float("inf")
+    if age<0 or age>900:
+        raise RuntimeError("V2942 launch authorization stale or future-dated")
+    return state
+
 def assert_owner_idle():
     # The previous gate skipped its own V2936 slug. V2942 has NO Notebook:
     # force all owned refs, including V2936, through the owner-wide status scan.
@@ -102,6 +122,7 @@ def assert_global_idle():
 
 def reserve():
     s=assert_preregistration()
+    assert_launch_authorized(s)
     assert_global_idle()
     assert_owner_idle()
     assert_global_idle()
@@ -132,6 +153,7 @@ if __name__=="__main__":
     args=parser.parse_args()
     if args.mode=="preflight":
         prove_cpu_synthetic_preflight()
-        assert_preregistration();assert_global_idle();assert_owner_idle();assert_global_idle()
+        s=assert_preregistration();assert_launch_authorized(s)
+        assert_global_idle();assert_owner_idle();assert_global_idle()
     elif args.mode=="reserve":reserve()
     else:verify_reserved()

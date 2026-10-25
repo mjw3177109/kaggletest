@@ -33,7 +33,7 @@ jobs:
           import numpy,pandas,scipy,sklearn
           assert (numpy.__version__,pandas.__version__,scipy.__version__,sklearn.__version__)==("2.2.6","2.2.3","1.15.3","1.6.1")
           PY
-      - name: Compile and run all 20 V2942 CPU safety tests
+      - name: Compile and run all 24 V2942 CPU safety tests
         run: |
           set -euo pipefail
           python -m py_compile kaggle_agent/v2942_rff_train.py kaggle_agent/v2942_actions_gate.py kaggle_agent/v2942_pipeline.py
@@ -119,7 +119,7 @@ jobs:
           set -euo pipefail
           git config user.name "kaggle-auto-scientist[bot]"
           git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
-          for f in state/v2_9_42_status.json reports/v2_9_41_result.md; do
+          for f in state/v2_9_42_status.json reports/v2_9_42_result.md; do
             if test -f "$f"; then git add -- "$f"; fi
           done
           if git diff --cached --quiet; then exit 0; fi
@@ -134,7 +134,7 @@ jobs:
           name: v2942-one-shot-evidence
           path: |
             state/v2_9_42_status.json
-            reports/v2_9_41_result.md
+            reports/v2_9_42_result.md
             ${{ runner.temp }}/v2942_output/v2942_metrics.json
             ${{ runner.temp }}/v2942_output/v2942_rff_oof.npz
             ${{ runner.temp }}/v2942_output/v2942_candidate_unsubmitted.csv
