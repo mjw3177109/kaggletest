@@ -101,9 +101,17 @@
     "worst_fold_strict_gt": -0.00005
   },
   "submission_policy": "evaluation_only_no_submission",
-  "implementation_status": "awaiting_independent_trainer_validator_safety_tests_and_guarded_workflow",
+  "implementation_status": "implemented_offline_cpu_21_of_21_tests_passed_not_launched",
   "kaggle_authenticated_owner_state_currently_verified": false,
   "prelaunch_allowed": false,
   "preregistration_report": "reports/v2_9_42_preregistration.md",
-  "next_action": "Implement and offline-test independent V2942 code; authenticate all Kaggle owner kernels and official submission evidence, verify all five GitHub Actions activity states and pinned synthetic fit before any single authorized run. No V2941 retrigger."
+  "next_action": "No authenticated owner-wide Kaggle Notebook or submission verification was available in this run. Do not launch or download official data. Independently verify all owner kernels, official submissions, deadline and all five Actions states before a separately authorized first dispatch. Preserve V2941 retry prohibition; never repeat V2942 if reserved.",
+  "offline_safety_ci": {
+    "run_id": "40190954608",
+    "conclusion": "success",
+    "tests_passed": 21,
+    "full_synthetic_fold_with_inner_te": true,
+    "official_data_access": false,
+    "authenticated_kaggle_owner_verified": false
+  }
 }
