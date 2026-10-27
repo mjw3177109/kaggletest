@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T07:48:35.515446+00:00",
+  "generated_at": "2026-10-27T07:52:45.149461+00:00",
   "agent": {
     "name": "Kaggle Auto Scientist",
     "version": "V2.3",
@@ -13,10 +13,10 @@
       "deadline": "2026-11-09 23:59:00",
       "category": "Featured",
       "reward": "450,000 Usd",
-      "teamCount": 311,
+      "teamCount": 325,
       "userHasEntered": false,
       "userRank": 0,
-      "daysRemaining": 14,
+      "daysRemaining": 13,
       "score": 30
     },
     {
@@ -25,11 +25,11 @@
       "deadline": "2026-11-02 23:59:00",
       "category": "Featured",
       "reward": "850,000 Usd",
-      "teamCount": 4844,
+      "teamCount": 4897,
       "userHasEntered": false,
       "userRank": 0,
-      "daysRemaining": 7,
-      "score": 20
+      "daysRemaining": 6,
+      "score": 13
     },
     {
       "ref": "https://www.kaggle.com/competitions/arc-prize-2026-arc-agi-2",
@@ -37,11 +37,11 @@
       "deadline": "2026-11-02 23:59:00",
       "category": "Featured",
       "reward": "700,000 Usd",
-      "teamCount": 3350,
+      "teamCount": 3401,
       "userHasEntered": false,
       "userRank": 0,
-      "daysRemaining": 7,
-      "score": 20
+      "daysRemaining": 6,
+      "score": 13
     }
   ]
 }
