@@ -29,8 +29,8 @@ V2.5 新增 5 折内部交叉拟合 TE；每个外层验证折只使用对应训
 ## 当前已评分冠军对应的官方排名
 
 - 此名次关联的 Public LB：0.96035
-- 当前 Public 排名：**第 1125 名 / 3299 支队伍**
-- 排名核验 UTC：2026-10-27T23:51:58.271865+00:00
+- 当前 Public 排名：**第 1127 名 / 3303 支队伍**
+- 排名核验 UTC：2026-10-28T00:43:24.919499+00:00
 - 排名证据：kaggle_authenticated_userRank
 - 官方排行榜：https://www.kaggle.com/competitions/playground-series-s6e10/leaderboard
 
