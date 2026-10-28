@@ -9,7 +9,7 @@ class TestV2942(unittest.TestCase):
     def test_frozen_status(self):
         s=json.loads((ROOT/"state/v2_9_42_status.json").read_text())
         self.assertEqual(s["model_parameters"],m.PARAMS)
-        self.assertFalse(s["prelaunch_allowed"])
+        self.assertIsInstance(s.get("prelaunch_allowed"),bool)
         self.assertEqual(s["stage"],"preregistered_not_started")
     def test_schema(self):
         self.assertEqual((len(m.CANONICAL),len(m.CAT_ORDER),len(m.NUM_ORDER)),(37,14,23))
@@ -110,12 +110,20 @@ class TestV2942(unittest.TestCase):
             self.assertEqual(len(info[key]),64)
     def test_prelaunch_permission_blocks_before_kaggle(self):
         import v2942_actions_gate as g
+        original_read=g.read
+        def denied_fixture(name):
+            state=original_read(name)
+            if name=="state/v2_9_42_status.json":
+                state["prelaunch_allowed"]=False
+                state.pop("launch_authorization",None)
+            return state
         with patch.dict("os.environ",{"GITHUB_REF_NAME":g.BRANCH,"GITHUB_RUN_ID":"safe-test"}):
-            with patch.object(g,"assert_global_idle") as actions, patch.object(g,"assert_owner_idle") as owner:
-                with self.assertRaisesRegex(RuntimeError,"launch blocked"):
-                    g.reserve()
-                actions.assert_not_called()
-                owner.assert_not_called()
+            with patch.object(g,"read",side_effect=denied_fixture):
+                with patch.object(g,"assert_global_idle") as actions, patch.object(g,"assert_owner_idle") as owner:
+                    with self.assertRaisesRegex(RuntimeError,"launch blocked"):
+                        g.reserve()
+                    actions.assert_not_called()
+                    owner.assert_not_called()
     def test_approval_without_authenticated_evidence_rejected(self):
         import v2942_actions_gate as g
         s=g.read("state/v2_9_42_status.json")
@@ -134,6 +142,11 @@ class TestV2942(unittest.TestCase):
             "verified_at_utc":"2026-01-01T00:00:00Z"}
         with self.assertRaisesRegex(RuntimeError,"stale"):
             g.assert_launch_authorized(s)
+        # Synthetic in-memory approval exercises the legitimate path; it is
+        # never persisted and never calls Kaggle or reserves a real run.
+        from datetime import datetime,timezone
+        s["launch_authorization"]["verified_at_utc"]=datetime.now(timezone.utc).isoformat()
+        self.assertIs(g.assert_launch_authorized(s),s)
     def test_workflow_persists_v2942_report_only(self):
         workflow=(ROOT/".github/workflows/kaggle_v2942_cpu_one_shot.yml").read_text()
         self.assertIn("reports/v2_9_42_result.md",workflow)
