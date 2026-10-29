@@ -1,14 +1,14 @@
 # Kaggle Auto Scientist — Scout Report
 
-Generated: `2026-10-28T08:33:16.173565+00:00`
+Generated: `2026-10-29T08:29:51.709015+00:00`
 
 Open candidates: **3**
 
 | Rank | Competition | Category | Deadline | Days left | Teams | Entered | Score |
 |---:|---|---|---|---:|---:|---|---:|
-| 1 | `arc-prize-2026-paper-track` | Featured | 2026-11-09 23:59:00 | 12 | 340 | False | 30 |
-| 2 | `arc-prize-2026-arc-agi-3` | Featured | 2026-11-02 23:59:00 | 5 | 4927 | False | 13 |
-| 3 | `arc-prize-2026-arc-agi-2` | Featured | 2026-11-02 23:59:00 | 5 | 3460 | False | 13 |
+| 1 | `arc-prize-2026-paper-track` | Featured | 2026-11-09 23:59:00 | 11 | 346 | False | 30 |
+| 2 | `arc-prize-2026-arc-agi-3` | Featured | 2026-11-02 23:59:00 | 4 | 4962 | False | 13 |
+| 3 | `arc-prize-2026-arc-agi-2` | Featured | 2026-11-02 23:59:00 | 4 | 3494 | False | 13 |
 
 ## Safety
 
