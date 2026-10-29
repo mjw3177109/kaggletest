@@ -30,7 +30,7 @@ V2.5 新增 5 折内部交叉拟合 TE；每个外层验证折只使用对应训
 
 - 此名次关联的 Public LB：0.96035
 - 当前 Public 排名：**第 1215 名 / 3507 支队伍**
-- 排名核验 UTC：2026-10-29T22:59:23.913246+00:00
+- 排名核验 UTC：2026-10-29T23:00:00.260708+00:00
 - 排名证据：kaggle_authenticated_userRank
 - 官方排行榜：https://www.kaggle.com/competitions/playground-series-s6e10/leaderboard
 
