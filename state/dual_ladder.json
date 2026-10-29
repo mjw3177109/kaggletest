@@ -1,7 +1,7 @@
 {
   "version": "V2.4 ladder",
   "active_competition": "playground-series-s6e10",
-  "updated_at": "2026-10-29T21:52:52.140830+00:00",
+  "updated_at": "2026-10-29T22:02:46.713444+00:00",
   "public_rank_verified": true,
   "status": "working_toward_top3",
   "warning": "",
@@ -15,15 +15,15 @@
     "join_next": "Never accept Kaggle rules without explicit user consent",
     "training_next": "Only after target type and scoring metric preflight; existing GPU/TPU kernels remain scoped to S6E10"
   },
-  "rank": 1214,
+  "rank": 1215,
   "active_deadline": "2026-10-31T23:59:00+00:00",
   "deadline_source": "archived Kaggle competition deadline",
-  "hours_to_deadline": 50.1,
+  "hours_to_deadline": 49.94,
   "handoff_reasons": [],
   "next_competition": null,
   "next_training_enabled": false,
   "rank_source": "kaggle_authenticated_userRank",
-  "rank_checked_at": "2026-10-29T21:52:48.762291+00:00",
+  "rank_checked_at": "2026-10-29T22:02:43.518579+00:00",
   "ranked_teams": 3504,
   "latest_scored_submission": {
     "source": "v2_5_status.json",
