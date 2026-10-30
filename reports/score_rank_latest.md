@@ -7,7 +7,7 @@
 - **当前 Public 排名：官方排名暂未核实**
 - 已识别排行榜队伍数：271
 - 排名数据源：no_public_rank
-- 最近核验 UTC：2026-10-30T22:38:10.912999+00:00
+- 最近核验 UTC：2026-10-30T22:40:20.491794+00:00
 - 官方榜：https://www.kaggle.com/competitions/connectx/leaderboard
 
 注意：公开榜名次会随着其他人提交而变化。比赛结束后需另行确认 Private 榜最终排名和领奖资格。
