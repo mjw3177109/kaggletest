@@ -1,10 +1,10 @@
 {
   "version": "V2.4 ladder",
-  "active_competition": "playground-series-s6e10",
-  "updated_at": "2026-10-29T23:54:25.652107+00:00",
-  "public_rank_verified": true,
-  "status": "working_toward_top3",
-  "warning": "",
+  "active_competition": "connectx",
+  "updated_at": "2026-10-30T01:09:59.295108+00:00",
+  "public_rank_verified": false,
+  "status": "rotated_waiting_task_preflight",
+  "warning": "Automatically switched selection to a joined new contest. GPU and TPU S6E10 kernels are not cross-competition trainers; first verify dataset, target, metric, competition rules and submission format before training the new contest.",
   "gpu_training": "complete",
   "tpu_training": "skipped_no_cv_gain",
   "promotion_policy": {
@@ -15,21 +15,44 @@
     "join_next": "Never accept Kaggle rules without explicit user consent",
     "training_next": "Only after target type and scoring metric preflight; existing GPU/TPU kernels remain scoped to S6E10"
   },
-  "rank": 1218,
-  "active_deadline": "2026-10-31T23:59:00+00:00",
-  "deadline_source": "archived Kaggle competition deadline",
-  "hours_to_deadline": 48.08,
-  "handoff_reasons": [],
-  "next_competition": null,
+  "rank": null,
+  "active_deadline": "2030-01-01T00:00:00+00:00",
+  "deadline_source": "selected Kaggle competitions list",
+  "hours_to_deadline": 27814.8,
+  "handoff_reasons": [
+    "submission_deadline_window"
+  ],
+  "next_competition": {
+    "competition": "connectx",
+    "url": "https://www.kaggle.com/competitions/connectx",
+    "category": "Getting Started",
+    "deadline": "2030-01-01T00:00:00+00:00",
+    "hours_left": 27814.8,
+    "entered": true,
+    "observed_user_rank": null,
+    "reward": "Knowledge"
+  },
   "next_training_enabled": false,
   "rank_source": "kaggle_authenticated_userRank",
-  "rank_checked_at": "2026-10-29T23:54:22.222449+00:00",
-  "ranked_teams": 3512,
+  "rank_checked_at": "2026-10-30T01:09:55.848996+00:00",
+  "ranked_teams": 3514,
   "latest_scored_submission": {
     "source": "v2_5_status.json",
     "model": "V2.5 blend_rank",
     "public_score": 0.96035,
     "submission_id": 57346852,
     "submitted_at": "2026-10-18T08:34:41.130000"
-  }
+  },
+  "last_handoff": {
+    "from": "playground-series-s6e10",
+    "reasons": [
+      "submission_deadline_window"
+    ],
+    "rank": 1221,
+    "deadline": "2026-10-31T23:59:00+00:00",
+    "detected_at": "2026-10-30T01:09:59.295108+00:00"
+  },
+  "rotated_from": [
+    "playground-series-s6e10"
+  ]
 }
