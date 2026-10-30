@@ -1,20 +1,20 @@
 # Kaggle Auto Scientist｜GPU+TPU 双线冲榜与截止期自动换赛
 
-- 检查时间：2026-10-30T01:09:59.295108+00:00
+- 检查时间：2026-10-30T01:10:41.486202+00:00
 - 当前比赛：connectx
 - Kaggle 官方公开榜名次：暂时无法确认
 - 是否有有效排名证据：False
-- 官方排行榜队伍数：3514
-- 排名数据源：kaggle_authenticated_userRank
-- 排名最后核验：2026-10-30T01:09:55.848996+00:00
-- 最新已提交 Public LB：0.96035
+- 官方排行榜队伍数：272
+- 排名数据源：no_public_rank
+- 排名最后核验：2026-10-30T01:10:36.077108+00:00
+- 最新已提交 Public LB：暂无
 - GPU：complete；https://www.kaggle.com/code/mjw3177109/kas-v23-gpu-playground-series-s6e10
 - TPU：skipped_no_cv_gain；https://www.kaggle.com/code/mjw3177109/kas-v23-tpu-playground-series-s6e10
-- 换赛阶段：rotated_waiting_task_preflight
+- 换赛阶段：monitoring_deadline
 - 当前比赛最终截止：2030-01-01T00:00:00+00:00
-- 截止时间证据：selected Kaggle competitions list
-- 距离截止（小时）：27814.8
-- 已触发换赛条件：['submission_deadline_window']
+- 截止时间证据：Kaggle competitions list
+- 距离截止（小时）：27814.82
+- 已触发换赛条件：[]
 
 ## 转换规则
 
@@ -27,11 +27,11 @@ GPU 与 TPU 训练状态分别保留，不会重复创建已经排队的 Noteboo
 
 ## 下一场比赛
 
-- 候选：connectx
-- 链接：https://www.kaggle.com/competitions/connectx
-- 是否已报名：True
-- 截止时间：2030-01-01T00:00:00+00:00
+- 候选：暂无符合资格的候选
+- 链接：暂无
+- 是否已报名：未知
+- 截止时间：暂无
 
 ## 说明
 
-Automatically switched selection to a joined new contest. GPU and TPU S6E10 kernels are not cross-competition trainers; first verify dataset, target, metric, competition rules and submission format before training the new contest.
+Rank unknown; independently monitoring the verified final submission deadline.

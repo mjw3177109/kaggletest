@@ -1,19 +1,15 @@
 {
-  "competition": "playground-series-s6e10",
-  "checked_at": "2026-10-30T01:09:55.848996+00:00",
+  "competition": "connectx",
+  "checked_at": "2026-10-30T01:10:36.077108+00:00",
   "ranking_type": "Public",
-  "rank": 1221,
-  "rank_verified": true,
-  "rank_source": "kaggle_authenticated_userRank",
-  "ranked_teams": 3514,
-  "score": {
-    "source": "v2_5_status.json",
-    "model": "V2.5 blend_rank",
-    "public_score": 0.96035,
-    "submission_id": 57346852,
-    "submitted_at": "2026-10-18T08:34:41.130000"
-  },
-  "warnings": [],
-  "leaderboard_url": "https://www.kaggle.com/competitions/playground-series-s6e10/leaderboard",
+  "rank": null,
+  "rank_verified": false,
+  "rank_source": "no_public_rank",
+  "ranked_teams": 272,
+  "score": null,
+  "warnings": [
+    "Public leaderboard lookup unavailable: No full leaderboard CSV downloaded from Kaggle"
+  ],
+  "leaderboard_url": "https://www.kaggle.com/competitions/connectx/leaderboard",
   "note": "Public rank is not final Private leaderboard rank or prize entitlement."
 }
