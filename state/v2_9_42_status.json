@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.42",
-  "stage": "run_reserved",
+  "stage": "validation_mismatch",
   "preregistered_at": "2026-10-25",
   "hypothesis": "foldsafe_original37_numeric23_random_fourier_rbf_interactions_cpu",
   "execution": "guarded_one_shot_github_actions_cpu_not_implemented",
@@ -115,5 +115,6 @@
     "authenticated_kaggle_owner_verified": false
   },
   "run_reservation_sha256": "59669324508fd988ac366a09ec7db14256b61aaa6b1b9bee7bbe444bdf86161d",
-  "updated_at": "2026-11-01T08:46:43.945088+00:00"
+  "updated_at": "2026-11-01T08:59:47.153040+00:00",
+  "error": "Competition deadline expired"
 }
