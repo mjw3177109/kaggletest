@@ -65,14 +65,23 @@ def kaggle(args,timeout=120):
     _last_kaggle_call_at=time.monotonic()
     p=subprocess.run(["kaggle",*args],capture_output=True,text=True,timeout=timeout)
     if p.returncode:
-        diagnostic=(p.stderr or p.stdout or "").lower()
+        raw_diagnostic=(p.stderr or p.stdout or "").strip()
+        diagnostic=raw_diagnostic.lower()
         category=("not_found" if any(x in diagnostic for x in ("404","not found","notfound"))
                   else "forbidden" if any(x in diagnostic for x in ("403","forbidden"))
                   else "rate_limited" if "429" in diagnostic else "unknown")
         if category=="not_found" and args[:2]==["kernels","status"]:
             raise LookupError("Kaggle kernel status authenticated NOT_FOUND")
+        # Preserve enough sanitized provider detail to diagnose endpoint/auth
+        # failures without ever echoing the API token into Actions logs.
+        safe_detail=raw_diagnostic
+        for secret in (os.environ.get("KAGGLE_API_TOKEN",""),
+                       os.environ.get("KAGGLE_USERNAME","")):
+            if secret:
+                safe_detail=safe_detail.replace(secret,"[REDACTED]")
+        safe_detail=" ".join(safe_detail.split())[-600:]
         raise RuntimeError("Authenticated read-only Kaggle CLI unavailable; category="+category+
-                           "; exit="+str(p.returncode))
+                           "; exit="+str(p.returncode)+"; detail="+safe_detail)
     return p.stdout
 
 
