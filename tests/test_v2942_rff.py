@@ -146,6 +146,11 @@ class TestV2942(unittest.TestCase):
         with patch.object(g,"read",return_value=approval):
             with self.assertRaisesRegex(RuntimeError,"authorization missing or mismatched"):
                 g.assert_launch_authorized(s)
+    def test_kaggle_cli_runtime_dependency_is_pinned(self):
+        requirements=(ROOT/"requirements.txt").read_text()
+        workflow=(ROOT/".github/workflows/kaggle_v2942_cpu_one_shot.yml").read_text()
+        self.assertIn("six>=1.16.0,<2.0.0",requirements)
+        self.assertIn("from kaggle.api.kaggle_api_extended import KaggleApi",workflow)
     def test_workflow_persists_v2942_report_only(self):
         workflow=(ROOT/".github/workflows/kaggle_v2942_cpu_one_shot.yml").read_text()
         self.assertIn("reports/v2_9_42_result.md",workflow)
