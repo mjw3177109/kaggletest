@@ -13,6 +13,6 @@
   "late_score_submission_confirmed": false,
   "submission_guard": "No submission in the training workflow. Any late-score upload requires a separate durable one-shot reservation, authenticated Kaggle acceptance check, and confirmation that score-only/no-leaderboard behavior is understood.",
   "training_guard": "Exactly one reserved V2942 CPU training run; immutable parameters; full independent three-fold OOF validation; no Notebook creation; no automatic retry; V2941 remains permanently no-retry.",
-  "preflight_attempt": 2,
-  "preflight_note": "First preflight stopped before reservation because Kaggle CLI submission-history returned HTTP 404; retry only to capture sanitized provider detail, not to repeat training."
+  "preflight_attempt": 3,
+  "preflight_note": "Previous preflight stopped before reservation because Kaggle CLI import lacked six; dependency and import checks are now repaired. Retry only the read-only preflight, not training."
 }
