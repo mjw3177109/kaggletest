@@ -4,7 +4,7 @@
 
 ```json
 {
-  "checked_at": "2026-11-01T08:30:58.167112+00:00",
+  "checked_at": "2026-11-01T08:31:45.895146+00:00",
   "competition": "playground-series-s6e10",
   "mode": "proposal_only_no_training_or_submission",
   "next_experiment": {
@@ -13,7 +13,7 @@
   },
   "tpu": {
     "stage": "timed_out",
-    "queued_hours": 313.38,
+    "queued_hours": 313.4,
     "breaker_tripped": true,
     "fallback": "gpu_or_cpu_candidate_planning",
     "requires_queued_since": false,
