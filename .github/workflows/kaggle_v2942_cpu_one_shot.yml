@@ -1,6 +1,11 @@
 name: Kaggle V2942 RFF Logistic One-Shot CPU
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/v29-autonomous-evolution
+    paths:
+      - "state/v2_9_42_owner_authorization.json"
 permissions:
   contents: write
   actions: read
