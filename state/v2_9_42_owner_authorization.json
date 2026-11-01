@@ -1,0 +1,16 @@
+{
+  "version": "V2.9.42 owner authorization",
+  "competition": "playground-series-s6e10",
+  "owner_approved": true,
+  "allow_training": true,
+  "scope": "one_shot_train_and_evaluate",
+  "champion_test_sha256": "906185547dcd5f0cac3ac173de644fd9997f20ac863c6745bcb1fd3e9a89e5f7",
+  "authorized_at_utc": "2026-11-01T09:33:00Z",
+  "authorization_source": "User explicitly selected authorization B in the current conversation.",
+  "official_deadline_utc": "2026-10-31T23:59:00Z",
+  "late_submission_mode": "score_only_no_leaderboard",
+  "conditional_submission_authorized": true,
+  "late_score_submission_confirmed": false,
+  "submission_guard": "No submission in the training workflow. Any late-score upload requires a separate durable one-shot reservation, authenticated Kaggle acceptance check, and confirmation that score-only/no-leaderboard behavior is understood.",
+  "training_guard": "Exactly one reserved V2942 CPU training run; immutable parameters; full independent three-fold OOF validation; no Notebook creation; no automatic retry; V2941 remains permanently no-retry."
+}
