@@ -69,10 +69,12 @@ class TestV2942(unittest.TestCase):
     def test_validator_provenance(self):
         s=(ROOT/"kaggle_agent/v2942_pipeline.py").read_text()
         for x in ("old.baseline_arrays(td,champion)","rff_weights_sha256","validation_index_sha256","rate_limited_kaggle_subprocess"):self.assertIn(x,s)
-    def test_workflow_dispatch_only(self):
+    def test_workflow_owner_authorization_push_trigger_only(self):
         s=(ROOT/".github/workflows/kaggle_v2942_cpu_one_shot.yml").read_text()
         self.assertIn("workflow_dispatch:",s)
-        self.assertNotIn("  push:",s)
+        self.assertIn("  push:",s)
+        self.assertIn('"state/v2_9_42_owner_authorization.json"',s)
+        self.assertNotIn('"state/v2_9_42_status.json"',s.split("  push:",1)[1].split("permissions:",1)[0])
     def test_rff_seed_and_gamma(self):
         p=m.preprocessor(2)
         r=p.transformers[2][1].named_steps["rff"]
@@ -108,45 +110,42 @@ class TestV2942(unittest.TestCase):
                     "numeric_linear_scaler_sha256","numeric_rff_median_sha256",
                     "numeric_rff_scaler_sha256","validation_index_sha256"):
             self.assertEqual(len(info[key]),64)
-    def test_prelaunch_permission_blocks_before_kaggle(self):
+    def test_owner_authorization_blocks_before_kaggle(self):
         import v2942_actions_gate as g
         original_read=g.read
         def denied_fixture(name):
-            state=original_read(name)
-            if name=="state/v2_9_42_status.json":
-                state["prelaunch_allowed"]=False
-                state.pop("launch_authorization",None)
-            return state
+            if name=="state/v2_9_42_owner_authorization.json":
+                return {"competition":"playground-series-s6e10","owner_approved":False,
+                        "allow_training":False,"scope":"one_shot_train_and_evaluate",
+                        "champion_test_sha256":g.CHAMPION_SHA,
+                        "late_submission_mode":"score_only_no_leaderboard"}
+            return original_read(name)
         with patch.dict("os.environ",{"GITHUB_REF_NAME":g.BRANCH,"GITHUB_RUN_ID":"safe-test"}):
             with patch.object(g,"read",side_effect=denied_fixture):
                 with patch.object(g,"assert_global_idle") as actions, patch.object(g,"assert_owner_idle") as owner:
-                    with self.assertRaisesRegex(RuntimeError,"launch blocked"):
+                    with self.assertRaisesRegex(RuntimeError,"authorization missing or mismatched"):
                         g.reserve()
                     actions.assert_not_called()
                     owner.assert_not_called()
-    def test_approval_without_authenticated_evidence_rejected(self):
+    def test_incomplete_owner_authorization_rejected(self):
         import v2942_actions_gate as g
         s=g.read("state/v2_9_42_status.json")
-        s["prelaunch_allowed"]=True
-        with self.assertRaisesRegex(RuntimeError,"evidence incomplete"):
-            g.assert_launch_authorized(s)
-    def test_expired_launch_approval_rejected(self):
+        with patch.object(g,"read",return_value={"owner_approved":True,"allow_training":True}):
+            with self.assertRaisesRegex(RuntimeError,"authorization missing or mismatched"):
+                g.assert_launch_authorized(s)
+    def test_durable_owner_authorization_not_time_limited(self):
         import v2942_actions_gate as g
         s=g.read("state/v2_9_42_status.json")
-        s["prelaunch_allowed"]=True
-        s["launch_authorization"]={
-            "authenticated_owner_notebooks_verified":True,
-            "official_submissions_verified":True,
-            "official_deadline_verified":True,
-            "champion_test_sha256":g.CHAMPION_SHA,
-            "verified_at_utc":"2026-01-01T00:00:00Z"}
-        with self.assertRaisesRegex(RuntimeError,"stale"):
-            g.assert_launch_authorized(s)
-        # Synthetic in-memory approval exercises the legitimate path; it is
-        # never persisted and never calls Kaggle or reserves a real run.
-        from datetime import datetime,timezone
-        s["launch_authorization"]["verified_at_utc"]=datetime.now(timezone.utc).isoformat()
-        self.assertIs(g.assert_launch_authorized(s),s)
+        approval={"competition":g.COMPETITION,"owner_approved":True,"allow_training":True,
+                  "scope":"one_shot_train_and_evaluate","champion_test_sha256":g.CHAMPION_SHA,
+                  "late_submission_mode":"score_only_no_leaderboard",
+                  "authorized_at_utc":"2026-11-01T08:31:00Z"}
+        with patch.object(g,"read",return_value=approval):
+            self.assertIs(g.assert_launch_authorized(s),s)
+        approval["champion_test_sha256"]="wrong"
+        with patch.object(g,"read",return_value=approval):
+            with self.assertRaisesRegex(RuntimeError,"authorization missing or mismatched"):
+                g.assert_launch_authorized(s)
     def test_workflow_persists_v2942_report_only(self):
         workflow=(ROOT/".github/workflows/kaggle_v2942_cpu_one_shot.yml").read_text()
         self.assertIn("reports/v2_9_42_result.md",workflow)
