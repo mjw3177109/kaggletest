@@ -97,8 +97,7 @@ def assert_launch_authorized(state):
         "competition":COMPETITION,
         "owner_approved":True,
         "allow_training":True,
-        "allow_conditional_late_submission":True,
-        "scope":"one_shot_train_evaluate_conditional_late_score",
+        "scope":"one_shot_train_and_evaluate",
         "champion_test_sha256":CHAMPION_SHA,
         "late_submission_mode":"score_only_no_leaderboard",
     }
