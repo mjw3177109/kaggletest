@@ -4,6 +4,7 @@ import csv
 import io
 import json
 import os
+import re
 import subprocess
 import time
 import urllib.parse
@@ -67,9 +68,11 @@ def kaggle(args,timeout=120):
     if p.returncode:
         raw_diagnostic=(p.stderr or p.stdout or "").strip()
         diagnostic=raw_diagnostic.lower()
-        category=("not_found" if any(x in diagnostic for x in ("404","not found","notfound"))
-                  else "forbidden" if any(x in diagnostic for x in ("403","forbidden"))
-                  else "rate_limited" if "429" in diagnostic else "unknown")
+        category=("dependency_missing" if "modulenotfounderror" in diagnostic or "no module named" in diagnostic
+                  else "not_found" if re.search(r"\\b404\\b|http\\s*404|404 client error|\\bnot found\\b|\\bnotfound\\b",diagnostic)
+                  else "forbidden" if re.search(r"\\b403\\b|forbidden",diagnostic)
+                  else "rate_limited" if re.search(r"\\b429\\b|too many requests|rate limit",diagnostic)
+                  else "unknown")
         if category=="not_found" and args[:2]==["kernels","status"]:
             raise LookupError("Kaggle kernel status authenticated NOT_FOUND")
         # Preserve enough sanitized provider detail to diagnose endpoint/auth
