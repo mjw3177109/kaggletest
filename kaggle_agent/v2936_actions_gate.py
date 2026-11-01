@@ -69,9 +69,9 @@ def kaggle(args,timeout=120):
         raw_diagnostic=(p.stderr or p.stdout or "").strip()
         diagnostic=raw_diagnostic.lower()
         category=("dependency_missing" if "modulenotfounderror" in diagnostic or "no module named" in diagnostic
-                  else "not_found" if re.search(r"\\b404\\b|http\\s*404|404 client error|\\bnot found\\b|\\bnotfound\\b",diagnostic)
-                  else "forbidden" if re.search(r"\\b403\\b|forbidden",diagnostic)
-                  else "rate_limited" if re.search(r"\\b429\\b|too many requests|rate limit",diagnostic)
+                  else "not_found" if re.search(r"\b404\b|http\s*404|404 client error|\bnot found\b|\bnotfound\b",diagnostic)
+                  else "forbidden" if re.search(r"\b403\b|forbidden",diagnostic)
+                  else "rate_limited" if re.search(r"\b429\b|too many requests|rate limit",diagnostic)
                   else "unknown")
         if category=="not_found" and args[:2]==["kernels","status"]:
             raise LookupError("Kaggle kernel status authenticated NOT_FOUND")
