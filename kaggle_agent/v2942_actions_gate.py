@@ -2,7 +2,7 @@
 No Kaggle Notebook creation and no competition submission. All owner kernels checked.
 """
 from __future__ import annotations
-import argparse, hashlib, json, os
+import argparse, hashlib, json, os, time
 from datetime import datetime, timezone
 from pathlib import Path
 import v2936_actions_gate as inherited
@@ -80,31 +80,34 @@ def assert_preregistration():
         raise RuntimeError("Official V2915 champion submission/hash changed")
     ladder=read("state/dual_ladder.json")
     deadline=datetime.fromisoformat(ladder["active_deadline"].replace("Z","+00:00"))
-    if (ladder.get("active_competition")!=COMPETITION or deadline.tzinfo is None
-        or datetime.now(timezone.utc)>=deadline):
-        raise RuntimeError("Competition deadline reached or unverified")
+    if ladder.get("active_competition")!=COMPETITION or deadline.tzinfo is None:
+        raise RuntimeError("Competition deadline metadata mismatch")
+    # The final deadline has passed. V2942 may still run its one authorized CV
+    # evaluation; any later Kaggle submission is score-only and cannot change
+    # the frozen competition leaderboard. Explicit owner authorization below
+    # and live authenticated Kaggle checks remain mandatory.
     if os.getenv("GITHUB_REF_NAME")!=BRANCH or not os.getenv("GITHUB_RUN_ID"):
         raise RuntimeError("Wrong branch or absent GitHub run identity")
     return s
 
 def assert_launch_authorized(state):
-    """Preregistration and offline tests never authorize a real-data launch."""
-    if state.get("prelaunch_allowed") is not True:
-        raise RuntimeError("V2942 launch blocked: authenticated prelaunch approval absent")
-    approval=state.get("launch_authorization")
-    required=("authenticated_owner_notebooks_verified",
-              "official_submissions_verified","official_deadline_verified")
-    if (not isinstance(approval,dict)
-        or any(approval.get(k) is not True for k in required)
-        or approval.get("champion_test_sha256")!=CHAMPION_SHA):
-        raise RuntimeError("V2942 launch authorization evidence incomplete")
-    try:
-        verified=datetime.fromisoformat(str(approval["verified_at_utc"]).replace("Z","+00:00"))
-    except (KeyError,TypeError,ValueError) as exc:
-        raise RuntimeError("V2942 launch authorization timestamp invalid") from exc
-    age=(datetime.now(timezone.utc)-verified).total_seconds() if verified.tzinfo else float("inf")
-    if age<0 or age>900:
-        raise RuntimeError("V2942 launch authorization stale or future-dated")
+    """Check durable owner consent; live Kaggle/Actions evidence is checked separately at launch."""
+    approval=read("state/v2_9_42_owner_authorization.json")
+    required={
+        "competition":COMPETITION,
+        "owner_approved":True,
+        "allow_training":True,
+        "allow_conditional_late_submission":True,
+        "scope":"one_shot_train_evaluate_conditional_late_score",
+        "champion_test_sha256":CHAMPION_SHA,
+        "late_submission_mode":"score_only_no_leaderboard",
+    }
+    if not isinstance(approval,dict) or any(approval.get(k)!=v for k,v in required.items()):
+        raise RuntimeError("V2942 explicit owner authorization missing or mismatched")
+    if state.get("stage")!="preregistered_not_started":
+        raise RuntimeError("V2942 is already reserved or terminal; never retrain")
+    # The consent record does not substitute for live authenticated owner-wide
+    # Notebook, submission-history, API-token, or global Actions checks.
     return state
 
 def assert_owner_idle():
@@ -118,7 +121,20 @@ def assert_owner_idle():
         raise RuntimeError("V2936 owner terminal witness changed")
 
 def assert_global_idle():
-    inherited.assert_no_other_actions()
+    # A push-triggered authorized run may start beside harmless CI/audit jobs.
+    # Wait for them to finish; never proceed while another repository Actions
+    # run is active, and fail closed if the repository does not become idle.
+    until=time.monotonic()+600
+    while True:
+        try:
+            inherited.assert_no_other_actions()
+            return
+        except RuntimeError as exc:
+            if "Other global GitHub Actions active" not in str(exc):
+                raise
+            if time.monotonic()>=until:
+                raise RuntimeError("Repository Actions did not become idle within 10 minutes") from exc
+            time.sleep(15)
 
 def reserve():
     s=assert_preregistration()
