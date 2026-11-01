@@ -1,7 +1,7 @@
 {
   "competition": "playground-series-s6e10",
   "version": "V2.9.42",
-  "stage": "preregistered_not_started",
+  "stage": "run_reserved",
   "preregistered_at": "2026-10-25",
   "hypothesis": "foldsafe_original37_numeric23_random_fourier_rbf_interactions_cpu",
   "execution": "guarded_one_shot_github_actions_cpu_not_implemented",
@@ -9,7 +9,7 @@
   "training_started": false,
   "submitted": false,
   "submission_attempted": false,
-  "run_reservation_id": null,
+  "run_reservation_id": "41289631378",
   "model_family": "sklearn_1_6_1_RBFSampler128_numeric23_plus_linear_numeric23_OHE14_logistic",
   "train_rows": 699635,
   "test_rows": 299844,
@@ -96,9 +96,9 @@
   },
   "promotion": {
     "min_cv": 0.96125635576833,
-    "min_gain_vs_v2915": 0.00005,
+    "min_gain_vs_v2915": 5e-05,
     "min_positive_folds": 2,
-    "worst_fold_strict_gt": -0.00005
+    "worst_fold_strict_gt": -5e-05
   },
   "submission_policy": "evaluation_only_no_submission",
   "implementation_status": "implemented_offline_cpu_21_of_21_tests_passed_not_launched",
@@ -113,5 +113,7 @@
     "full_synthetic_fold_with_inner_te": true,
     "official_data_access": false,
     "authenticated_kaggle_owner_verified": false
-  }
+  },
+  "run_reservation_sha256": "59669324508fd988ac366a09ec7db14256b61aaa6b1b9bee7bbe444bdf86161d",
+  "updated_at": "2026-11-01T08:46:43.945088+00:00"
 }
