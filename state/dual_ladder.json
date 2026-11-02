@@ -1,7 +1,7 @@
 {
   "version": "V2.4 ladder",
   "active_competition": "connectx",
-  "updated_at": "2026-11-02T17:28:41.220006+00:00",
+  "updated_at": "2026-11-02T18:33:04.971011+00:00",
   "public_rank_verified": false,
   "status": "monitoring_deadline",
   "warning": "Rank unknown; independently monitoring the verified final submission deadline.",
@@ -18,12 +18,12 @@
   "rank": null,
   "active_deadline": "2030-01-01T00:00:00+00:00",
   "deadline_source": "Kaggle competitions list",
-  "hours_to_deadline": 27726.52,
+  "hours_to_deadline": 27725.45,
   "handoff_reasons": [],
   "next_competition": null,
   "next_training_enabled": false,
   "rank_source": "no_public_rank",
-  "rank_checked_at": "2026-11-02T17:28:36.390567+00:00",
+  "rank_checked_at": "2026-11-02T18:33:01.172311+00:00",
   "ranked_teams": 277,
   "latest_scored_submission": null,
   "last_handoff": {
