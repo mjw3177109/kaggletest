@@ -113,6 +113,49 @@ class LadderTests(unittest.TestCase):
         choices=ladder.next_candidates(raw, "playground-series-s6e10", set(), self.when)
         self.assertEqual([c["competition"] for c in choices], ["playground-next", "playground-other"])
 
+    def test_joined_rewarded_playground_preempts_unscored_practice(self):
+        current=self.row("connectx", joined=True, category="Getting Started", hours=10000)
+        reward=self.row("playground-series-s6e11", joined=True, hours=600)
+        reward["reward"]="3 Swag"
+        far=self.row("other-playground", joined=True, hours=1200)
+        far["reward"]="Swag"
+        old={"active_competition":"connectx",
+             "active_deadline":current["deadline"],
+             "rank_source":"old_practice_rank",
+             "latest_scored_submission":None}
+        d=ladder.decide(old,"connectx",None,[current,reward,far],self.when,
+                        authenticated_entered={"connectx","playground-series-s6e11","other-playground"})
+        self.assertEqual(d["active_competition"],"playground-series-s6e11")
+        self.assertEqual(d["status"],"rotated_waiting_task_preflight")
+        self.assertIn("higher_value_joined_playground",d["handoff_reasons"])
+        self.assertFalse(d["next_training_enabled"])
+        self.assertIsNone(d["latest_scored_submission"])
+        self.assertEqual(d["rank_source"],"awaiting_new_competition_verification")
+
+    def test_no_unverified_or_unjoined_preemption(self):
+        current=self.row("connectx", joined=True, category="Getting Started", hours=10000)
+        reward=self.row("playground-series-s6e11", joined=False, hours=600)
+        reward["reward"]="3 Swag"
+        old={"active_competition":"connectx","active_deadline":current["deadline"]}
+        for verified in [set(),{"playground-series-s6e11"}]:
+            d=ladder.decide(old,"connectx",None,[current,reward],self.when,
+                            authenticated_entered=verified)
+            self.assertEqual(d["active_competition"],"connectx")
+        reward["userHasEntered"]=True
+        d=ladder.decide(old,"connectx",None,[current,reward],self.when,
+                        authenticated_entered={"connectx"})
+        self.assertEqual(d["active_competition"],"connectx")
+
+    def test_no_preemption_of_scored_practice(self):
+        current=self.row("connectx", joined=True, category="Getting Started", hours=10000)
+        reward=self.row("playground-series-s6e11", joined=True, hours=600)
+        reward["reward"]="3 Swag"
+        old={"active_competition":"connectx","active_deadline":current["deadline"],
+             "latest_scored_submission":{"public_score":0.9}}
+        d=ladder.decide(old,"connectx",None,[current,reward],self.when,
+                        authenticated_entered={"connectx","playground-series-s6e11"})
+        self.assertEqual(d["active_competition"],"connectx")
+
     def test_older_top3_never_leaks_into_new_competition(self):
         old={"active_competition": "new-competition",
              "public_top3_achieved": {"competition": "previous", "rank": 1}}
