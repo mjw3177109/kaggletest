@@ -19,6 +19,11 @@ def main():
         original=guide.read_text(encoding="utf-8")
         if START in original:
             original=original.split(START)[0].rstrip()
+        if status.get("competition") != slug:
+            # Do not display S6E10 OOF/fusion methods as if they were tried in S6E11.
+            chapter = "## V2.7｜不占 GPU 配额的 OOF 双模型融合（小白版）\\n\\n该比赛尚未启动 V2.7 实验；不展示其他比赛的融合策略或成绩。"
+            guide.write_text(original.rstrip()+"\\n\\n"+START+"\\n"+chapter+"\\n"+END+"\\n", encoding="utf-8")
+            continue
         lines=[
             "## V2.7｜不占 GPU 配额的 OOF 双模型融合（小白版）", "",
             "这一版不是重新训练新模型，而是把我们已经得到的 V2.5 和 V2.6 折外预测进行固定 50/50 排名融合。",
