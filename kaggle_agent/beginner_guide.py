@@ -29,6 +29,15 @@ def render_guide(slug: str) -> str:
     project = ROOT / "competitions" / slug
     v2 = load_json(ROOT / "state" / "v2_status.json", {}) or {}
     v21 = load_json(ROOT / "state" / "v2_1_status.json", {}) or {}
+    # Historical status files are global. Never attribute another contest's
+    # training, scores, or submissions to the guide currently being rendered.
+    if v2.get("competition") != slug:
+        v2 = {}
+    if v21.get("competition") != slug:
+        v21 = {}
+    gate = load_json(ROOT / "state" / "s6e11_entry_gate.json", {}) or {}
+    if gate.get("competition") != slug:
+        gate = {}
     profile = load_json(project / "data_profile.json", {}) or {}
     v2_metrics = load_json(project / "results" / "metrics.json", {}) or {}
     v21_metrics = load_json(project / "results_v21" / "metrics.json", {}) or {}
@@ -48,7 +57,9 @@ def render_guide(slug: str) -> str:
 
     current_lb = v21_lb if v21.get("stage") == "complete" and v21_lb not in (None, "") else baseline_lb
     current_cv = v21_best_cv if v21.get("stage") == "complete" and v21_best_cv is not None else baseline_cv
-    current_model = v21_best if v21.get("stage") == "complete" and v21_best else "HistGradientBoosting baseline"
+    current_model = (v21_best if v21.get("stage") == "complete" and v21_best
+                     else "HistGradientBoosting baseline" if baseline_cv is not None or baseline_lb not in (None, "")
+                     else "尚未训练")
 
     rows = []
     if baseline_cv is not None or baseline_lb not in (None, ""):
@@ -68,9 +79,12 @@ def render_guide(slug: str) -> str:
     if not rows:
         exp_table.append("| - | 尚未完成训练 | - | - | 先等待自动流程完成 |")
 
-    stage = v21.get("stage") if v21 else v2.get("stage")
+    stage = gate.get("stage") or (v21.get("stage") if v21 else v2.get("stage"))
     stage_cn = {
         "rules_required": "等待你本人接受 Kaggle 比赛规则",
+        "blocked_awaiting_user_rule_acceptance": "尚未加入比赛，等待你本人接受 Kaggle 规则",
+        "joined_pending_official_rules_review": "已加入比赛，等待官方规则与数据格式审核",
+        "closed_no_submission": "比赛已截止，禁止新提交",
         "download_failed": "数据下载阶段出现问题",
         "kernel_failed": "Kaggle 云端训练失败，系统会根据日志继续修复",
         "kernel_timeout": "Kaggle 云端训练超过当前等待时限",
