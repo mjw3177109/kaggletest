@@ -4,6 +4,7 @@ import json
 import os
 import re
 import subprocess
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -19,11 +20,24 @@ def run(cmd: list[str]) -> str:
         raise RuntimeError("Missing KAGGLE_API_TOKEN environment variable")
     proc = subprocess.run(cmd, cwd=ROOT, env=env, text=True, capture_output=True)
     if proc.returncode != 0:
-        raise RuntimeError(f"Command failed: {' '.join(cmd)}\nSTDOUT:\n{proc.stdout}\nSTDERR:\n{proc.stderr}")
+        raise RuntimeError(f"Kaggle CLI failed with exit code {proc.returncode}; credentials and raw stderr withheld")
     return proc.stdout
 
 
 def parse_competitions(raw: str) -> list[dict]:
+    """Accept the official CLI JSON output; retain legacy table compatibility."""
+    raw = raw.strip()
+    if raw.startswith(("[", "{")):
+        payload = json.loads(raw)
+        if isinstance(payload, dict):
+            payload = next((payload[k] for k in ("competitions", "items", "results", "data")
+                            if isinstance(payload.get(k), list)), [])
+        if not isinstance(payload, list):
+            raise ValueError("Unexpected Kaggle competitions JSON structure")
+        return [
+            dict(item, slug=str(item.get("ref") or item.get("slug") or "").rstrip("/").split("/")[-1])
+            for item in payload if isinstance(item, dict)
+        ]
     rows: list[dict] = []
     for line in raw.splitlines():
         stripped = line.strip()
@@ -52,28 +66,31 @@ def parse_competitions(raw: str) -> list[dict]:
     return rows
 
 
-def is_open(deadline: str, now: datetime) -> bool:
+def parse_deadline(deadline: str) -> datetime | None:
     try:
-        dt = datetime.strptime(deadline, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
-        return dt > now
-    except ValueError:
-        return False
+        dt = datetime.fromisoformat(str(deadline).replace("Z", "+00:00"))
+        return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+    except (ValueError, TypeError):
+        return None
+
+
+def is_open(deadline: str, now: datetime) -> bool:
+    dt = parse_deadline(deadline)
+    return dt is not None and dt > now
 
 
 def days_remaining(deadline: str, now: datetime) -> int:
-    try:
-        dt = datetime.strptime(deadline, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
-        return max(0, (dt - now).days)
-    except ValueError:
-        return 0
+    dt = parse_deadline(deadline)
+    return max(0, (dt - now).days) if dt else 0
 
 
 def score(row: dict, prefer_categories: list[str], now: datetime) -> int:
     s = 0
-    category = str(row.get("category", ""))
-    if category in prefer_categories:
-        s += 35 - prefer_categories.index(category) * 5
-    elif category.lower() in {"featured", "research"}:
+    category = str(row.get("category", "")).replace(" ", "").lower()
+    preferred = [str(x).replace(" ", "").lower() for x in prefer_categories]
+    if category in preferred:
+        s += 35 - preferred.index(category) * 5
+    elif category in {"featured", "research"}:
         s += 10
 
     slug = str(row.get("slug", "")).lower()
@@ -94,19 +111,49 @@ def score(row: dict, prefer_categories: list[str], now: datetime) -> int:
     return s
 
 
+def discover_competitions(page_size: int, max_pages: int = 2) -> list[dict]:
+    """Bounded, category-specific read-only discovery; entered list verifies membership."""
+    merged: dict[str, dict] = {}
+    scopes = [
+        ("general", "playground"),
+        ("general", "gettingStarted"),
+        ("general", "featured"),
+        ("general", "research"),
+        ("entered", "all"),
+    ]
+    first_request = True
+    for group, category in scopes:
+        for page in range(1, max_pages + 1):
+            if not first_request:
+                time.sleep(3)  # Avoid Kaggle API bursts.
+            first_request = False
+            rows = parse_competitions(run([
+                "kaggle", "competitions", "list",
+                "--group", group, "--category", category,
+                "--sort-by", "recentlyCreated",
+                "--page-size", str(page_size), "--page", str(page),
+                "--format", "json",
+            ]))
+            for item in rows:
+                slug = str(item.get("slug") or "").strip()
+                if not re.fullmatch(r"[a-z0-9][a-z0-9-]{2,}", slug):
+                    continue
+                if slug not in merged:
+                    merged[slug] = dict(item)
+                if group == "entered" or item.get("userHasEntered") is True:
+                    merged[slug]["userHasEntered"] = True
+                    if item.get("userRank") not in (None, 0, "0"):
+                        merged[slug]["userRank"] = item["userRank"]
+            if len(rows) < page_size:
+                break
+    return list(merged.values())
+
+
 def main() -> None:
     cfg = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
     scout_cfg = cfg["scout"]
-    raw = run([
-        "kaggle",
-        "competitions",
-        "list",
-        "--page-size",
-        str(scout_cfg.get("page_size", 100)),
-    ])
-
     now = datetime.now(timezone.utc)
-    comps = parse_competitions(raw)
+    comps = discover_competitions(int(scout_cfg.get("page_size", 100)))
     min_days = int(scout_cfg.get("min_days_remaining", 2))
     comps = [
         c for c in comps
