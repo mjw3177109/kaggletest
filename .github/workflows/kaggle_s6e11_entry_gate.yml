@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "23 * * * *"
+  # Fallback when GitHub delays or drops hourly schedule events.
+  # Kaggle Scout runs only from trusted main/schedule/push, never untrusted PR code.
+  workflow_run:
+    workflows: ["Kaggle Scout"]
+    types: [completed]
   push:
     branches: [main]
     paths:
