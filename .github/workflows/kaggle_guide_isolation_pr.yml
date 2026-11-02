@@ -1,0 +1,28 @@
+name: Kaggle Guide Contest Isolation PR Tests
+
+on:
+  pull_request:
+    paths:
+      - "kaggle_agent/v25_guide.py"
+      - "kaggle_agent/v26_guide.py"
+      - "kaggle_agent/v27_guide.py"
+      - "kaggle_agent/v28_guide.py"
+      - "tests/test_beginner_guide_isolation.py"
+      - ".github/workflows/kaggle_guide_isolation_pr.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  guide-isolation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile guide scripts
+        run: python -m compileall -q kaggle_agent/beginner_guide.py kaggle_agent/v25_guide.py kaggle_agent/v26_guide.py kaggle_agent/v27_guide.py kaggle_agent/v28_guide.py
+      - name: Verify no cross-competition guide leakage
+        run: python -m unittest discover -s tests -p 'test_beginner_guide_isolation.py' -v
