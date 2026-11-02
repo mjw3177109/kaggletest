@@ -1,0 +1,33 @@
+name: Kaggle Scout Offline Regression
+
+on:
+  pull_request:
+    paths:
+      - "kaggle_agent/scout.py"
+      - "tests/test_scout_discovery.py"
+      - ".github/workflows/kaggle_scout_tests.yml"
+  push:
+    branches: [main]
+    paths:
+      - "kaggle_agent/scout.py"
+      - "tests/test_scout_discovery.py"
+      - ".github/workflows/kaggle_scout_tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test-scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install offline test dependency
+        run: python -m pip install "PyYAML>=6.0,<7.0"
+      - name: Compile and run Kaggle scout regression
+        run: |
+          python -m py_compile kaggle_agent/scout.py
+          python -m unittest discover -s tests -p test_scout_discovery.py -v
