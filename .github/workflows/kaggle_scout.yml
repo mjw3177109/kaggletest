@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/kaggle_scout.yml"
+      - "kaggle_agent/scout.py"
+      - "tests/test_scout_discovery.py"
   schedule:
     - cron: "17 2 * * *"
 
@@ -33,6 +35,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Test bounded scout discovery without Kaggle access
+        run: python -m unittest discover -s tests -p test_scout_discovery.py -v
 
       - name: Verify Kaggle token exists
         shell: bash
