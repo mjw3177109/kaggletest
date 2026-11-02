@@ -7,7 +7,11 @@ on:
   # Fallback when GitHub delays or drops hourly schedule events.
   # Kaggle Scout runs only from trusted main/schedule/push, never untrusted PR code.
   workflow_run:
-    workflows: ["Kaggle Scout"]
+    # Scout is daily; the already-running ladder provides an additional
+    # completion-based fallback when GitHub drops hourly schedule events.
+    workflows:
+      - "Kaggle Scout"
+      - "Kaggle Dual GPU-TPU Top3 or Deadline Ladder"
     types: [completed]
   push:
     branches: [main]
@@ -46,7 +50,7 @@ jobs:
 
   authenticated-check:
     needs: offline-tests
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
