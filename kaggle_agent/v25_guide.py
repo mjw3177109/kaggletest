@@ -13,6 +13,10 @@ def get(path):
 
 def section(slug):
     state=get(ROOT/"state"/"v2_5_status.json")
+    # Legacy experiment descriptions are S6E10-specific; never paste them into
+    # a different competition's guide, even when its training has not begun.
+    if state.get("competition") != slug:
+        return "## V2.5｜对标高手的 GPU 优化（小白版）\n\n该比赛尚未启动 V2.5 实验；不展示其他比赛的模型、字段或成绩。"
     rank=get(ROOT/"state"/"score_rank_latest.json")
     parts=[
         "## V2.5｜对标高手的 GPU 优化（小白版）", "",
