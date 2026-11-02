@@ -1,5 +1,6 @@
 """Offline tests: never touch Kaggle, secrets, training or submission."""
 import unittest
+from datetime import datetime, timezone
 from unittest.mock import patch
 
 from kaggle_agent import s6e11_entry_gate as gate
@@ -12,6 +13,12 @@ TARGET = {
 
 
 class S6E11GateTests(unittest.TestCase):
+    def setUp(self):
+        clock = patch.object(gate, "datetime")
+        mocked = clock.start()
+        mocked.now.return_value = datetime(2026, 11, 2, tzinfo=timezone.utc)
+        self.addCleanup(clock.stop)
+
     def test_not_joined_stays_blocked(self):
         result = gate.verify([TARGET], [], True)
         self.assertEqual(result["stage"], "blocked_awaiting_user_rule_acceptance")
