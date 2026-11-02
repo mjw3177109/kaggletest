@@ -1,0 +1,100 @@
+name: Kaggle S6E11 Authenticated Entry Gate
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 * * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/kaggle_s6e11_entry_gate.yml"
+      - "kaggle_agent/s6e11_entry_gate.py"
+      - "tests/test_s6e11_entry_gate.py"
+  pull_request:
+    paths:
+      - ".github/workflows/kaggle_s6e11_entry_gate.yml"
+      - "kaggle_agent/s6e11_entry_gate.py"
+      - "tests/test_s6e11_entry_gate.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-s6e11-entry-gate
+  cancel-in-progress: false
+
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install local test dependencies
+        run: pip install PyYAML
+      - name: Verify read-only fail-closed entry logic
+        run: |
+          python -m py_compile kaggle_agent/s6e11_entry_gate.py
+          python -m unittest discover -s tests -p test_s6e11_entry_gate.py -v
+
+  authenticated-check:
+    needs: offline-tests
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install official Kaggle CLI
+        run: pip install -r requirements.txt
+      - name: Require existing Kaggle credential without printing it
+        shell: bash
+        run: |
+          if [ -z "$KAGGLE_API_TOKEN" ]; then
+            echo "Kaggle credential unavailable; fail closed."
+            exit 1
+          fi
+      - name: Verify entry via authenticated general and entered lists
+        run: python -m kaggle_agent.s6e11_entry_gate
+      - name: Archive evidence when available
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s6e11-entry-gate
+          path: |
+            state/s6e11_entry_gate.json
+            reports/s6e11_entry_gate_latest.md
+          if-no-files-found: ignore
+      - name: Persist material status transitions only
+        shell: bash
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -A -- state/s6e11_entry_gate.json reports/s6e11_entry_gate_latest.md
+          if git diff --cached --quiet; then
+            echo "No material enrollment change."
+            exit 0
+          fi
+          git commit -m "bot: record authenticated S6E11 entry gate transition"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              echo "Enrollment gate transition persisted."
+              exit 0
+            fi
+            sleep $((attempt * 2))
+          done
+          exit 1
