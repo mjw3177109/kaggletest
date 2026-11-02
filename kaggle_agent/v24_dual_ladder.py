@@ -158,7 +158,7 @@ def handoff_reasons(rank_row, deadline, now):
     return reasons
 
 
-def decide(previous, current, rank_row, candidates, now):
+def decide(previous, current, rank_row, candidates, now, *, authenticated_entered=None):
     data = dict(previous)
     last_top3 = data.get("public_top3_achieved")
     if last_top3 and last_top3.get("competition") != current:
@@ -192,6 +192,49 @@ def decide(previous, current, rank_row, candidates, now):
     data["handoff_reasons"] = reasons
     data["next_competition"] = None
     data["next_training_enabled"] = False
+
+    # A joined, reward-bearing Playground may preempt an unscored Getting Started
+    # practice contest. Use the fresh authenticated ENTERED list, never a stale
+    # public flag alone. Selection only: it cannot accept rules, train or submit.
+    if not reasons and authenticated_entered is not None and rank is None:
+        current_row = next((r for r in candidates if norm_slug(r) == current), None)
+        current_category = str((current_row or {}).get("category") or "").replace(" ", "").lower()
+        if current_category == "gettingstarted" and not data.get("latest_scored_submission"):
+            history = set(previous.get("rotated_from") or [])
+            eligible = [
+                c for c in next_candidates(candidates, current, history, now)
+                if c["entered"]
+                and c["competition"] in authenticated_entered
+                and str(c["category"]).replace(" ", "").lower() == "playground"
+                and str(c.get("reward") or "").strip().lower() not in ("", "knowledge", "none")
+            ]
+            if eligible:
+                choice = min(eligible, key=lambda c: (c["hours_left"], c["competition"]))
+                data["handoff_reasons"] = ["higher_value_joined_playground"]
+                data["last_handoff"] = {
+                    "from": current, "reasons": data["handoff_reasons"],
+                    "rank": rank, "deadline": data["active_deadline"],
+                    "detected_at": now.isoformat(),
+                }
+                data["next_competition"] = choice
+                data["rotated_from"] = sorted(history | {current})
+                data["active_competition"] = choice["competition"]
+                data["active_deadline"] = choice["deadline"]
+                data["deadline_source"] = "fresh authenticated Kaggle entered list"
+                data["hours_to_deadline"] = choice["hours_left"]
+                data["rank"] = choice["observed_user_rank"]
+                data["public_rank_verified"] = choice["observed_user_rank"] is not None
+                data["rank_source"] = "awaiting_new_competition_verification"
+                data["rank_checked_at"] = None
+                data["ranked_teams"] = None
+                data["latest_scored_submission"] = None
+                data["status"] = "rotated_waiting_task_preflight"
+                data["warning"] = (
+                    "Joined rewarded Playground takes selection priority over unscored "
+                    "practice contest. New rules, schema, metric and submission format "
+                    "must be independently reviewed; training/submission remain disabled."
+                )
+                return data
 
     if not reasons:
         if rank is None and deadline is None:
@@ -328,12 +371,20 @@ def main():
     for row in entered:
         k = norm_slug(row)
         merged[k] = {**merged.get(k, {}), **{p: v for p, v in row.items() if v is not None}}
-    result = decide(old, current, rank_row, list(merged.values()), utc())
-    if rank_snapshot.get("competition") == current:
+    verified_entered = {norm_slug(r) for r in entered if is_entered(r)}
+    result = decide(old, current, rank_row, list(merged.values()), utc(),
+                    authenticated_entered=verified_entered)
+    if result.get("active_competition") == current and rank_snapshot.get("competition") == current:
         result["rank_source"] = rank_snapshot.get("rank_source", "unverified")
         result["rank_checked_at"] = rank_snapshot.get("checked_at")
         result["ranked_teams"] = rank_snapshot.get("ranked_teams")
         result["latest_scored_submission"] = rank_snapshot.get("score")
+    elif result.get("active_competition") != current:
+        # A prior contest's score/rank must NEVER appear under a newly selected slug.
+        result["rank_source"] = "awaiting_new_competition_verification"
+        result["rank_checked_at"] = None
+        result["ranked_teams"] = None
+        result["latest_scored_submission"] = None
     write(STATE, result)
     report(result)
     print(json.dumps(result, ensure_ascii=False, indent=2), flush=True)
