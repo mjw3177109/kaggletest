@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from kaggle_agent import beginner_guide
+from kaggle_agent import beginner_guide, v25_guide, v26_guide, v27_guide, v28_guide
 
 
 class BeginnerGuideContestIsolationTests(unittest.TestCase):
@@ -66,6 +66,37 @@ class BeginnerGuideContestIsolationTests(unittest.TestCase):
         self.assertIn("尚未开始", guide)
         self.assertIn("尚未训练", guide)
         self.assertNotIn("0.95774", guide)
+
+
+    def test_legacy_experiment_chapters_do_not_leak_to_s6e11(self):
+        """Old airline-specific experiment claims must stay in S6E10."""
+        for version in ("5", "6", "7", "8"):
+            self.write(f"state/v2_{version}_status.json", {
+                "competition": "playground-series-s6e10",
+                "stage": "complete",
+                "metrics": {"best_cv_auc": 0.96035},
+                "submitted": True,
+            })
+        for module in (v25_guide, v26_guide, v28_guide):
+            with patch.object(module, "ROOT", self.root):
+                new_chapter = module.section("playground-series-s6e11")
+                old_chapter = module.section("playground-series-s6e10")
+            self.assertIn("该比赛尚未启动", new_chapter)
+            self.assertNotIn("Flight Distance", new_chapter)
+            self.assertNotIn("0.95819", new_chapter)
+            self.assertNotIn("航线画像", new_chapter)
+            self.assertIn("0.96035", old_chapter)
+
+        for slug in ("playground-series-s6e10", "playground-series-s6e11"):
+            path = self.root / "competitions" / slug / "小白说明书.md"
+            path.write_text(self.render(slug), encoding="utf-8")
+        with patch.object(v27_guide, "ROOT", self.root):
+            v27_guide.main()
+        new_guide = (self.root / "competitions/playground-series-s6e11/小白说明书.md").read_text(encoding="utf-8")
+        old_guide = (self.root / "competitions/playground-series-s6e10/小白说明书.md").read_text(encoding="utf-8")
+        self.assertIn("该比赛尚未启动 V2.7 实验", new_guide)
+        self.assertNotIn("50/50 排名融合", new_guide)
+        self.assertIn("50/50 排名融合", old_guide)
 
 
 if __name__ == "__main__":
