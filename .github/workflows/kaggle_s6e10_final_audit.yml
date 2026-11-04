@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/kaggle_s6e10_final_audit.yml"
+      - "kaggle_agent/s6e10_final_audit.py"
 
 permissions:
   contents: write
