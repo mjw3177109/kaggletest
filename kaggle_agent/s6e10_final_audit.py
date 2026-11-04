@@ -222,7 +222,8 @@ def main():
         except Exception as exc:
             # Never print raw exception strings: network errors can include secrets.
             evidence = {"status": "unverified_authenticated_query_failed",
-                        "failed_stage": AUDIT_STAGE, "error_class": type(exc).__name__}
+                        "failed_stage": AUDIT_STAGE, "error_class": type(exc).__name__,
+                        "missing_module": getattr(exc, "name", None) if isinstance(exc, ModuleNotFoundError) else None}
     evidence.setdefault("competition", SLUG)
     evidence.setdefault("submission_id", SUBMISSION_ID)
     # Do not churn repo state for timestamp-only polling; GitHub Actions run itself is timestamped.
