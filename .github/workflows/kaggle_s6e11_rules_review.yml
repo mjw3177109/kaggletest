@@ -1,0 +1,92 @@
+name: Kaggle S6E11 Official Rules Review (Read Only)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "43 3 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/kaggle_s6e11_rules_review.yml"
+      - "kaggle_agent/s6e11_rules_review.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-s6e11-rules-review
+  cancel-in-progress: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      GH_REVIEW_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Offline rule parser self-test (no Kaggle)
+        run: |
+          python -m py_compile kaggle_agent/s6e11_rules_review.py
+          python -m kaggle_agent.s6e11_rules_review --test
+      - name: Install official Kaggle API and required six
+        run: python -m pip install "kaggle==2.2.5" "six>=1.16.0,<2"
+      - name: Require configured token without showing its value
+        run: |
+          if [ -z "$KAGGLE_API_TOKEN" ]; then
+            echo "Missing existing Kaggle Secret; fail closed."
+            exit 1
+          fi
+      - name: Read official rules pages, file metadata and current account limits
+        run: python -m kaggle_agent.s6e11_rules_review
+      - name: Upload source summary evidence (no raw competition data)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s6e11-official-rules-review
+          path: |
+            state/s6e11_rules_review.json
+            reports/s6e11_rules_review_latest.md
+          if-no-files-found: ignore
+      - name: Enforce full repository Actions write gate
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,os
+          from urllib.request import Request,urlopen
+          repo=os.environ["GITHUB_REPOSITORY"]
+          me=int(os.environ["GITHUB_RUN_ID"])
+          token=os.environ["GH_REVIEW_TOKEN"]
+          for status in ("in_progress","queued","waiting","requested","pending"):
+              u=f"https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100"
+              with urlopen(Request(u,headers={"Authorization":f"Bearer {token}","Accept":"application/vnd.github+json"}),timeout=20) as resp:
+                  j=json.load(resp)
+              rows=j.get("workflow_runs",[])
+              n=j.get("total_count")
+              if not isinstance(n,int) or n>len(rows):
+                  raise SystemExit("Unknown/truncated Actions status; no write")
+              if [w.get("id") for w in rows if w.get("id")!=me]:
+                  raise SystemExit("Other Actions active; preserve artifact only")
+          print("No conflicting workflow run; metadata-only commit allowed")
+          PY
+      - name: Commit verified-only audit metadata without modifying entry gate
+        shell: bash
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/s6e11_rules_review.json reports/s6e11_rules_review_latest.md
+          if git diff --cached --quiet; then
+            echo "Review evidence unchanged."
+            exit 0
+          fi
+          git commit -m "bot: record read-only S6E11 official rules review"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
