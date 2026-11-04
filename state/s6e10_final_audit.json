@@ -2,6 +2,7 @@
   "competition": "playground-series-s6e10",
   "error_class": "ModuleNotFoundError",
   "failed_stage": "import_kaggle",
+  "missing_module": "six",
   "status": "unverified_authenticated_query_failed",
   "submission_id": 57446286
 }
