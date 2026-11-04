@@ -1,0 +1,66 @@
+{
+  "account_submissions": {
+    "has_any": false,
+    "status": "success",
+    "visible_count_first_page": 0
+  },
+  "competition": "playground-series-s6e11",
+  "data_files": {
+    "files": [
+      {
+        "name": "sample_submission.csv",
+        "total_bytes": 8399564
+      },
+      {
+        "name": "test.csv",
+        "total_bytes": 41068069
+      },
+      {
+        "name": "train.csv",
+        "total_bytes": 98533176
+      }
+    ],
+    "paging_more": false,
+    "status": "success"
+  },
+  "deadline": "2026-11-30T23:59:00+00:00",
+  "joined": true,
+  "pages": {
+    "page_names": [
+      "About the Tabular Playground Series",
+      "Evaluation",
+      "Prizes",
+      "Timeline",
+      "abstract",
+      "data-description",
+      "rules"
+    ],
+    "rules": {
+      "content_length": 33500,
+      "content_sha256": "b09ffa98473a049145fb76ab9246d182169010662c684114b36b3bbce2132b7e",
+      "final_selection_expression": "two (2)",
+      "rules_full_text_retrieved": true,
+      "section_excerpts": {
+        "data_license": "DATA ACCESS AND USE Attribution 4.0 International (CC BY 4.0) ###2. COMPETITION-SPECIFIC RULES In addition to the provisions of the General Competition Rules below, you understand and agree to these Competition-Specific Rules required by the Competition Sponsor: ####1. TEAM LIMITS a. The maximum Team size is three (3). b. Team mergers are allowed and can be performed by the Team leader. In order to merge, the combined Team must have a total Submission count less than or equal to the maximum allowed as of the Team Merger Deadline. The maximum allowed is the number of Submissions per day multiplied by the number of days the competition has been running. ####2. SUBMISSION LIMITS a. You may submit a maximum of ten (10) Submissions per day. b. You may select up to two (2) Final Submissions for judging. ####3. COMPETITION TIMELINE a. Competition Timeline dates (including Entry Deadline, Final Submission Deadline, Start Date, and Team Merger Deadline, as applicable) are reflected on the competition’s Overview > Timeline page. ####4. COMPETITION DATA a. Data Access and Use. *Competition Use and Commercial are checked*: You may access and us",
+        "eligibility": "ELIGIBILITY a. Unless otherwise stated in the Competition-Specific Rules above or prohibited by internal policies of the Competition Entities, employees, interns, contractors, officers and directors of Competition Entities may enter and participate in the Competition, but are not eligible to win any Prizes. \"Competition Entities\" means the Competition Sponsor, Kaggle Inc., and their respective parent companies, subsidiaries and affiliates. If you are such a Participant from a Competition Entity, you are subject to all applicable internal policies of your employer with respect to your participation. ####8. WINNER’S OBLIGATIONS a. As a condition to being awarded a Prize, a Prize winner must fulfill the following obligations: 1. Deliver to the Competition Sponsor the final model's software code as used to generate the winning Submission and associated documentation. The delivered software code should follow [these documentation guidelines][5], must be capable of generating the winning Submission, and contain a description of resources required to build and/or run the executable code successfully. For avoidance of doubt, delivered softw",
+        "external_data": "EXTERNAL DATA AND TOOLS a. You may use data other than the Competition Data (“External Data”) to develop and test your Submissions. However, you will ensure the External Data is either publicly available and equally accessible to use by all Participants of the Competition for purposes of the competition at no cost to the other Participants, or satisfies the Reasonableness criteria as outlined in Section 2.6.b below. The ability to use External Data under this Section does not limit your other obligations under these Competition Rules, including but not limited to Section 2.8 (Winners Obligations). b. The use of external data and models is acceptable unless specifically prohibited by the Host. Because of the potential costs or restrictions (e.g., “geo restrictions”) associated with obtaining rights to use external data or certain software and associated tools, their use must be “reasonably accessible to all” and of “minimal cost”. Also, regardless of the cost challenges as they might affect all Participants during the course of the competition, the costs of potentially procuring a license for software used to generate a Submission, m",
+        "submission_limits": "SUBMISSION LIMITS a. You may submit a maximum of ten (10) Submissions per day. b. You may select up to two (2) Final Submissions for judging. ####3. COMPETITION TIMELINE a. Competition Timeline dates (including Entry Deadline, Final Submission Deadline, Start Date, and Team Merger Deadline, as applicable) are reflected on the competition’s Overview > Timeline page. ####4. COMPETITION DATA a. Data Access and Use. *Competition Use and Commercial are checked*: You may access and use the Competition Data for any purpose, whether commercial or non-commercial, including for participating in the Competition and on Kaggle.com forums, and for academic research and education. The Competition Sponsor reserves the right to disqualify any Participant who uses the Competition Data other than as permitted by the Competition Website and these Rules. The Competition Data is also subject to the following terms and conditions: [Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/). b. Data Security. 1. You agree to use reasonable and suitable measures to prevent persons who have not formally agreed to these Rules fro",
+        "team_limits": "TEAM LIMITS a. The maximum Team size is three (3). b. Team mergers are allowed and can be performed by the Team leader. In order to merge, the combined Team must have a total Submission count less than or equal to the maximum allowed as of the Team Merger Deadline. The maximum allowed is the number of Submissions per day multiplied by the number of days the competition has been running. ####2. SUBMISSION LIMITS a. You may submit a maximum of ten (10) Submissions per day. b. You may select up to two (2) Final Submissions for judging. ####3. COMPETITION TIMELINE a. Competition Timeline dates (including Entry Deadline, Final Submission Deadline, Start Date, and Team Merger Deadline, as applicable) are reflected on the competition’s Overview > Timeline page. ####4. COMPETITION DATA a. Data Access and Use. *Competition Use and Commercial are checked*: You may access and use the Competition Data for any purpose, whether commercial or non-commercial, including for participating in the Competition and on Kaggle.com forums, and for academic research and education. The Competition Sponsor reserves the right to disqualify any Participant who u"
+      },
+      "submission_limit_expression": null,
+      "team_limit_expression": "three (3)"
+    },
+    "status": "success"
+  },
+  "rules_review_passed": false,
+  "status": "rules_text_fetched_manual_clause_audit_required",
+  "submission_allowed": false,
+  "submission_limits": {
+    "limited_by_total": false,
+    "num_allowed_now": 10,
+    "num_today": 0,
+    "num_total": 0,
+    "status": "success"
+  },
+  "training_allowed": false
+}
