@@ -1,8 +1,12 @@
 {
   "competition": "playground-series-s6e10",
-  "error_class": "ModuleNotFoundError",
-  "failed_stage": "import_kaggle",
-  "missing_module": "six",
-  "status": "unverified_authenticated_query_failed",
-  "submission_id": 57446286
+  "counted_submission_id_verified": false,
+  "final_rank": 1247,
+  "final_team_score": "0.96178",
+  "official_award_verified": false,
+  "private_score_submission": "0.96178",
+  "rank_source": "Kaggle authenticated final leaderboard ordered row; all pages read",
+  "status": "final_rank_verified",
+  "submission_id": 57446286,
+  "team_id": 17143602
 }
