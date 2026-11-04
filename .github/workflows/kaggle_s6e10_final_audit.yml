@@ -37,7 +37,7 @@ jobs:
           python -m py_compile kaggle_agent/s6e10_final_audit.py
           python -m kaggle_agent.s6e10_final_audit --offline-test
       - name: Install official pinned Kaggle client
-        run: python -m pip install "kaggle==2.2.5"
+        run: python -m pip install "kaggle==2.2.5" "six>=1.16.0,<2"
       - name: Require existing Kaggle API token
         shell: bash
         run: |
