@@ -1,0 +1,94 @@
+name: Kaggle S6E10 Final Private Result Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "37 4 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/kaggle_s6e10_final_audit.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaggle-s6e10-final-audit
+  cancel-in-progress: false
+
+jobs:
+  read-only-final-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      GH_AUDIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Offline fail-closed evidence checks
+        run: |
+          python -m py_compile kaggle_agent/s6e10_final_audit.py
+          python -m kaggle_agent.s6e10_final_audit --offline-test
+      - name: Install official pinned Kaggle client
+        run: python -m pip install "kaggle==2.2.5"
+      - name: Require existing Kaggle API token
+        shell: bash
+        run: |
+          if [ -z "$KAGGLE_API_TOKEN" ]; then
+            echo "Kaggle Secret missing; no API call, fail closed."
+            exit 1
+          fi
+      - name: Read final Private score and paginated final leaderboard, never submit
+        run: python -m kaggle_agent.s6e10_final_audit
+      - name: Archive sanitized audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s6e10-final-audit-evidence
+          if-no-files-found: ignore
+          path: |
+            state/s6e10_final_audit.json
+            reports/s6e10_final_audit_latest.md
+      - name: Global owner-wide Actions five-state write gate
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          from urllib.request import Request, urlopen
+          repo = os.environ["GITHUB_REPOSITORY"]
+          current = int(os.environ["GITHUB_RUN_ID"])
+          token = os.environ.get("GH_AUDIT_TOKEN", "")
+          for status in ("in_progress","queued","waiting","requested","pending"):
+              url = f"https://api.github.com/repos/{repo}/actions/runs?status={status}&per_page=100"
+              req = Request(url, headers={"Authorization":f"Bearer {token}","Accept":"application/vnd.github+json"})
+              with urlopen(req, timeout=20) as resp:
+                  obj = json.load(resp)
+              count = obj.get("total_count")
+              runs = obj.get("workflow_runs",[])
+              if not isinstance(count,int) or count > len(runs):
+                  raise SystemExit("Actions response truncated; no write")
+              foreign = [x.get("id") for x in runs if x.get("id") != current]
+              if foreign:
+                  raise SystemExit("Other Actions in progress; no write")
+          print("Actions five-state gate passed; only this audit run active.")
+          PY
+      - name: Persist authenticated evidence and only proven Private rank
+        shell: bash
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/s6e10_final_audit.json reports/s6e10_final_audit_latest.md reports/2026-11-02_S6E10_赛后归纳.md
+          if git diff --cached --quiet; then
+            echo "No evidence change. Nothing to persist."
+            exit 0
+          fi
+          git commit -m "bot: persist official S6E10 final result audit"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
