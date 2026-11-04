@@ -1,0 +1,22 @@
+{
+  "competition": "playground-series-s6e11",
+  "review_type": "manual_clause_review_of_official_authenticated_page",
+  "source_rules_sha256": "b09ffa98473a049145fb76ab9246d182169010662c684114b36b3bbce2132b7e",
+  "source_run_id": 41799322265,
+  "source_pages_api": "Kaggle authenticated competition_list_pages",
+  "reviewed_on_utc": "2026-11-04",
+  "max_team_size": 3,
+  "max_submissions_per_day": 10,
+  "max_final_selections": 2,
+  "competition_data_license": "CC BY 4.0",
+  "review_scope": "official_competition_data_only_no_external_data_no_unreviewed_models",
+  "external_data_for_initial_stage": false,
+  "paid_resources_authorized": false,
+  "allow_accept_rules": false,
+  "allow_download_competition_data_for_audit": true,
+  "allow_training_without_separate_data_gate": false,
+  "allow_submission_without_oof_and_quota_gate": false,
+  "age_geography_prize_eligibility_independently_verified": false,
+  "competition_code_public_sharing_requires_kaggle": true,
+  "author_note": "Rule review permits an independently gated data integrity audit only; check current membership, rules hash, dataset metadata and actions before data operations."
+}
