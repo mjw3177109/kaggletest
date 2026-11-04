@@ -1,9 +1,10 @@
 # Kaggle S6E11 官方规则只读复核
 
 - Kaggle 参赛认证：True，来自已有认证门禁记录（此项未重新接受规则）
-- 复核状态：**rules_text_fetched_manual_clause_audit_required**
-- 原则：没有官方 S6E11 专属规则正文的完整证据，不自动批准训练、数据下载、外部模型或提交
-- 禁止动作：自动接受规则、训练、下载受限数据、正式提交、使用付费资源
+- 复核状态：**rules_verified_data_audit_pending**
+- 审核原则：已审计的专属规则哈希必须保持一致；仅开放独立的数据审计前置条件，训练/提交另设门禁
+- 本工作流禁止接受规则、下载、训练、提交以及付费
+- 本次规则哈希审计通过：True
 
 ## 官网已公开确认
 - 比赛：Predicting Credit Card Fraud（Playground Series S6E11）

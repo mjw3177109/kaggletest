@@ -4,6 +4,7 @@
     "status": "success",
     "visible_count_first_page": 0
   },
+  "can_begin_separately_gated_official_data_audit": true,
   "competition": "playground-series-s6e11",
   "data_files": {
     "files": [
@@ -64,8 +65,8 @@
     },
     "status": "success"
   },
-  "rules_review_passed": false,
-  "status": "rules_text_fetched_manual_clause_audit_required",
+  "rules_review_passed": true,
+  "status": "rules_verified_data_audit_pending",
   "submission_allowed": false,
   "submission_limits": {
     "limited_by_total": false,
