@@ -19,6 +19,7 @@ REPORT = Path("reports/2026-11-02_S6E10_赛后归纳.md")
 STATE = Path("state/s6e10_final_audit.json")
 LATEST = Path("reports/s6e10_final_audit_latest.md")
 SECTION = "## 八、S6E10 官方最终成绩认证补证（自动核验）"
+AUDIT_STAGE = "init"
 
 
 def number(value):
@@ -93,14 +94,19 @@ def resolve(owned_refs, detail, rows, complete=True):
 
 
 def read_authenticated():
+    global AUDIT_STAGE
+    AUDIT_STAGE = "import_kaggle"
     from kaggle.api.kaggle_api_extended import KaggleApi
     from kagglesdk.competitions.types.competition_api_service import ApiGetLeaderboardRequest
 
+    AUDIT_STAGE = "authenticate"
     api = KaggleApi()
     api.authenticate()
     # Verify the known ref is visible in the *authenticated user's own* history.
+    AUDIT_STAGE = "list_account_submissions"
     mine = api.competition_submissions(SLUG, page_size=200) or []
     own_refs = [int(getattr(v, "ref", -1)) for v in mine if v is not None]
+    AUDIT_STAGE = "get_historical_submission"
     detail = api.get_submission(SUBMISSION_ID)
     info = {
         "ref": getattr(detail, "ref", None),
@@ -114,6 +120,7 @@ def read_authenticated():
     token = ""
     seen = set()
     for _ in range(60):  # bounded: 12,000 rows max; no infinite retry
+        AUDIT_STAGE = "get_final_leaderboard_page"
         if token in seen:
             raise RuntimeError("repeated_leaderboard_page_token")
         seen.add(token)
@@ -212,9 +219,10 @@ def main():
     else:
         try:
             evidence = read_authenticated()
-        except Exception:
-            # No exception details: some auth/network errors may include sensitive data.
-            evidence = {"status": "unverified_authenticated_query_failed"}
+        except Exception as exc:
+            # Never print raw exception strings: network errors can include secrets.
+            evidence = {"status": "unverified_authenticated_query_failed",
+                        "failed_stage": AUDIT_STAGE, "error_class": type(exc).__name__}
     evidence.setdefault("competition", SLUG)
     evidence.setdefault("submission_id", SUBMISSION_ID)
     # Do not churn repo state for timestamp-only polling; GitHub Actions run itself is timestamped.
