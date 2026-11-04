@@ -48,7 +48,7 @@ def parse_rule_text(body):
     def grab(pattern):
         match = re.search(pattern, t, re.I | re.S)
         return match.group(1).strip() if match else None
-    limit = grab(r"(?:maximum|up to)\s+(\w+\s*\(\d+\)|\d+)\s+Submissions\s+per\s+day")
+    limit = grab(r"(?:maximum of|maximum|up to)\s+(\w+\s*\(\d+\)|\d+)\s+Submissions\s+per\s+day")
     group = grab(r"maximum Team size is\s+(\w+\s*\(\d+\)|\d+)")
     final = grab(r"select up to\s+(\w+\s*\(\d+\)|\d+)\s+Final Submissions")
     sections = {}
@@ -60,7 +60,7 @@ def parse_rule_text(body):
         ("eligibility", r"ELIGIBILITY"),
     ):
         m = re.search(pat, t, re.I)
-        sections[key] = t[m.start():m.start()+1150] if m else None
+        sections[key] = t[m.start():m.start()+(3300 if key == "external_data" else 2000)] if m else None
     return {
         "content_sha256": hashlib.sha256((body or "").encode("utf-8")).hexdigest() if body else None,
         "content_length": len(body or ""),
@@ -69,6 +69,8 @@ def parse_rule_text(body):
         "team_limit_expression": group,
         "final_selection_expression": final,
         "section_excerpts": sections,
+        "eligibility_all_excerpts": [t[m.start():m.start()+1500] for m in list(re.finditer(r"\bELIGIBILITY\b", t, re.I))[:3]],
+        "other_rules_evidence": {k: (t[m.start():m.start()+1700] if (m := re.search(p, t, re.I)) else None) for k,p in (("code_sharing",r"CODE SHARING"),("winner_obligations",r"WINNER.S OBLIGATIONS"),("automated_ml",r"Automated Machine Learning Tools"),("pretrained",r"pre.trained model"))},
     }
 
 
@@ -87,7 +89,8 @@ def query_api():
         names = sorted({str(getattr(p, "name", "") or "") for p in pages})
         rules = [p for p in pages if str(getattr(p, "name", "")).lower() == "rules"]
         parsed = parse_rule_text(getattr(rules[0], "content", "") or "") if len(rules)==1 else None
-        result["pages"] = {"status": "success", "page_names": names, "rules": parsed}
+        desc = next((str(getattr(p, "content", "") or "") for p in pages if str(getattr(p, "name", "")).lower()=="data-description"), "")
+        result["pages"] = {"status":"success", "page_names":names, "rules":parsed, "data_description_excerpt":clean_html(desc)[:1700]}
     except Exception as exc:
         result["pages"] = {"status": "failed", "error_class": type(exc).__name__}
     try:
@@ -160,7 +163,12 @@ def format_report(o):
     ]
     for k,v in (rules.get("section_excerpts") or {}).items():
         lines += [f"### {k}", "", v or "未取得：待核实", ""]
-    lines += [
+    lines += ["## 其他专属规则条款证据"]
+    for k,v in (rules.get("other_rules_evidence") or {}).items():
+        lines += [f"### {k}","",v or "未找到",""]
+    for j,v in enumerate(rules.get("eligibility_all_excerpts") or []):
+        lines += [f"### eligibility_occurrence_{j+1}","",v,""]
+    lines += ["## 官方数据说明（片段）", p.get("data_description_excerpt") or "未取得", "",
         "## 当前门禁与待补证",
         "- 账户加入不代表已经逐项审计所有比赛特定条款；本报告不替用户接受协议。",
         "- 专属规则全文、资格及地域限制、外部数据、预训练模型、生成式 AI 使用许可：未明确验证前不擅自允许。",
