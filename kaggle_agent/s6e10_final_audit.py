@@ -182,7 +182,7 @@ def update_main_report(evidence, audit_md):
     if not REPORT.exists():
         return False
     old = REPORT.read_text(encoding="utf-8")
-    section = SECTION + "\n\n" + audit_md
+    section = SECTION + "\n\n" + audit_md.replace("# S6E10 Kaggle 账户认证赛后补证", "### 认证结果摘要", 1)
     if SECTION in old:
         old = old[:old.index(SECTION)].rstrip()
     new = old.rstrip() + "\n\n" + section
