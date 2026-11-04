@@ -1,0 +1,104 @@
+name: Kaggle S6E11 Official Data Integrity Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/kaggle_s6e11_data_integrity.yml"
+      - "kaggle_agent/s6e11_data_integrity.py"
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: kaggle-s6e11-data-integrity
+  cancel-in-progress: false
+
+jobs:
+  integrity-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      GH_GATE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile audit and ensure no missing imports
+        run: python -m py_compile kaggle_agent/s6e11_data_integrity.py
+      - name: Install pinned free Kaggle CLI and existing scout parser dependency
+        run: python -m pip install "kaggle==2.2.5" "six>=1.16.0,<2" "PyYAML>=6.0,<7"
+      - name: Check existing secret without printing content
+        shell: bash
+        run: |
+          if [ -z "$KAGGLE_API_TOKEN" ]; then echo "Kaggle credential absent; stop."; exit 1; fi
+      - name: Verify owner-wide idle before ANY competition data access
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          from urllib.request import Request, urlopen
+          current=int(os.environ["GITHUB_RUN_ID"])
+          repo=os.environ["GITHUB_REPOSITORY"]
+          token=os.environ["GH_GATE_TOKEN"]
+          for state in ("in_progress","queued","waiting","requested","pending"):
+              req=Request(f"https://api.github.com/repos/{repo}/actions/runs?status={state}&per_page=100",
+                          headers={"Authorization":f"Bearer {token}","Accept":"application/vnd.github+json"})
+              with urlopen(req,timeout=25) as h: obj=json.load(h)
+              runs=obj.get("workflow_runs", [])
+              if not isinstance(obj.get("total_count"),int) or obj["total_count"]>len(runs):
+                  raise SystemExit("Incomplete Github Actions evidence; stop before data.")
+              if any(int(w.get("id",0))!=current for w in runs):
+                  raise SystemExit("Another workflow is active; stop before data.")
+          print("Owner-wide Actions gate passed")
+          PY
+      - name: Fresh member/rules SHA check; download only official files; stream integrity stats
+        run: python -m kaggle_agent.s6e11_data_integrity
+      - name: Persist evidence artifact (never upload raw ZIP or CSV)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s6e11-integrity-summary-only
+          path: |
+            state/s6e11_data_integrity.json
+            reports/s6e11_data_integrity_latest.md
+          if-no-files-found: ignore
+      - name: Verify owner-wide idle before metadata commit
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          from urllib.request import Request, urlopen
+          repo=os.environ["GITHUB_REPOSITORY"]
+          current=int(os.environ["GITHUB_RUN_ID"])
+          for state in ("in_progress","queued","waiting","requested","pending"):
+              req=Request(f"https://api.github.com/repos/{repo}/actions/runs?status={state}&per_page=100",
+                          headers={"Authorization":"Bearer "+os.environ["GH_GATE_TOKEN"],"Accept":"application/vnd.github+json"})
+              with urlopen(req,timeout=25) as h: obj=json.load(h)
+              runs=obj.get("workflow_runs",[])
+              if not isinstance(obj.get("total_count"),int) or obj["total_count"]>len(runs):
+                  raise SystemExit("Incomplete Actions state; evidence artifact only")
+              if any(int(w.get("id",0))!=current for w in runs):
+                  raise SystemExit("Concurrent workflow; evidence artifact only")
+          PY
+      - name: Commit aggregate-only data checks, never raw competition data
+        shell: bash
+        run: |
+          git config user.name "kaggle-auto-scientist[bot]"
+          git config user.email "kaggle-auto-scientist[bot]@users.noreply.github.com"
+          git add -- state/s6e11_data_integrity.json reports/s6e11_data_integrity_latest.md
+          if git diff --cached --quiet; then
+            echo "No change in integrity state"
+            exit 0
+          fi
+          git commit -m "bot: persist bounded S6E11 data integrity summary"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
