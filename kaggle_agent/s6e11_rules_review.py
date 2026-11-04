@@ -18,6 +18,7 @@ SLUG = "playground-series-s6e11"
 OUTPUT = Path("state/s6e11_rules_review.json")
 REPORT = Path("reports/s6e11_rules_review_latest.md")
 ENTRY = Path("state/s6e11_entry_gate.json")
+APPROVAL = Path("state/s6e11_rule_approval.json")
 
 
 class StripHTML(HTMLParser):
@@ -136,8 +137,9 @@ def format_report(o):
         "",
         f"- Kaggle 参赛认证：{show(o.get('joined'))}，来自已有认证门禁记录（此项未重新接受规则）",
         f"- 复核状态：**{status}**",
-        "- 原则：没有官方 S6E11 专属规则正文的完整证据，不自动批准训练、数据下载、外部模型或提交",
-        "- 禁止动作：自动接受规则、训练、下载受限数据、正式提交、使用付费资源",
+        "- 审核原则：已审计的专属规则哈希必须保持一致；仅开放独立的数据审计前置条件，训练/提交另设门禁",
+        "- 本工作流禁止接受规则、下载、训练、提交以及付费",
+        f"- 本次规则哈希审计通过：{o.get('rules_review_passed', False)}",
         "",
         "## 官网已公开确认",
         "- 比赛：Predicting Credit Card Fraud（Playground Series S6E11）",
@@ -207,10 +209,28 @@ def main():
         try:
             o.update(query_api())
             rules=(o.get("pages",{}).get("rules") or {})
-            if rules.get("rules_full_text_retrieved"):
-                o["status"]="rules_text_fetched_manual_clause_audit_required"
-            else:
-                o["status"]="review_pending_specific_rules"
+            approval=json.loads(APPROVAL.read_text(encoding="utf8")) if APPROVAL.exists() else {}
+            names={f.get("name") for f in o.get("data_files",{}).get("files",[])}
+            verified=bool(
+                o["joined"] is True and
+                rules.get("rules_full_text_retrieved") and
+                rules.get("content_sha256")==approval.get("source_rules_sha256") and
+                rules.get("team_limit_expression")=="three (3)" and
+                rules.get("submission_limit_expression")=="ten (10)" and
+                rules.get("final_selection_expression")=="two (2)" and
+                approval.get("review_scope")=="official_competition_data_only_no_external_data_no_unreviewed_models" and
+                approval.get("competition")==SLUG and
+                o.get("deadline")=="2026-11-30T23:59:00+00:00" and
+                names=={"train.csv","test.csv","sample_submission.csv"} and
+                "CC BY 4.0" in (rules.get("section_excerpts",{}).get("data_license") or "") and
+                (rules.get("other_rules_evidence",{}).get("code_sharing") or "") and
+                (rules.get("other_rules_evidence",{}).get("automated_ml") or "")
+            )
+            o["rules_review_passed"]=verified
+            o["can_begin_separately_gated_official_data_audit"]=verified
+            o["status"]="rules_verified_data_audit_pending" if verified else "rules_version_or_clauses_unverified"
+            o["training_allowed"]=False
+            o["submission_allowed"]=False
         except Exception as exc:
             o.update(status="review_query_failed",failed_stage="kaggle_api",
                      error_class=type(exc).__name__)
