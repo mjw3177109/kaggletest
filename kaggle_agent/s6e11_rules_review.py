@@ -189,7 +189,6 @@ def main():
     o={"competition":SLUG,"joined":entry.get("userHasEntered",False),
        "deadline":entry.get("deadline"),
        "status":"review_pending_specific_rules",
-       "checked_at":datetime.now(timezone.utc).isoformat(),
        "training_allowed":False,"submission_allowed":False,
        "rules_review_passed":False}
     if not os.environ.get("KAGGLE_API_TOKEN"):
