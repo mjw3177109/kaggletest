@@ -1,11 +1,11 @@
 {
   "competition": "connectx",
-  "checked_at": "2026-11-05T00:51:57.830305+00:00",
+  "checked_at": "2026-11-05T01:46:07.932666+00:00",
   "ranking_type": "Public",
   "rank": null,
   "rank_verified": false,
   "rank_source": "no_public_rank",
-  "ranked_teams": 281,
+  "ranked_teams": 280,
   "score": null,
   "warnings": [
     "Public leaderboard lookup unavailable: No full leaderboard CSV downloaded from Kaggle"
