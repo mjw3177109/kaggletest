@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-06T09:25:36.437666+00:00",
+  "generated_at": "2026-11-07T08:47:42.239432+00:00",
   "agent": {
     "name": "Kaggle Auto Scientist",
     "version": "V2.3",
@@ -12,11 +12,11 @@
       "deadline": "2027-01-08T23:59:59",
       "category": "Playground",
       "reward": "Swag",
-      "teamCount": 644,
+      "teamCount": 652,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "the-pokemon-company-ptcg-ai-battle-challenge-playground",
-      "daysRemaining": 63,
+      "daysRemaining": 62,
       "score": 85
     },
     {
@@ -24,11 +24,11 @@
       "deadline": "2026-11-30T23:59:00",
       "category": "Playground",
       "reward": "3 Swag",
-      "teamCount": 886,
+      "teamCount": 974,
       "userHasEntered": true,
       "userRank": 0,
       "slug": "playground-series-s6e11",
-      "daysRemaining": 24,
+      "daysRemaining": 23,
       "score": 85
     },
     {
@@ -36,11 +36,11 @@
       "deadline": "2030-01-01T00:00:00",
       "category": "Getting Started",
       "reward": "Knowledge",
-      "teamCount": 4841,
+      "teamCount": 4838,
       "userHasEntered": true,
       "userRank": 0,
       "slug": "house-prices-advanced-regression-techniques",
-      "daysRemaining": 1151,
+      "daysRemaining": 1150,
       "score": 80
     },
     {
@@ -48,11 +48,11 @@
       "deadline": "2030-07-01T23:59:00",
       "category": "Getting Started",
       "reward": "Knowledge",
-      "teamCount": 311,
+      "teamCount": 310,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "llm-classification-finetuning",
-      "daysRemaining": 1333,
+      "daysRemaining": 1332,
       "score": 70
     },
     {
@@ -60,11 +60,11 @@
       "deadline": "2027-07-18T23:59:00",
       "category": "Playground",
       "reward": "50,000 Usd",
-      "teamCount": 1704,
+      "teamCount": 1755,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "squares-in-squares",
-      "daysRemaining": 254,
+      "daysRemaining": 253,
       "score": 55
     },
     {
@@ -72,11 +72,11 @@
       "deadline": "2030-07-01T23:59:00",
       "category": "Getting Started",
       "reward": "Knowledge",
-      "teamCount": 54,
+      "teamCount": 53,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "contradictory-my-dear-watson",
-      "daysRemaining": 1333,
+      "daysRemaining": 1332,
       "score": 50
     },
     {
@@ -84,11 +84,11 @@
       "deadline": "2030-06-30T23:59:00",
       "category": "Getting Started",
       "reward": "Knowledge",
-      "teamCount": 542,
+      "teamCount": 541,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "store-sales-time-series-forecasting",
-      "daysRemaining": 1332,
+      "daysRemaining": 1331,
       "score": 50
     },
     {
@@ -100,7 +100,7 @@
       "userHasEntered": false,
       "userRank": 0,
       "slug": "tpu-getting-started",
-      "daysRemaining": 1305,
+      "daysRemaining": 1304,
       "score": 50
     },
     {
@@ -108,11 +108,11 @@
       "deadline": "2030-01-01T23:59:00",
       "category": "Getting Started",
       "reward": "Knowledge",
-      "teamCount": 3852,
+      "teamCount": 3831,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "home-data-for-ml-course",
-      "daysRemaining": 1152,
+      "daysRemaining": 1151,
       "score": 50
     },
     {
@@ -120,11 +120,11 @@
       "deadline": "2030-01-01T00:00:00",
       "category": "Getting Started",
       "reward": "Knowledge",
-      "teamCount": 1937,
+      "teamCount": 1936,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "spaceship-titanic",
-      "daysRemaining": 1151,
+      "daysRemaining": 1150,
       "score": 50
     },
     {
@@ -132,11 +132,11 @@
       "deadline": "2030-01-01T00:00:00",
       "category": "Getting Started",
       "reward": "Knowledge",
-      "teamCount": 287,
+      "teamCount": 289,
       "userHasEntered": true,
       "userRank": 0,
       "slug": "connectx",
-      "daysRemaining": 1151,
+      "daysRemaining": 1150,
       "score": 50
     },
     {
@@ -144,11 +144,11 @@
       "deadline": "2030-01-01T00:00:00",
       "category": "Getting Started",
       "reward": "Knowledge",
-      "teamCount": 459,
+      "teamCount": 456,
       "userHasEntered": true,
       "userRank": 0,
       "slug": "nlp-getting-started",
-      "daysRemaining": 1151,
+      "daysRemaining": 1150,
       "score": 50
     },
     {
@@ -156,11 +156,11 @@
       "deadline": "2030-01-01T00:00:00",
       "category": "Getting Started",
       "reward": "Knowledge",
-      "teamCount": 1170,
+      "teamCount": 1166,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "digit-recognizer",
-      "daysRemaining": 1151,
+      "daysRemaining": 1150,
       "score": 50
     },
     {
@@ -168,11 +168,11 @@
       "deadline": "2030-01-01T00:00:00",
       "category": "Getting Started",
       "reward": "Knowledge",
-      "teamCount": 11695,
+      "teamCount": 11650,
       "userHasEntered": true,
       "userRank": 0,
       "slug": "titanic",
-      "daysRemaining": 1151,
+      "daysRemaining": 1150,
       "score": 45
     },
     {
@@ -180,11 +180,11 @@
       "deadline": "2027-01-20T23:59:00",
       "category": "Featured",
       "reward": "150,000 Usd",
-      "teamCount": 2442,
+      "teamCount": 2528,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "google-verifiable-quantum-circuit-compilation",
-      "daysRemaining": 75,
+      "daysRemaining": 74,
       "score": 45
     },
     {
@@ -192,11 +192,11 @@
       "deadline": "2027-01-06T23:59:00",
       "category": "Featured",
       "reward": "100,000 Usd",
-      "teamCount": 515,
+      "teamCount": 525,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "nfl-big-data-bowl-2027",
-      "daysRemaining": 61,
+      "daysRemaining": 60,
       "score": 45
     },
     {
@@ -204,23 +204,23 @@
       "deadline": "2026-12-02T23:59:00",
       "category": "Featured",
       "reward": "75,000 Usd",
-      "teamCount": 4906,
+      "teamCount": 5001,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "gemma-4-developer-agent",
-      "daysRemaining": 26,
-      "score": 45
+      "daysRemaining": 25,
+      "score": 40
     },
     {
       "ref": "https://www.kaggle.com/competitions/gemma-4-developer-agent-paper",
       "deadline": "2026-11-12T23:59:00.807000",
       "category": "Featured",
       "reward": "35,000 Usd",
-      "teamCount": 597,
+      "teamCount": 620,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "gemma-4-developer-agent-paper",
-      "daysRemaining": 6,
+      "daysRemaining": 5,
       "score": 38
     },
     {
@@ -228,11 +228,11 @@
       "deadline": "2026-11-09T23:59:00",
       "category": "Featured",
       "reward": "450,000 Usd",
-      "teamCount": 485,
+      "teamCount": 512,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "arc-prize-2026-paper-track",
-      "daysRemaining": 3,
+      "daysRemaining": 2,
       "score": 38
     },
     {
@@ -240,11 +240,11 @@
       "deadline": "2027-01-14T23:59:00.817000",
       "category": "Featured",
       "reward": "50,000 Usd",
-      "teamCount": 4855,
+      "teamCount": 4978,
       "userHasEntered": false,
       "userRank": 0,
       "slug": "name-that-llm",
-      "daysRemaining": 69,
+      "daysRemaining": 68,
       "score": 35
     }
   ]
