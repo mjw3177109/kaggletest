@@ -1,7 +1,7 @@
 {
   "version": "V2.4 ladder",
   "active_competition": "connectx",
-  "updated_at": "2026-11-19T13:32:08.894168+00:00",
+  "updated_at": "2026-11-19T13:32:36.382437+00:00",
   "public_rank_verified": false,
   "status": "monitoring_deadline",
   "warning": "Rank unknown; independently monitoring the verified final submission deadline.",
@@ -23,7 +23,7 @@
   "next_competition": null,
   "next_training_enabled": false,
   "rank_source": "no_public_rank",
-  "rank_checked_at": "2026-11-19T13:32:04.929811+00:00",
+  "rank_checked_at": "2026-11-19T13:32:33.290641+00:00",
   "ranked_teams": 321,
   "latest_scored_submission": null,
   "last_handoff": {
